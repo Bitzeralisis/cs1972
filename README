@@ -1,0 +1,98 @@
+1) RUBRIC. _____________________________________________________________________
+
+COMPLETE/INCOMPLETE
+
+Retries used: NONE (2 extra retries left)
+
+[ ] Completed a design check
+
+Common Engine Requirements
+========================================
+[ ] First person camera support
+  
+    See engine/camera.h. This is a first-person camera helper class used by
+    Graphics in its drawing code.
+
+    [ ] Yaws around the up (positive Y in OpenGL) axis
+    [ ] Pitches in the horizontal plane
+    [ ] Camera pitch is locked to the range (-pi/2, pi/2)
+
+        Yaw and pitch are set by setting the corresponding member variable. They
+        are set to their bounds whenever they are used to generate a matrix.
+        See: Camera class definition
+
+    [ ] Forward-backward and left-right strafe style movement of the eye
+
+        Movement can be done in the xz plane according to a vector relative to
+        the eye. See: Camera::walk(glm::vec3)
+
+[ ] Screen management
+
+    See engine/game.h and engine/screen.h. These classes are to be extended by
+    the user, with the extended Game used for global state and extended Screens
+    for game functionality.
+
+    Game manages OpenGL initialization and a stack of screens. view.cpp contains
+    a Game to which it passes all events, and the base Game class passes events
+    to Screens on the screen stack, which the user then handles.
+
+    [ ] Virtual Screen class representing a logical subscreen of a game which
+        (minimally) supports:
+        [ ] Timed updates (tick)
+        [ ] Render events (draw)
+        [ ] Input events (mouse and keyboard)
+        [ ] Window size updates (resize)
+    [ ] Virtual Application class representing a whole game which supports
+        custom OpenGL initialization and, minimally, a stack of Screens
+
+[ ] Custom Graphics object
+    [ ] Supports the loading of textures from image files
+    [ ] Supports the storage and binding of unique OpenGL texture IDs by a
+        string key
+    [ ] Supports rendering a 1x1 textured quad
+    [ ] Maintains an active shader program that is used for drawing
+
+Game Requirements
+========================================
+[ ] The player must be able to move using standard first person camera controls,
+    meaning:
+    [ ] Horizontal mouse movements change the yaw of the camera
+    [ ] Vertical mouse movements change the pitch of the camera
+    [ ] Standard WASD keyboard controls (W moves forwards, S moves backwards, A
+        strafes left, D strafes right) change the eye of the camera
+[ ] The player must never fall through the ground at y = 0
+[ ] The player must be able to jump off the ground using the spacebar or a mouse
+    button
+[ ] The player can only jump when on the ground
+[ ] Gravity must act downwards on the player
+[ ] The ground must consist of planar geometry with a tiled grass texture
+[ ] The game must have at least two screens, one of which requires player input
+    to get to the other
+
+Global requirements
+========================================
+[ ] Top-level handin directory contains a Qt project file, a README, and an
+    INSTRUCTIONS file
+[ ] README has a copy of the rubric with explanations of how to verify
+    requirements
+[ ] README documents any known bugs
+[ ] README indicates number of hours taken
+[ ] INSTRUCTIONS contains all information needed to play the game
+[ ] Engine and game code logically separated
+[ ] Engine code well designed
+[ ] Game code well designed
+[ ] Runs on department machines
+[ ] Does not crash
+[ ] Works at 800x600 and fullscreen resolutions
+[ ] Runs at 30+ UPS and never dips below 20 UPS unless indicated in the specific
+    handout
+
+
+2) KNOWN BUGS. _________________________________________________________________
+
+None.
+
+
+3) TIME SPENT. _________________________________________________________________
+
+5 hours
