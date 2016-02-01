@@ -1,10 +1,14 @@
 #pragma once
 
+#include "game.h"
+#include "graphics.h"
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QWheelEvent>
 
 namespace CS1972Engine {
+
+class Game;
 
 /**
  * @brief The Screen class
@@ -12,9 +16,12 @@ namespace CS1972Engine {
  */
 class Screen {
 public:
+    explicit Screen(Game *game): parent(game) {}
     virtual ~Screen() {}
 
 public:
+    Game *const parent;
+
     virtual void tick() = 0;
     virtual void draw() = 0;
 

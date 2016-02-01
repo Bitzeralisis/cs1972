@@ -2,13 +2,23 @@
 
 using namespace CS1972Engine;
 
-Camera::Camera() { }
+Camera::Camera()
+    : Camera(0.375f*glm::pi<float>(), 4.f/3.f, 1.f, 200.f)
+{ }
 
 Camera::Camera(float fov, float ar, float n, float f)
-    : fovy(fov)
+    : Camera(glm::vec3(0.f, 5.f, 0.f), 0.f, 0.f, fov, ar, n, f)
+{ }
+
+Camera::Camera(glm::vec3 pos, float y, float p, float fov, float ar, float n, float f)
+    : position(pos)
+    , yaw(y)
+    , pitch(p)
+    , fovy(fov)
     , aspect(ar)
     , near(n)
     , far(f)
+
 { }
 
 /**
@@ -33,8 +43,8 @@ void Camera::walk(glm::vec3 dir) {
 
 glm::mat4 Camera::viewMatrix() {
     // Normalize yaw and pitch
-    while (yaw > glm::pi<float>()) yaw -= glm::pi<float>();
-    while (yaw <= -1.f*glm::pi<float>()) yaw += glm::pi<float>();
+    while (yaw > glm::pi<float>()) yaw -= 2.f*glm::pi<float>();
+    while (yaw <= -1.f*glm::pi<float>()) yaw += 2.f*glm::pi<float>();
     if (pitch > glm::half_pi<float>()) pitch = glm::half_pi<float>();
     else if (pitch < -1.f*glm::half_pi<float>()) pitch = -1.f*glm::half_pi<float>();
 
@@ -47,8 +57,11 @@ glm::mat4 Camera::viewMatrix() {
     look = glm::normalize(look);
     glm::vec3 center = position + look;
     glm::vec3 up(0.f, 1.f, 0.f);
-    if (pitch == glm::half_pi<float>() || pitch == -1.f*glm::half_pi<float>()) {
-        up = glm::vec3(look.x, 1.f, look.z);
+    if (pitch == glm::half_pi<float>()) {
+        up = glm::vec3(-1.f*glm::cos(yaw), 0.f, 1.f*glm::sin(yaw));
+        up = glm::normalize(up);
+    } else if (pitch == -1.f*glm::half_pi<float>()) {
+        up = glm::vec3(glm::cos(yaw), 0.f, glm::sin(yaw));
         up = glm::normalize(up);
     }
 

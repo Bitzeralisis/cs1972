@@ -1,5 +1,6 @@
 #pragma once
 
+#include "graphics.h"
 #include "screen.h"
 #include "util/CommonIncludes.h"
 #include <QKeyEvent>
@@ -8,6 +9,8 @@
 #include <stack>
 
 namespace CS1972Engine {
+
+class Screen;
 
 /**
  * @brief The Game class
@@ -20,14 +23,24 @@ public:
     virtual ~Game() {}
 
 private:
-    std::deque<Screen*> screenStack;
+    int m_width;
+    int m_height;
+    std::deque<Screen*> m_screenStack;
 
-public: // Screen stack management
+public:
+    Graphics g;
+
+public:
+    int width() { return m_width; }
+    int height() { return m_height; }
+
+    // Screen stack management
     void pushScreen(Screen *s);
     Screen* popScreen();
 
-public: // Events
-    virtual void initializeGL() = 0;
+public:
+    void initializeGL();
+    virtual void initGL() = 0;
 
     void tick();
     void draw();

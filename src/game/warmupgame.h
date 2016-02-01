@@ -10,7 +10,7 @@ public:
     virtual ~WarmupGame();
 
 public:
-    virtual void initializeGL() override;
+    virtual void initGL() override;
 };
 
 }

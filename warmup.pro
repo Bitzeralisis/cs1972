@@ -20,9 +20,10 @@ SOURCES += \
     libs/glew-1.10.0/src/glew.c \
     src/game/warmupgame.cpp \
     src/engine/game.cpp \
-    src/engine/screen.cpp \
     src/engine/camera.cpp \
-    src/game/mainmenu.cpp
+    src/game/mainmenu.cpp \
+    src/engine/graphics.cpp \
+    src/game/gamescreen.cpp
 
 HEADERS += \
     libs/glew-1.10.0/include/GL/glew.h \
@@ -35,13 +36,16 @@ HEADERS += \
     src/game/warmupgame.h \
     src/engine/screen.h \
     src/engine/camera.h \
-    src/game/mainmenu.h
+    src/game/mainmenu.h \
+    src/engine/graphics.h \
+    src/game/gamescreen.h
 
 
 FORMS += src/mainwindow.ui
 
 RESOURCES += \
-    res/shaders/shaders.qrc
+    res/shaders/shaders.qrc \
+    res/images/images.qrc
 
 OTHER_FILES += \
     res/images/grass.png \
