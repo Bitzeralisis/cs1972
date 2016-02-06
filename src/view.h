@@ -1,6 +1,7 @@
 #ifndef VIEW_H
 #define VIEW_H
 
+#include "engine/game.h"
 #include "util/CommonIncludes.h"
 #include <qgl.h>
 #include <QTime>
@@ -23,6 +24,8 @@ public:
     ~View();
 
 private:
+    CS1972Engine::Game *game;
+
     QTime time;
     QTimer timer;
 

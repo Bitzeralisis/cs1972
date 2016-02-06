@@ -1,0 +1,165 @@
+						  cs.brown.edu/courses/cs1972
+									warmup1
+									by ajlin
+						   due: 11:59 PM, 02/02/2016
+
+
+								   GRASSDASH
+
+1) ANNOTATED RUBRIC. ___________________________________________________________
+
+COMPLETE/INCOMPLETE
+
+Retries used: NONE (2 extra retries left)
+
+[ ] Completed a design check
+
+Common Engine Requirements
+========================================
+[ ] First person camera support
+  
+    See engine/camera.h. This is a first-person camera helper class used by
+    Graphics in its drawing code to generate perspective and view matrices.
+
+    [ ] Yaws around the up (positive Y in OpenGL) axis
+    [ ] Pitches in the horizontal plane
+    [ ] Camera pitch is locked to the range (-pi/2, pi/2)
+
+        Yaw and pitch are set by setting the corresponding member variable. They
+        are set to their bounds whenever they are used to generate a matrix.
+        See: Camera class definition
+
+    [ ] Forward-backward and left-right strafe style movement of the eye
+
+        Movement can be done in the xz plane according to a vector relative to
+        the eye. See: Camera::walk(glm::vec3)
+
+[ ] Screen management
+
+    See engine/game.h and engine/screen.h. These classes are to be extended by
+    the user, with the extended Game used for global state and extended Screens
+    for game functionality.
+
+    Game manages OpenGL initialization and a stack of screens. view.cpp contains
+    a Game to which it passes all events, and the base Game class passes events
+    to Screens on the screen stack, which the user then handles.
+
+    [ ] Virtual Screen class representing a logical subscreen of a game which
+        (minimally) supports:
+        [ ] Timed updates (tick)
+        [ ] Render events (draw)
+        [ ] Input events (mouse and keyboard)
+        [ ] Window size updates (resize)
+    [ ] Virtual Application class representing a whole game which supports
+        custom OpenGL initialization and, minimally, a stack of Screens
+
+[ ] Custom Graphics object
+
+    See engine/graphics.h. Graphics is an object that Game contains by default,
+	which is accessible by screens through this->parent->g. It is meant to be
+	used as a stateful helper class for OpenGL.
+
+    [ ] Supports the loading of textures from image files
+
+        See Graphics::loadTextureFromQRC(const char*)
+
+    [ ] Supports the storage and binding of unique OpenGL texture IDs by a
+        string key
+
+        See Graphics::putTexture(const char*, GLuint)
+            Graphics::getTexture(const char*)
+            Graphics::shaderBindTexture(const char*)
+
+    [ ] Supports rendering a 1x1 textured quad
+
+        Graphics initializes a VAO for a textured quad. This can be drawn
+		through a series of calls to Graphics::shader* functions, which are
+		mostly wrappers to OpenGL calls, culminating in Graphics::drawQuad().
+
+    [ ] Maintains an active shader program that is used for drawing
+
+	    Graphics::useShader(GLuint) allows calls to Graphics::shader* functions
+		to use that shader, given that the uniforms in said shader are the same
+		ones named in Graphics::shader* functions.
+
+
+Game Requirements
+========================================
+
+For most game logic, see game/gamescreen.h.
+
+[ ] The player must be able to move using standard first person camera controls,
+    meaning:
+
+    Keyboard events are used to set the keysDown variable, which is then used in
+	tick() in order to determine how to move / jump the character. Rather
+	awkwardly, currently the game uses Graphics's Camera's position to determine
+	its own character's position, except for height, which the game tracks
+	itself, because the camera is located at the "head" of the player, which is
+	a bit higher up than the player's actual location.
+
+	Mouse events directly affect the yaw and pitch variables of Graphics's
+	Camera.
+
+    [ ] Horizontal mouse movements change the yaw of the camera
+    [ ] Vertical mouse movements change the pitch of the camera
+    [ ] Standard WASD keyboard controls (W moves forwards, S moves backwards, A
+        strafes left, D strafes right) change the eye of the camera
+
+[ ] The player must never fall through the ground at y = 0
+
+    See GameScreen::tick().
+
+[ ] The player must be able to jump off the ground using the spacebar or a mouse
+    button
+
+    See GameScreen::tick().
+
+[ ] The player can only jump when on the ground
+
+    See GameScreen::tick().
+
+[ ] Gravity must act downwards on the player
+
+    See GameScreen::tick().
+
+[ ] The ground must consist of planar geometry with a tiled grass texture
+
+	See GameScreen::draw(). We draw a bunch of rectangles, tiled as far as the
+	furthest the perspective matrix allows us to see. This is done through
+	repeated calls to drawQuad() while changing the shader's model matrix each
+	time.
+
+[ ] The game must have at least two screens, one of which requires player input
+    to get to the other
+
+	See game/mainmenu.h. This is a "main menu" which requires the player to
+	press any key in order to proceed to the game.
+
+Global requirements
+========================================
+[ ] Top-level handin directory contains a Qt project file, a README, and an
+    INSTRUCTIONS file
+[ ] README has a copy of the rubric with explanations of how to verify
+    requirements
+[ ] README documents any known bugs
+[ ] README indicates number of hours taken
+[ ] INSTRUCTIONS contains all information needed to play the game
+[ ] Engine and game code logically separated
+[ ] Engine code well designed
+[ ] Game code well designed
+[ ] Runs on department machines
+[ ] Does not crash
+[ ] Works at 800x600 and fullscreen resolutions
+[ ] Runs at 30+ UPS and never dips below 20 UPS unless indicated in the specific
+    handout
+
+
+2) KNOWN BUGS. _________________________________________________________________
+
+None known.
+
+
+3) TIME SPENT. _________________________________________________________________
+
+9 hours.

@@ -1,3 +1,4 @@
+#include "game/warmupgame.h"
 #include "util/CommonIncludes.h"
 #include "view.h"
 #include <QApplication>
@@ -22,10 +23,12 @@ View::View(QWidget *parent) : QGLWidget(parent)
     }
     frameIndex = 0;
 
+    game = new WarmupGame::WarmupGame();
 }
 
 View::~View()
 {
+    delete game;
 }
 
 void View::initializeGL()
@@ -66,6 +69,7 @@ void View::initializeGL()
     // the default).
     glFrontFace(GL_CCW);
 
+    game->initializeGL();
 }
 
 void View::paintGL()
@@ -73,20 +77,27 @@ void View::paintGL()
     glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    glPushAttrib(GL_ALL_ATTRIB_BITS);
+    glPushMatrix();
+
+    game->draw();
+
+    glPopMatrix();
+    glPopAttrib();
+
     glColor3f(1,1,1);
     renderText(10, 20, "FPS: " + QString::number((int) (fps)), this->font());
-
-    // TODO: call your game rendering code here
-
 }
 
 void View::resizeGL(int w, int h)
 {
     glViewport(0, 0, w, h);
+    game->resizeEvent(w, h);
 }
 
 void View::mousePressEvent(QMouseEvent *event)
 {
+    game->mousePressEvent(event);
 }
 
 void View::mouseMoveEvent(QMouseEvent *event)
@@ -103,27 +114,28 @@ void View::mouseMoveEvent(QMouseEvent *event)
     if (!deltaX && !deltaY) return;
     QCursor::setPos(mapToGlobal(QPoint(width() / 2, height() / 2)));
 
-    // TODO: Handle mouse movements here
+    game->mouseMoveEvent(event);
 }
 
 void View::mouseReleaseEvent(QMouseEvent *event)
 {
-
+    game->mouseReleaseEvent(event);
 }
 
 void View::wheelEvent(QWheelEvent *event)
 {
-
+    game->wheelEvent(event);
 }
 
 void View::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Escape) QApplication::quit();
-    // TODO: Handle keyboard presses here
+    game->keyPressEvent(event);
 }
 
 void View::keyReleaseEvent(QKeyEvent *event)
 {
+    game->keyReleaseEvent(event);
 }
 
 void View::tick()
@@ -140,7 +152,7 @@ void View::tick()
     fps /= FRAMES_TO_AVERAGE;
     fps = 1.f / fps;
 
-    // TODO: Implement the game update here
+    game->tick();
 
     // Flag this view for repainting (Qt will call paintGL() soon after)
     update();
