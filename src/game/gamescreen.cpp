@@ -1,4 +1,6 @@
 #include "gamescreen.h"
+#include "../engine/game.h"
+#include <QMouseEvent>
 
 using namespace WarmupGame;
 

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "warmupgame.h"
 #include "../engine/screen.h"
 
 namespace WarmupGame {

@@ -1,5 +1,6 @@
 #include "mainmenu.h"
 #include "gamescreen.h"
+#include "../engine/game.h"
 #include "../util/CommonIncludes.h"
 
 using namespace WarmupGame;
@@ -19,6 +20,7 @@ void MainMenu::wheelEvent(QWheelEvent *event) { }
 void MainMenu::keyPressEvent(QKeyEvent *event) {
     parent->popScreen();
     parent->pushScreen(new GameScreen(this->parent));
+    delete this;
 }
 void MainMenu::keyReleaseEvent(QKeyEvent *event) { }
 void MainMenu::resizeEvent(int w, int h) { }

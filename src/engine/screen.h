@@ -1,10 +1,8 @@
 #pragma once
 
-#include "game.h"
-#include "graphics.h"
-#include <QKeyEvent>
-#include <QMouseEvent>
-#include <QWheelEvent>
+class QKeyEvent;
+class QMouseEvent;
+class QWheelEvent;
 
 namespace CS1972Engine {
 
