@@ -1,12 +1,15 @@
 #pragma once
 
+#include "game.h"
+#include "../util/HeaderUtils.h"
+
 class QKeyEvent;
 class QMouseEvent;
 class QWheelEvent;
 
 namespace CS1972Engine {
 
-class Game;
+class Graphics;
 
 /**
  * @brief The Screen class
@@ -16,6 +19,9 @@ class Screen {
 public:
     explicit Screen(Game *game): parent(game) {}
     virtual ~Screen() {}
+
+protected:
+    inline REFERENCE_ACCESSOR_DEEP(Graphics,graphics,parent->g)
 
 public:
     Game *const parent;

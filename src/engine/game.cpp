@@ -58,7 +58,7 @@ void Game::keyReleaseEvent(QKeyEvent *event) {
 void Game::resizeEvent(int w, int h) {
     m_width = w;
     m_height = h;
-    g.camera->aspect = (float)w / (float)h;
+    g.camera->aspect((float)w / (float)h);
     for (std::deque<Screen*>::iterator it = m_screenStack.begin(); it != m_screenStack.end(); ++it) {
         (*it)->resizeEvent(w, h);
     }

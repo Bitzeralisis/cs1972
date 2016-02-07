@@ -1,8 +1,11 @@
 #pragma once
 
 #include "../engine/screen.h"
+#include "../engine/world.h"
 
 namespace WarmupGame {
+
+class PlayerEntity;
 
 class GameScreen : public CS1972Engine::Screen {
 public:
@@ -10,11 +13,8 @@ public:
     virtual ~GameScreen();
 
 private:
-    const float HEAD_HEIGHT = 5.f;
-    const float RUN_SPEED = 0.25f;
-    const float DASH_SPEED = 0.5f;
-    const float JUMP_SPEED = 0.33f;
-    const float FALL_ACCEL = -0.017f;
+    CS1972Engine::World m_world;
+    PlayerEntity *m_player;
 
     bool m_keysHeld[6] = {false, false, false, false, false, false};
     int m_dash = 0;

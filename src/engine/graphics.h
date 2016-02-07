@@ -7,6 +7,8 @@
 
 namespace CS1972Engine {
 
+class Primitive;
+
 /**
  * @brief The Graphics class
  * Helper class for OpenGL stuff.
@@ -15,16 +17,16 @@ class Graphics {
 public:
     Graphics(): camera(new Camera()) {}
     explicit Graphics(Camera *cam): camera(cam) {}
+    virtual ~Graphics();
 
 private:
     GLuint m_defaultShader;
     GLuint m_activeShader;
 
-    GLuint m_quadVbo;
-    GLuint m_quadVao;
-    int m_quadNumVertices;
-
     std::map<std::string, GLuint> m_textures;
+
+    Primitive *m_pQuad;
+    Primitive *m_pCylinder;
 
 public:
     Camera *camera;
@@ -48,7 +50,10 @@ public:
     void shaderBindTexture(GLuint tex);
     void shaderBindTexture(const char *name);
     void shaderUnbindTexture();
+
+    // Draw some primitives from the ones included with this object
     void drawQuad();
+    void drawCylinder();
 };
 
 }
