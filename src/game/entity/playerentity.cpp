@@ -3,16 +3,22 @@
 
 using namespace WarmupGame;
 
-PlayerEntity::PlayerEntity() {
+PlayerEntity::PlayerEntity(glm::vec3 position)
+    : WarmupEntity(Type::PLAYER)
+{
+    m_position = position;
     // Constant gravity
     m_accel.y = FALL_ACCEL;
 }
 
 void PlayerEntity::move(glm::vec3 walk, bool jumping, bool dashing) {
+    bool dashed = false;
+
     // Figure how far we need to walk in camera space
     if (walk != glm::vec3(0.f)) {
         walk = glm::normalize(walk);
-        if (dashing) {
+        if (dashing && m_dashBar >= DASHBAR_COST) {
+            dashed = true;
             walk *= DASH_SPEED;
             if (m_dash < 5) ++m_dash;
         } else {
@@ -30,9 +36,18 @@ void PlayerEntity::move(glm::vec3 walk, bool jumping, bool dashing) {
     m_position = graphics().camera->position();
     graphics().camera->position(pos);
 
+    // Consume/regen dashbar
+    if (dashed)
+        m_dashBar -= DASHBAR_COST;
+    else {
+        m_dashBar += DASHBAR_REGEN;
+        if (m_dashBar > MAX_DASHBAR)
+            m_dashBar = MAX_DASHBAR;
+    }
+
     // Jump on ground if space held
     if (m_onGround && jumping) {
-        m_velocity.y = dashing ? DASH_JUMP_SPEED : JUMP_SPEED;
+        m_velocity.y = dashed ? DASH_JUMP_SPEED : JUMP_SPEED;
     }
 }
 
@@ -64,12 +79,32 @@ glm::vec2 PlayerEntity::getCylinder() const {
     return PLAYER_HITBOX;
 }
 
-void PlayerEntity::collide(glm::vec3 mtv, const Entity *other) {
-    m_position += mtv;
+void PlayerEntity::collide(glm::vec3 mtv, const WarmupEntity *other) {
+    switch (other->type()) {
+    case Type::OBSTACLE:
+        // Upwards mtv means we are "standing on something"
+        if (mtv.y > 0.f) {
+            m_velocity.y = 0.f;
+            m_onGround = true;
+        }
 
-    // Upwards mtv means we are "standing on something"
-    if (mtv.y > 0.f) {
-        m_velocity.y = 0.f;
-        m_onGround = true;
+        // Downwards mtv means that we bonked our head onto something and lose our upwards velocity
+        if (mtv.y < 0.f) {
+            m_velocity.y = 0.f;
+        }
+        break;
+
+    case Type::GOOD_ITEM:
+        m_dashBar = MAX_DASHBAR;
+        break;
+
+    case Type::BAD_ITEM:
+        m_health -= 1;
+        if (m_health <= 0)
+            m_dead = true;
+        break;
+
+    default:
+        break;
     }
 }

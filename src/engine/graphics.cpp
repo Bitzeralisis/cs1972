@@ -17,6 +17,7 @@ Graphics::~Graphics() {
 void Graphics::initializeGL() {
     // Load default shader
     m_defaultShader = ResourceLoader::loadShaders(":/shaders/shader.vert", ":/shaders/shader.frag");
+    m_uiShader = ResourceLoader::loadShaders(":/shaders/2d.vert", ":/shaders/2d.frag");
 
     // Make some primitives or something
     int quadNumVertices = 6;
@@ -29,9 +30,19 @@ void Graphics::initializeGL() {
          .5f,0.f, .5f, 0.f,1.f,0.f, 1.f,0.f
     };
     int quadDataSize = 48 * sizeof(GLfloat);
-
     m_pQuad = new Primitive(quadNumVertices, quadDataSize, quadData);
+
     m_pCylinder = new Primitive(cylinderVertexCount, cylinderDataSize, cylinderVertexBufferData);
+
+    GLfloat uiQuadData[48] = {
+        0.f,0.f,0.f, 0.f,0.f,-1.f, 0.f,1.f,
+        0.f,1.f,0.f, 0.f,0.f,-1.f, 0.f,0.f,
+        1.f,0.f,0.f, 0.f,0.f,-1.f, 1.f,1.f,
+        1.f,0.f,0.f, 0.f,0.f,-1.f, 1.f,1.f,
+        0.f,1.f,0.f, 0.f,0.f,-1.f, 0.f,0.f,
+        1.f,1.f,0.f, 0.f,0.f,-1.f, 1.f,0.f
+    };
+    m_uiQuad = new Primitive(quadNumVertices, quadDataSize, uiQuadData);
 }
 
 GLuint Graphics::loadTextureFromQRC(const char *path) {
@@ -106,4 +117,22 @@ void Graphics::drawQuad() {
 
 void Graphics::drawCylinder() {
     m_pCylinder->drawArray();
+}
+
+void Graphics::useUiShader() {
+    useShader(m_uiShader);
+}
+
+void Graphics::uisOrthoTransform(float left, float right, float bottom, float top) {
+    glm::mat4 m = glm::ortho(left, right, bottom, top, -1.f, 1.f);
+    glUniformMatrix4fv(glGetUniformLocation(m_activeShader, "p"), 1, GL_FALSE, glm::value_ptr(m));
+}
+
+void Graphics::uisQuad(float left, float right, float bottom, float top) {
+    glm::mat4 m(1.f);
+    m = glm::translate(m, glm::vec3(left, bottom, 0.f));
+    m = glm::scale(m, glm::vec3(right-left, top-bottom, 1.f));
+
+    shaderMTransform(m);
+    m_uiQuad->drawArray();
 }

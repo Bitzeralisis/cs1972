@@ -25,6 +25,7 @@ protected:
     glm::vec3 m_position;
     glm::vec3 m_velocity;
     glm::vec3 m_accel;
+    bool m_static = false; // Will not be moved by collisions if true
 
 protected:
     inline REFERENCE_ACCESSOR_DEEP(Graphics,graphics,parent()->parent->g)
@@ -34,6 +35,10 @@ protected:
 
 public:
     VALUE_ACCESSOR(World *,parent)
+    VALUE_ACCESSOR(glm::vec3,position)
+    VALUE_ACCESSOR(glm::vec3,velocity)
+    VALUE_ACCESSOR(glm::vec3,accel)
+    VALUE_ACCESSOR_DEEP(bool,is_static,m_static)
 
     virtual void tick() = 0;
     virtual void draw() = 0;

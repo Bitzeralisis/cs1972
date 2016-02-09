@@ -56,7 +56,7 @@ glm::mat4 Camera::viewMatrix() {
     glm::vec3 center = pos + look;
     glm::vec3 up(0.f, 1.f, 0.f);
     if (m_pitch == glm::half_pi<float>()) {
-        up = glm::vec3(-1.f*glm::cos(m_yaw), 0.f, 1.f*glm::sin(m_yaw));
+        up = glm::vec3(-1.f*glm::cos(m_yaw), 0.f, -1.f*glm::sin(m_yaw));
         up = glm::normalize(up);
     } else if (m_pitch == -1.f*glm::half_pi<float>()) {
         up = glm::vec3(glm::cos(m_yaw), 0.f, glm::sin(m_yaw));

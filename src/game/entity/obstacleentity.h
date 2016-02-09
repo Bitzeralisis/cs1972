@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../../engine/entity.h"
+#include "warmupentity.h"
 
 namespace WarmupGame {
 
-class ObstacleEntity : public CS1972Engine::Entity {
+class ObstacleEntity : public WarmupEntity {
 public:
-    ObstacleEntity();
+    ObstacleEntity(glm::vec3 pos, glm::vec2 size);
     virtual ~ObstacleEntity() {}
 
 private:
@@ -16,7 +16,7 @@ public:
     virtual void tick() override;
     virtual void draw() override;
     virtual glm::vec2 getCylinder() const override;
-    virtual void collide(glm::vec3 mtv, const Entity *other);
+    virtual void collide(glm::vec3 mtv, const WarmupEntity *other) override;
 };
 
 }

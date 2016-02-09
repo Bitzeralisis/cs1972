@@ -8,17 +8,6 @@ Primitive::Primitive(int vertices, int size, GLfloat *data) {
     glBindVertexArray(m_vao);
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 
-    /*m_quadNumVertices = 6;
-    GLfloat quadData[48] = {
-        -.5f,0.f,-.5f, 0.f,1.f,0.f, 0.f,1.f,
-        -.5f,0.f, .5f, 0.f,1.f,0.f, 0.f,0.f,
-         .5f,0.f,-.5f, 0.f,1.f,0.f, 1.f,1.f,
-         .5f,0.f,-.5f, 0.f,1.f,0.f, 1.f,1.f,
-        -.5f,0.f, .5f, 0.f,1.f,0.f, 0.f,0.f,
-         .5f,0.f, .5f, 0.f,1.f,0.f, 1.f,0.f
-    };
-    int quadDataSize = 48 * sizeof(GLfloat);*/
-
     m_vertices = vertices;
     glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 

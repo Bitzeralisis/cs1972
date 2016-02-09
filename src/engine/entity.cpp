@@ -39,7 +39,24 @@ void Entity::checkCollide(Entity *other) {
     else
         totalMtv = xzMtv * glm::normalize(glm::vec3(xzDelta.x, 0.f, xzDelta.y));
 
+    // Resolve collisions
+    glm::vec3 thisMtv(0.f);
+    glm::vec3 thatMtv(0.f);
+    if (m_static && other->m_static) {
+        // noop
+    } else if (m_static)
+        thatMtv = -1.f*totalMtv;
+    else if (other->m_static)
+        thisMtv = totalMtv;
+    else {
+        thisMtv = 0.5f*totalMtv;
+        thatMtv = -0.5f*totalMtv;
+    }
+
+    m_position += thisMtv;
+    other->m_position += thatMtv;
+
     // Send response callbacks
-    collide(0.5f*totalMtv, other);
-    other->collide(-0.5f*totalMtv, this);
+    collide(thisMtv, other);
+    other->collide(thatMtv, this);
 }

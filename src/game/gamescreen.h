@@ -5,6 +5,7 @@
 
 namespace WarmupGame {
 
+class BossEntity;
 class PlayerEntity;
 
 class GameScreen : public CS1972Engine::Screen {
@@ -15,11 +16,10 @@ public:
 private:
     CS1972Engine::World m_world;
     PlayerEntity *m_player;
+    BossEntity *m_boss;
 
     bool m_keysHeld[6] = {false, false, false, false, false, false};
-    int m_dash = 0;
-    float m_height = 0.f;
-    float m_fallSpeed = 0.f;
+    int m_gameOver = 0;
 
 public:
     virtual void tick() override;

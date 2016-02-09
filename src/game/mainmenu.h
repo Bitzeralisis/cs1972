@@ -7,7 +7,7 @@ namespace WarmupGame {
 class MainMenu : public CS1972Engine::Screen {
 public:
     explicit MainMenu(CS1972Engine::Game *parent);
-    virtual ~MainMenu();
+    virtual ~MainMenu() {}
 
 public:
     virtual void tick() override;
