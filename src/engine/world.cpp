@@ -3,6 +3,22 @@
 
 using namespace CS1972Engine;
 
+World::World(Game *par)
+    : parent(par)
+{ }
+
+World::~World() {
+    if (m_deleteOnDeconstruct) {
+        for (std::list<Entity *>::iterator it = m_entities.begin(); it != m_entities.end(); ++it) {
+            // Items that have been flagged for removal but not flagged for deletion are in
+            // the caller's care, so only delete items that are not flagged for removal or
+            // are flagged for removal and flagged to be deleted by us
+            if (!(*it)->m_removeFlag || (*it)->m_deleteFlag)
+                if ((*it)->m_deleteFlag) delete *it;
+        }
+    }
+}
+
 void World::addEntity(Entity *ent) {
     m_addEntities.push_back(ent);
 }
@@ -31,12 +47,14 @@ void World::tick() {
     }
 
     // Remove and delete entities
-    for (std::list<Entity *>::iterator it = m_entities.begin(); it != m_entities.end(); ++it) {
+    for (std::list<Entity *>::iterator it = m_entities.begin(); it != m_entities.end(); ) {
         if ((*it)->m_removeFlag) {
-            m_entities.erase(it);
-            (*it)->m_parent = 0;
-            if ((*it)->m_deleteFlag) delete *it;
-        }
+            Entity *item = *it;
+            item->m_parent = 0;
+            if (item->m_deleteFlag) delete item;
+            it = m_entities.erase(it);
+        } else
+            ++it;
     }
 
     // Add entities

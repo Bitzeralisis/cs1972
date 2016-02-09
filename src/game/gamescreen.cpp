@@ -38,9 +38,8 @@ GameScreen::GameScreen(CS1972Engine::Game *parent)
 }
 
 GameScreen::~GameScreen() {
-    delete m_player;
-    delete m_boss;
-    // TODO: delete all the other entities
+    // Tell world to free all the entities for us
+    m_world.deleteEntitiesOnDeconstruct(true);
 }
 
 void GameScreen::tick() {
@@ -146,7 +145,7 @@ void GameScreen::mouseMoveEvent(QMouseEvent *event) {
 void GameScreen::mouseReleaseEvent(QMouseEvent *) { }
 
 void GameScreen::wheelEvent(QWheelEvent *event) {
-    float zoom = -0.01f * event->angleDelta().y();
+    float zoom = -0.01f * event->delta();
     float dist = graphics().camera->tpdistance();
     dist += zoom;
     dist = glm::max(5.f, glm::min(dist, 30.f));
