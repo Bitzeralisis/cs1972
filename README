@@ -60,9 +60,9 @@ Common Engine Requirements
     See Entity and World. World calls Entity::checkCollide(Entity *) on all pair
     combinations of Entities (the caller of and argument to checkCollide are
     commutative). Collisions are resolved in checkCollide and then the responses
-	are dispatched to the Entitys' pure virtual collide methods. A rudimentary
-	static variable allows an Entity to not be moved by collisions and instead
-	have the other Entity recieve the full mtv (if it is not static).
+    are dispatched to the Entitys' pure virtual collide methods. A rudimentary
+    static variable allows an Entity to not be moved by collisions and instead
+    have the other Entity recieve the full mtv (if it is not static).
 
     [ ] Detection - determine that two cylinders are overlapping
     [ ] Resolution - translate the cylinders out of detection using the MTV
@@ -112,4 +112,4 @@ None known.
 
 3) TIME SPENT. _________________________________________________________________
 
-10 hours.
+13 hours.
