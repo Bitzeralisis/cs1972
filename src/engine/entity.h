@@ -29,8 +29,8 @@ protected:
 
 protected:
     inline REFERENCE_ACCESSOR_DEEP(Graphics,graphics,parent()->parent->g)
-    void tickPhysicsDiscrete();
-    void tickPhysicsContinuous(); // NYI
+    void tickPhysicsDiscrete(float seconds);
+    void tickPhysicsContinuous(float seconds); // NYI
     void checkCollide(Entity *other);
 
 public:
@@ -40,7 +40,7 @@ public:
     VALUE_ACCESSOR(glm::vec3,accel)
     VALUE_ACCESSOR_DEEP(bool,is_static,m_static)
 
-    virtual void tick() = 0;
+    virtual void tick(float seconds) = 0;
     virtual void draw() = 0;
     virtual glm::vec2 getCylinder() const = 0; // Return a hitbox defined as a cylinder with radius x and height y, with the center-bottom of the cylinder at m_position
     virtual void collide(glm::vec3 mtv, const Entity *other) = 0; // Response callback for collisions

@@ -10,7 +10,7 @@ MainMenu::MainMenu(CS1972Engine::Game *parent)
     : Screen(parent)
 { }
 
-void MainMenu::tick() { }
+void MainMenu::tick(float) { }
 
 void MainMenu::draw() {
     graphics().useUiShader();

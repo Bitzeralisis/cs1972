@@ -152,7 +152,7 @@ void View::tick()
     fps /= FRAMES_TO_AVERAGE;
     fps = 1.f / fps;
 
-    game->tick();
+    game->tick(seconds);
 
     // Flag this view for repainting (Qt will call paintGL() soon after)
     update();

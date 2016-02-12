@@ -20,12 +20,12 @@ private:
 
     bool m_dead = false;
 
-    int m_time = 0;
+    float m_time = 0.f;
 
 public:
     VALUE_ACCESSOR(bool,dead)
 
-    virtual void tick() override;
+    virtual void tick(float seconds) override;
     virtual void draw() override;
     virtual glm::vec2 getCylinder() const override;
     virtual void collide(glm::vec3 mtv, const WarmupEntity *other) override;

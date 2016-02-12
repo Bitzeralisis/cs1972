@@ -2,9 +2,9 @@
 
 using namespace CS1972Engine;
 
-void Entity::tickPhysicsDiscrete() {
-    m_velocity += m_accel;
-    m_position += m_velocity;
+void Entity::tickPhysicsDiscrete(float seconds) {
+    m_velocity += seconds * m_accel;
+    m_position += seconds * m_velocity;
 }
 
 void Entity::checkCollide(Entity *other) {

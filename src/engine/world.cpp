@@ -32,10 +32,10 @@ void World::deleteEntity(Entity *ent) {
     ent->m_deleteFlag = true;
 }
 
-void World::tick() {
+void World::tick(float seconds) {
     // Tick all entities
     for (std::list<Entity *>::iterator it = m_entities.begin(); it != m_entities.end(); ++it) {
-        (*it)->tick();
+        (*it)->tick(seconds);
     }
 
     // Collide all entities

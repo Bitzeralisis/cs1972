@@ -34,7 +34,7 @@ GameScreen::GameScreen(CS1972Engine::Game *parent)
     }
 
     // Tick once to actually add entities
-    m_world.tick();
+    m_world.tick(0.f);
 }
 
 GameScreen::~GameScreen() {
@@ -42,7 +42,7 @@ GameScreen::~GameScreen() {
     m_world.deleteEntitiesOnDeconstruct(true);
 }
 
-void GameScreen::tick() {
+void GameScreen::tick(float seconds) {
     if (m_gameOver) return;
 
     // Move the player using ASDF, Shift, Space
@@ -53,10 +53,10 @@ void GameScreen::tick() {
     if (m_keysHeld[3]) walk.z += 1.f;
     bool jumping = m_keysHeld[4];
     bool dashing = m_keysHeld[5];
-    m_player->move(walk, jumping, dashing);
+    m_player->move(seconds, walk, jumping, dashing);
 
     // Tick world
-    m_world.tick();
+    m_world.tick(seconds);
 
     // Check for game over
     if (m_boss->dead())

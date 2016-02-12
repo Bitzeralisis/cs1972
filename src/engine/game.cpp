@@ -21,8 +21,8 @@ void Game::initializeGL() {
     initGL();
 }
 
-void Game::tick() {
-    if (m_screenStack.size()) m_screenStack.back()->tick();
+void Game::tick(float seconds) {
+    if (m_screenStack.size()) m_screenStack.back()->tick(seconds);
 }
 
 void Game::draw() {

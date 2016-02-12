@@ -11,18 +11,18 @@ PlayerEntity::PlayerEntity(glm::vec3 position)
     m_accel.y = FALL_ACCEL;
 }
 
-void PlayerEntity::move(glm::vec3 walk, bool jumping, bool dashing) {
+void PlayerEntity::move(float seconds, glm::vec3 walk, bool jumping, bool dashing) {
     bool dashed = false;
 
     // Figure how far we need to walk in camera space
     if (walk != glm::vec3(0.f)) {
         walk = glm::normalize(walk);
-        if (dashing && m_dashBar >= DASHBAR_COST) {
+        if (dashing && m_dashBar >= seconds * DASHBAR_COST) {
             dashed = true;
-            walk *= DASH_SPEED;
+            walk *= seconds * DASH_SPEED;
             if (m_dash < 5) ++m_dash;
         } else {
-            walk *= RUN_SPEED;
+            walk *= seconds * RUN_SPEED;
             if (m_dash > 0) --m_dash;
         }
     } else {
@@ -38,9 +38,9 @@ void PlayerEntity::move(glm::vec3 walk, bool jumping, bool dashing) {
 
     // Consume/regen dashbar
     if (dashed)
-        m_dashBar -= DASHBAR_COST;
+        m_dashBar -= seconds * DASHBAR_COST;
     else {
-        m_dashBar += DASHBAR_REGEN;
+        m_dashBar += seconds * DASHBAR_REGEN;
         if (m_dashBar > MAX_DASHBAR)
             m_dashBar = MAX_DASHBAR;
     }
@@ -51,8 +51,8 @@ void PlayerEntity::move(glm::vec3 walk, bool jumping, bool dashing) {
     }
 }
 
-void PlayerEntity::tick() {
-    tickPhysicsDiscrete();
+void PlayerEntity::tick(float seconds) {
+    tickPhysicsDiscrete(seconds);
 
     m_onGround = false;
 

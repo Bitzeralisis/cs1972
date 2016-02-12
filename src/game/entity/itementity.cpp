@@ -9,8 +9,8 @@ ItemEntity::ItemEntity(bool isGood, glm::vec3 pos, glm::vec3 vel)
     m_velocity = vel;
 }
 
-void ItemEntity::tick() {
-    tickPhysicsDiscrete();
+void ItemEntity::tick(float seconds) {
+    tickPhysicsDiscrete(seconds);
 
     // Once they reach the bottom floor, they stop and stick
     if (m_position.y < 0.f) {
@@ -19,11 +19,11 @@ void ItemEntity::tick() {
         m_decay = DECAY_TIME;
     }
 
-    if (m_decay == 0)
-        parent()->deleteEntity(this);
-
-    if (m_decay > 0)
-        --m_decay;
+    if (m_decay > 0.f) {
+        m_decay -= seconds;
+        if (m_decay <= 0.f)
+            parent()->deleteEntity(this);
+    }
 }
 
 void ItemEntity::draw() {

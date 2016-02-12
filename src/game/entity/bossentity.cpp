@@ -13,21 +13,21 @@ BossEntity::BossEntity(int period, int radius, int height)
     m_static = true;
 }
 
-void BossEntity::tick() {
+void BossEntity::tick(float seconds) {
     // Move around circularly
-    m_angle += 2.f * glm::pi<float>() / m_period;
+    m_angle += seconds * 120.f * glm::pi<float>() / m_period;
     m_position = glm::vec3(m_radius*glm::cos(m_angle), m_height, m_radius*glm::sin(m_angle));
 
     // Shoot some items
-    if (m_time % 3 == 0) {
+    m_time += seconds;
+    while (m_time >= 0.05f) {
         float ang = 2.f * glm::pi<float>() * (float)rand() / RAND_MAX;
-        float x = 0.2f * glm::cos(ang);
-        float z = 0.2f * glm::sin(ang);
-        ItemEntity *item = new ItemEntity(false, m_position, glm::vec3(x, -0.2f, z));
+        float x = 12.f * glm::cos(ang);
+        float z = 12.f * glm::sin(ang);
+        ItemEntity *item = new ItemEntity(false, m_position, glm::vec3(x, -12.f, z));
         parent()->addEntity(item);
+        m_time -= 0.05f;
     }
-
-    ++m_time;
 }
 
 void BossEntity::draw() {

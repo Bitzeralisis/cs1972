@@ -41,7 +41,7 @@ public:
     void initializeGL();
     virtual void initGL() = 0;
 
-    void tick();
+    void tick(float seconds);
     void draw();
 
     void mousePressEvent(QMouseEvent *event);

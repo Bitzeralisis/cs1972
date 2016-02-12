@@ -22,7 +22,7 @@ private:
     int m_gameOver = 0;
 
 public:
-    virtual void tick() override;
+    virtual void tick(float seconds) override;
     virtual void draw() override;
 
     virtual void mousePressEvent(QMouseEvent *event) override;

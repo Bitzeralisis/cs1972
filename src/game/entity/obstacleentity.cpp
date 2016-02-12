@@ -11,8 +11,8 @@ ObstacleEntity::ObstacleEntity(glm::vec3 pos, glm::vec2 size)
     m_hitbox = size;
 }
 
-void ObstacleEntity::tick() {
-    tickPhysicsDiscrete();
+void ObstacleEntity::tick(float seconds) {
+    tickPhysicsDiscrete(seconds);
 }
 
 void ObstacleEntity::draw() {

@@ -26,7 +26,7 @@ protected:
 public:
     Game *const parent;
 
-    virtual void tick() = 0;
+    virtual void tick(float seconds) = 0;
     virtual void draw() = 0;
 
     virtual void mousePressEvent(QMouseEvent *event) = 0;

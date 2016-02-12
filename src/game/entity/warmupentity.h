@@ -23,7 +23,7 @@ protected:
 public:
     VALUE_ACCESSOR(Type,type)
 
-    virtual void tick() override = 0;
+    virtual void tick(float seconds) override = 0;
     virtual void draw() override = 0;
     virtual glm::vec2 getCylinder() const override = 0;
     virtual void collide(glm::vec3 mtv, const WarmupEntity *other) = 0;
