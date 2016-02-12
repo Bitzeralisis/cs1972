@@ -1,4 +1,5 @@
 #include "game.h"
+#include "screen.h"
 
 using namespace CS1972Engine;
 
@@ -20,8 +21,8 @@ void Game::initializeGL() {
     initGL();
 }
 
-void Game::tick() {
-    if (m_screenStack.size()) m_screenStack.back()->tick();
+void Game::tick(float seconds) {
+    if (m_screenStack.size()) m_screenStack.back()->tick(seconds);
 }
 
 void Game::draw() {
@@ -57,7 +58,7 @@ void Game::keyReleaseEvent(QKeyEvent *event) {
 void Game::resizeEvent(int w, int h) {
     m_width = w;
     m_height = h;
-    g.camera->aspect = (float)w / (float)h;
+    g.camera->aspect((float)w / (float)h);
     for (std::deque<Screen*>::iterator it = m_screenStack.begin(); it != m_screenStack.end(); ++it) {
         (*it)->resizeEvent(w, h);
     }

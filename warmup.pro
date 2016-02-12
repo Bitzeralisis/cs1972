@@ -23,7 +23,15 @@ SOURCES += \
     src/engine/camera.cpp \
     src/game/mainmenu.cpp \
     src/engine/graphics.cpp \
-    src/game/gamescreen.cpp
+    src/game/gamescreen.cpp \
+    src/engine/primitive.cpp \
+    src/engine/world.cpp \
+    src/engine/entity.cpp \
+    src/game/entity/playerentity.cpp \
+    src/game/entity/obstacleentity.cpp \
+    src/game/entity/warmupentity.cpp \
+    src/game/entity/bossentity.cpp \
+    src/game/entity/itementity.cpp
 
 HEADERS += \
     libs/glew-1.10.0/include/GL/glew.h \
@@ -38,7 +46,16 @@ HEADERS += \
     src/engine/camera.h \
     src/game/mainmenu.h \
     src/engine/graphics.h \
-    src/game/gamescreen.h
+    src/game/gamescreen.h \
+    src/util/HeaderUtils.h \
+    src/engine/primitive.h \
+    src/engine/world.h \
+    src/engine/entity.h \
+    src/game/entity/playerentity.h \
+    src/game/entity/obstacleentity.h \
+    src/game/entity/warmupentity.h \
+    src/game/entity/bossentity.h \
+    src/game/entity/itementity.h
 
 
 FORMS += src/mainwindow.ui

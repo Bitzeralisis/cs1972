@@ -1,6 +1,5 @@
 #pragma once
 
-#include "warmupgame.h"
 #include "../engine/screen.h"
 
 namespace WarmupGame {
@@ -8,10 +7,10 @@ namespace WarmupGame {
 class MainMenu : public CS1972Engine::Screen {
 public:
     explicit MainMenu(CS1972Engine::Game *parent);
-    virtual ~MainMenu();
+    virtual ~MainMenu() {}
 
 public:
-    virtual void tick() override;
+    virtual void tick(float seconds) override;
     virtual void draw() override;
 
     virtual void mousePressEvent(QMouseEvent *event) override;

@@ -2,5 +2,7 @@
     <qresource prefix="/shaders">
         <file>shader.frag</file>
         <file>shader.vert</file>
+        <file>2d.frag</file>
+        <file>2d.vert</file>
     </qresource>
 </RCC>

@@ -1,29 +1,61 @@
-						  cs.brown.edu/courses/cs1972
-									warmup1
-									by ajlin
-						   due: 11:59 PM, 02/02/2016
+                          cs.brown.edu/courses/cs1972
+                                    warmup2
+                                    by ajlin
+                           due: 11:59 PM, 02/09/2016
 
 
-								   GRASSDASH
+                                   GRASSDASH
+                      CHAPTER ZERO: ATTACK OF ROBOCYLINDER
 
 1) OVERVIEW. ___________________________________________________________________
 
-	In GRASSDASH, you take control of the GRASSDASHER, a DASHINGLY CHARMING
-	MAN-CYLINDER who can DASH across the GRASS. In this infinite void of GRASS,
-	how will the GRASSDASHER ever find meaning in his life? Find out never in
-	the extensive, gut-wrenching ZERO HOUR CAMPAIGN chock full of a LACK OF
-	STORYLINE.
+    GRASSDASH
+    CHAPTER ZERO: ATTACK OF ROBOCYLINDER
+
+    The FOUR TRIBES once lived in peace on the S.S. GALAXY INFINITY GRASS PLANE
+    LAND WORLDTOPIA.  Then, ROBOCYLINDER attacked.
+
+    But a hero appeared: the GRASSDASHER, a charmingly cylindrical
+    GRASS-MAN-CYLINDER, honed in the arts of DASH. Using the secret technique
+    known only as "collision check," or "collide" for short, the GRASSDASHER
+    must defeat ROBOCYLINDER to restore peace to the S.S. GALAXY INFINITY GRASS
+    PLANE LAND WORLDTOPIA.
 
 
-2) CONTROLS. ___________________________________________________________________
+2) HOW TO PLAY. ________________________________________________________________
 
-	MAIN MENU (dark screen with an FPS counter)
+    Defeat ROBOCYLINDER by colliding into it!
 
-		> any key - proceed to game
+    In order to reach ROBOCYLINDER, the GRASSDASHER must use DASH-JUMP in order
+    to jump up higher and higher FLOATING GRASS CIRCULOPLATFORMs. However, the
+    GRASSDASHER can only DASH in short bursts at a time. Keep an eye on the
+    DASH BAR and slow down to recover it!
 
-	
-	GAME
-	
-		> WASD - move
-		> Space - hold to jump
-		> Shift - hold to \ \ DASH / /
+    ROBOCYLINDER will attempt to stop the GRASSDASHER by firing RED DOOM
+    CYLINDERs. Should the GRASSDASHER collide with a RED DOOM CYLINDER, he will
+    take damage to his LIFE GAUGE. If the GRASSDASHER's LIFE GAUGE is completely
+    depleted, he will be defeated.
+
+
+3) CONTROLS. ___________________________________________________________________
+
+    MAIN MENU
+
+        > Enter - proceed to game
+
+    
+    GAME
+    
+        > WASD - move
+        > Space - hold to jump. jump higher while dashing!
+        > Shift - hold to \ \ DASH / /
+        > K - suicide
+
+        > Enter - Return to MAIN MENU when defeated
+
+
+4) ALEX'S IDOL CORNER. _________________________________________________________
+
+    According to some taxonomists, Nico Yazawa belongs to the "best idol"
+    genus. However, other taxonomists claim she is a member of the "trash"
+    genus, a very close relative of the "best idol" genus.

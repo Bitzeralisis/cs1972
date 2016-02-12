@@ -1,10 +1,10 @@
-						  cs.brown.edu/courses/cs1972
-									warmup1
-									by ajlin
-						   due: 11:59 PM, 02/02/2016
+                          cs.brown.edu/courses/cs1972
+                                    warmup2
+                                    by ajlin
+                           due: 11:59 PM, 02/09/2016
 
 
-								   GRASSDASH
+                                   GRASSDASH
 
 1) ANNOTATED RUBRIC. ___________________________________________________________
 
@@ -13,128 +13,78 @@ COMPLETE/INCOMPLETE
 Retries used: NONE (2 extra retries left)
 
 [ ] Completed a design check
+[ ] Participated in playtesting
 
 Common Engine Requirements
 ========================================
-[ ] First person camera support
-  
-    See engine/camera.h. This is a first-person camera helper class used by
-    Graphics in its drawing code to generate perspective and view matrices.
+[ ] Third person support built into your camera, with the ability to toggle
+    between the two cameras
 
-    [ ] Yaws around the up (positive Y in OpenGL) axis
-    [ ] Pitches in the horizontal plane
-    [ ] Camera pitch is locked to the range (-pi/2, pi/2)
+    See engine/camera.* and CS1972Engine::Camera::mode. 3rd person is
+    implemented as the camera moved in the negative eye direction for some
+    distance.
 
-        Yaw and pitch are set by setting the corresponding member variable. They
-        are set to their bounds whenever they are used to generate a matrix.
-        See: Camera class definition
+[ ] Primitive wrapper class for drawing arbitrary geometry
 
-    [ ] Forward-backward and left-right strafe style movement of the eye
+    See engine/primitive.*. This class wraps OpenGL VAOs and VBOs and performs a
+    minimal amount of calls related to drawing a VAO.
 
-        Movement can be done in the xz plane according to a vector relative to
-        the eye. See: Camera::walk(glm::vec3)
+    [ ] Supports VAO/VBO creation and cleanup
+    [ ] Supports sending data to the VBO
+    [ ] Supports drawing the geometry stored in the VBO
 
-[ ] Screen management
+[ ] Entity/World hierarchy
 
-    See engine/game.h and engine/screen.h. These classes are to be extended by
-    the user, with the extended Game used for global state and extended Screens
-    for game functionality.
+    See engine/entity.* and engine/world.*. Although this rubric specifies that
+    World should be a virtual class, I have decided against that design, since
+    my engine is centered around Screens doing most of the heavy lifting. The
+    World class acts as little more than a sophisticated container for storing
+    and passing events to Entities.
 
-    Game manages OpenGL initialization and a stack of screens. view.cpp contains
-    a Game to which it passes all events, and the base Game class passes events
-    to Screens on the screen stack, which the user then handles.
-
-    [ ] Virtual Screen class representing a logical subscreen of a game which
-        (minimally) supports:
+    [ ] Virtual Entity class representing a single logical game object with
+        (minimally) the following contract:
         [ ] Timed updates (tick)
         [ ] Render events (draw)
-        [ ] Input events (mouse and keyboard)
-        [ ] Window size updates (resize)
-    [ ] Virtual Application class representing a whole game which supports
-        custom OpenGL initialization and, minimally, a stack of Screens
+        [ ] Creation of a collision shape (for now, getCylinder)
+        [ ] Instance variables for position, velocity, and an acceleration
+            accumulator
+    [ ] Virtual World class representing a collection of Entities with
+        (minimally) the following contract:
+        [ ] Timed updates (tick)
+        [ ] Render events (draw)
+        [ ] Entity management (add/remove an Entity)
 
-[ ] Custom Graphics object
+[ ] Cylinder-cylinder collision detection, resolution, and generation of a
+    response callback
 
-    See engine/graphics.h. Graphics is an object that Game contains by default,
-	which is accessible by screens through this->parent->g. It is meant to be
-	used as a stateful helper class for OpenGL.
+    See Entity and World. World calls Entity::checkCollide(Entity *) on all pair
+    combinations of Entities (the caller of and argument to checkCollide are
+    commutative). Collisions are resolved in checkCollide and then the responses
+    are dispatched to the Entitys' pure virtual collide methods. A rudimentary
+    static variable allows an Entity to not be moved by collisions and instead
+    have the other Entity recieve the full mtv (if it is not static).
 
-    [ ] Supports the loading of textures from image files
-
-        See Graphics::loadTextureFromQRC(const char*)
-
-    [ ] Supports the storage and binding of unique OpenGL texture IDs by a
-        string key
-
-        See Graphics::putTexture(const char*, GLuint)
-            Graphics::getTexture(const char*)
-            Graphics::shaderBindTexture(const char*)
-
-    [ ] Supports rendering a 1x1 textured quad
-
-        Graphics initializes a VAO for a textured quad. This can be drawn
-		through a series of calls to Graphics::shader* functions, which are
-		mostly wrappers to OpenGL calls, culminating in Graphics::drawQuad().
-
-    [ ] Maintains an active shader program that is used for drawing
-
-	    Graphics::useShader(GLuint) allows calls to Graphics::shader* functions
-		to use that shader, given that the uniforms in said shader are the same
-		ones named in Graphics::shader* functions.
-
+    [ ] Detection - determine that two cylinders are overlapping
+    [ ] Resolution - translate the cylinders out of detection using the MTV
+    [ ] Response - dispatches collision callback to collided Entities
 
 Game Requirements
 ========================================
+[ ] All Warmup1 requirements must still be fulfilled
+[ ] The player can use a key to toggle between first and third person cameras
 
-For most game logic, see game/gamescreen.h.
+    F1.
 
-[ ] The player must be able to move using standard first person camera controls,
-    meaning:
+[ ] Cylinder-cylinder collision response must be used somewhere
+[ ] There must be at least 1 NPC (non-player character), such as an enemy or
+    opponent, with some basic AI
+[ ] The game must have a non-arbitrary and reasonably achievable win or loss
+    condition
+[ ] The game must be resettable upon win or loss without restarting the program
+[ ] The game can never enter an unwinnable or unloseable state
 
-    Keyboard events are used to set the keysDown variable, which is then used in
-	tick() in order to determine how to move / jump the character. Rather
-	awkwardly, currently the game uses Graphics's Camera's position to determine
-	its own character's position, except for height, which the game tracks
-	itself, because the camera is located at the "head" of the player, which is
-	a bit higher up than the player's actual location.
-
-	Mouse events directly affect the yaw and pitch variables of Graphics's
-	Camera.
-
-    [ ] Horizontal mouse movements change the yaw of the camera
-    [ ] Vertical mouse movements change the pitch of the camera
-    [ ] Standard WASD keyboard controls (W moves forwards, S moves backwards, A
-        strafes left, D strafes right) change the eye of the camera
-
-[ ] The player must never fall through the ground at y = 0
-
-    See GameScreen::tick().
-
-[ ] The player must be able to jump off the ground using the spacebar or a mouse
-    button
-
-    See GameScreen::tick().
-
-[ ] The player can only jump when on the ground
-
-    See GameScreen::tick().
-
-[ ] Gravity must act downwards on the player
-
-    See GameScreen::tick().
-
-[ ] The ground must consist of planar geometry with a tiled grass texture
-
-	See GameScreen::draw(). We draw a bunch of rectangles, tiled as far as the
-	furthest the perspective matrix allows us to see. This is done through
-	repeated calls to drawQuad() while changing the shader's model matrix each
-	time.
-
-[ ] The game must have at least two screens, one of which requires player input
-    to get to the other
-
-	See game/mainmenu.h. This is a "main menu" which requires the player to
-	press any key in order to proceed to the game.
+    The suicide key (K) means the game is always losable, and therefore never
+    unlosable, and therefore never (unwinnable or unlosable).
 
 Global requirements
 ========================================
@@ -162,4 +112,4 @@ None known.
 
 3) TIME SPENT. _________________________________________________________________
 
-9 hours.
+13 hours.

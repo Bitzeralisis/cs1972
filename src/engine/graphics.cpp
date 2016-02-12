@@ -1,22 +1,26 @@
 #include "graphics.h"
-#include "../util/ResourceLoader.h"
+#include "primitive.h"
 #include "../util/CommonIncludes.h"
+#include "../util/CylinderData.h"
+#include "../util/ResourceLoader.h"
 #include <QGLWidget>
 #include <QImage>
 
 using namespace CS1972Engine;
 
+Graphics::~Graphics() {
+    delete m_pQuad;
+    delete m_pCylinder;
+    delete camera;
+}
+
 void Graphics::initializeGL() {
     // Load default shader
     m_defaultShader = ResourceLoader::loadShaders(":/shaders/shader.vert", ":/shaders/shader.frag");
+    m_uiShader = ResourceLoader::loadShaders(":/shaders/2d.vert", ":/shaders/2d.frag");
 
-    // Build VAO for a quad
-    glGenBuffers(1, &m_quadVbo);
-    glGenVertexArrays(1, &m_quadVao);
-    glBindVertexArray(m_quadVao);
-    glBindBuffer(GL_ARRAY_BUFFER, m_quadVbo);
-
-    m_quadNumVertices = 6;
+    // Make some primitives or something
+    int quadNumVertices = 6;
     GLfloat quadData[48] = {
         -.5f,0.f,-.5f, 0.f,1.f,0.f, 0.f,1.f,
         -.5f,0.f, .5f, 0.f,1.f,0.f, 0.f,0.f,
@@ -26,21 +30,19 @@ void Graphics::initializeGL() {
          .5f,0.f, .5f, 0.f,1.f,0.f, 1.f,0.f
     };
     int quadDataSize = 48 * sizeof(GLfloat);
+    m_pQuad = new Primitive(quadNumVertices, quadDataSize, quadData);
 
-    glBufferData(GL_ARRAY_BUFFER, quadDataSize, quadData, GL_STATIC_DRAW);
+    m_pCylinder = new Primitive(cylinderVertexCount, cylinderDataSize, cylinderVertexBufferData);
 
-    // Vertices
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, 0);
-    // Normals
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(GLfloat)*8, (void*)(sizeof(GLfloat)*3));
-    // Texture coordinates
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (void*)(sizeof(GLfloat)*6));
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    GLfloat uiQuadData[48] = {
+        0.f,0.f,0.f, 0.f,0.f,-1.f, 0.f,1.f,
+        0.f,1.f,0.f, 0.f,0.f,-1.f, 0.f,0.f,
+        1.f,0.f,0.f, 0.f,0.f,-1.f, 1.f,1.f,
+        1.f,0.f,0.f, 0.f,0.f,-1.f, 1.f,1.f,
+        0.f,1.f,0.f, 0.f,0.f,-1.f, 0.f,0.f,
+        1.f,1.f,0.f, 0.f,0.f,-1.f, 1.f,0.f
+    };
+    m_uiQuad = new Primitive(quadNumVertices, quadDataSize, uiQuadData);
 }
 
 GLuint Graphics::loadTextureFromQRC(const char *path) {
@@ -110,7 +112,27 @@ void Graphics::shaderUnbindTexture() {
 }
 
 void Graphics::drawQuad() {
-    glBindVertexArray(m_quadVao);
-    glDrawArrays(GL_TRIANGLES, 0, m_quadNumVertices);
-    glBindVertexArray(0);
+    m_pQuad->drawArray();
+}
+
+void Graphics::drawCylinder() {
+    m_pCylinder->drawArray();
+}
+
+void Graphics::useUiShader() {
+    useShader(m_uiShader);
+}
+
+void Graphics::uisOrthoTransform(float left, float right, float bottom, float top) {
+    glm::mat4 m = glm::ortho(left, right, bottom, top, -1.f, 1.f);
+    glUniformMatrix4fv(glGetUniformLocation(m_activeShader, "p"), 1, GL_FALSE, glm::value_ptr(m));
+}
+
+void Graphics::uisQuad(float left, float right, float bottom, float top) {
+    glm::mat4 m(1.f);
+    m = glm::translate(m, glm::vec3(left, bottom, 0.f));
+    m = glm::scale(m, glm::vec3(right-left, top-bottom, 1.f));
+
+    shaderMTransform(m);
+    m_uiQuad->drawArray();
 }

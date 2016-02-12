@@ -1,12 +1,11 @@
 #pragma once
 
 #include "graphics.h"
-#include "screen.h"
-#include "util/CommonIncludes.h"
-#include <QKeyEvent>
-#include <QMouseEvent>
-#include <QWheelEvent>
-#include <stack>
+#include <deque>
+
+class QKeyEvent;
+class QMouseEvent;
+class QWheelEvent;
 
 namespace CS1972Engine {
 
@@ -42,7 +41,7 @@ public:
     void initializeGL();
     virtual void initGL() = 0;
 
-    void tick();
+    void tick(float seconds);
     void draw();
 
     void mousePressEvent(QMouseEvent *event);

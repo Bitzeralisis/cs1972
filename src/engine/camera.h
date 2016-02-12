@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../util/CommonIncludes.h"
+#include "../util/HeaderUtils.h"
 
 namespace CS1972Engine {
 
@@ -11,21 +12,39 @@ namespace CS1972Engine {
  */
 class Camera {
 public:
-    Camera();
-    Camera(float fovy, float aspect, float near, float far);
-    Camera(glm::vec3 pos, float yaw, float pitch, float fovy, float aspect, float near, float far);
+    enum struct Mode : int {
+        FIRST_PERSON,
+        THIRD_PERSON
+    };
+
+    Camera(Mode mode = Mode::FIRST_PERSON, glm::vec3 pos = glm::vec3(), float yaw = 0.f, float pitch = 0.f, float tpdistance = 10.f, float fovy = 0.75f*glm::half_pi<float>(), float aspect = 4.f/3.f, float near = 1.f, float far = 200.f);
+
+private:
+    Mode m_mode;
+    glm::vec3 m_position;
+    float m_yaw; // Normalized to (-pi, pi] every time viewMatrix() is called
+    float m_pitch; // Normalized to [-pi/2, pi/2] every time viewMatrix() is called
+    float m_tpdistance;
+
+    float m_fovy;
+    float m_aspect;
+    float m_near;
+    float m_far;
 
 public:
-    glm::vec3 position;
-    float yaw; // Normalized to (-pi, pi] every time viewMatrix() is called
-    float pitch; // Normalized to [-pi/2, pi/2] every time viewMatrix() is called
+    VALACC_MUT(Mode, mode)
+    VALACC_MUT(glm::vec3, position)
+    MUTATOR_DEEP(float, position_x, m_position.x)
+    MUTATOR_DEEP(float, position_y, m_position.y)
+    MUTATOR_DEEP(float, position_z, m_position.z)
+    VALACC_MUT(float, yaw)
+    VALACC_MUT(float, pitch)
+    VALACC_MUT(float, tpdistance)
+    VALACC_MUT(float, fovy)
+    VALACC_MUT(float, aspect)
+    VALACC_MUT(float, near)
+    VALACC_MUT(float, far)
 
-    float fovy;
-    float aspect;
-    float near;
-    float far;
-
-public:
     void walk(glm::vec3 dir);
     glm::mat4 viewMatrix();
     glm::mat4 perspectiveMatrix();
