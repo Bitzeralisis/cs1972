@@ -1,4 +1,3 @@
-#include "game/warmupgame.h"
 #include "util/CommonIncludes.h"
 #include "view.h"
 #include <QApplication>
@@ -23,7 +22,7 @@ View::View(QWidget *parent) : QGLWidget(parent)
     }
     frameIndex = 0;
 
-    game = new WarmupGame::WarmupGame();
+    // game = new WarmupGame::WarmupGame();
 }
 
 View::~View()

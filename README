@@ -1,108 +1,14 @@
                           cs.brown.edu/courses/cs1972
-                                    warmup2
+                                   minecraft1
                                     by ajlin
-                           due: 11:59 PM, 02/09/2016
+                           due: 11:59 PM, 02/16/2016
 
 
-                                   GRASSDASH
+                    GRASSDASH II: THE BEYOND OF DIMENSION V
+                  CHAPTER 0: A SONG OF SKY AND SORROW -SoSaS-
 
 1) ANNOTATED RUBRIC. ___________________________________________________________
 
-COMPLETE/INCOMPLETE
-
-Retries used: NONE (2 extra retries left)
-
-[ ] Completed a design check
-[ ] Participated in playtesting
-
-Common Engine Requirements
-========================================
-[ ] Third person support built into your camera, with the ability to toggle
-    between the two cameras
-
-    See engine/camera.* and CS1972Engine::Camera::mode. 3rd person is
-    implemented as the camera moved in the negative eye direction for some
-    distance.
-
-[ ] Primitive wrapper class for drawing arbitrary geometry
-
-    See engine/primitive.*. This class wraps OpenGL VAOs and VBOs and performs a
-    minimal amount of calls related to drawing a VAO.
-
-    [ ] Supports VAO/VBO creation and cleanup
-    [ ] Supports sending data to the VBO
-    [ ] Supports drawing the geometry stored in the VBO
-
-[ ] Entity/World hierarchy
-
-    See engine/entity.* and engine/world.*. Although this rubric specifies that
-    World should be a virtual class, I have decided against that design, since
-    my engine is centered around Screens doing most of the heavy lifting. The
-    World class acts as little more than a sophisticated container for storing
-    and passing events to Entities.
-
-    [ ] Virtual Entity class representing a single logical game object with
-        (minimally) the following contract:
-        [ ] Timed updates (tick)
-        [ ] Render events (draw)
-        [ ] Creation of a collision shape (for now, getCylinder)
-        [ ] Instance variables for position, velocity, and an acceleration
-            accumulator
-    [ ] Virtual World class representing a collection of Entities with
-        (minimally) the following contract:
-        [ ] Timed updates (tick)
-        [ ] Render events (draw)
-        [ ] Entity management (add/remove an Entity)
-
-[ ] Cylinder-cylinder collision detection, resolution, and generation of a
-    response callback
-
-    See Entity and World. World calls Entity::checkCollide(Entity *) on all pair
-    combinations of Entities (the caller of and argument to checkCollide are
-    commutative). Collisions are resolved in checkCollide and then the responses
-    are dispatched to the Entitys' pure virtual collide methods. A rudimentary
-    static variable allows an Entity to not be moved by collisions and instead
-    have the other Entity recieve the full mtv (if it is not static).
-
-    [ ] Detection - determine that two cylinders are overlapping
-    [ ] Resolution - translate the cylinders out of detection using the MTV
-    [ ] Response - dispatches collision callback to collided Entities
-
-Game Requirements
-========================================
-[ ] All Warmup1 requirements must still be fulfilled
-[ ] The player can use a key to toggle between first and third person cameras
-
-    F1.
-
-[ ] Cylinder-cylinder collision response must be used somewhere
-[ ] There must be at least 1 NPC (non-player character), such as an enemy or
-    opponent, with some basic AI
-[ ] The game must have a non-arbitrary and reasonably achievable win or loss
-    condition
-[ ] The game must be resettable upon win or loss without restarting the program
-[ ] The game can never enter an unwinnable or unloseable state
-
-    The suicide key (K) means the game is always losable, and therefore never
-    unlosable, and therefore never (unwinnable or unlosable).
-
-Global requirements
-========================================
-[ ] Top-level handin directory contains a Qt project file, a README, and an
-    INSTRUCTIONS file
-[ ] README has a copy of the rubric with explanations of how to verify
-    requirements
-[ ] README documents any known bugs
-[ ] README indicates number of hours taken
-[ ] INSTRUCTIONS contains all information needed to play the game
-[ ] Engine and game code logically separated
-[ ] Engine code well designed
-[ ] Game code well designed
-[ ] Runs on department machines
-[ ] Does not crash
-[ ] Works at 800x600 and fullscreen resolutions
-[ ] Runs at 30+ UPS and never dips below 20 UPS unless indicated in the specific
-    handout
 
 
 2) KNOWN BUGS. _________________________________________________________________
@@ -112,4 +18,4 @@ None known.
 
 3) TIME SPENT. _________________________________________________________________
 
-13 hours.
+0 hours.
