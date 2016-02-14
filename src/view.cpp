@@ -2,6 +2,7 @@
 #include "view.h"
 #include <QApplication>
 #include <QKeyEvent>
+#include "game/minecraftgame.h"
 
 View::View(QWidget *parent) : QGLWidget(parent)
 {
@@ -22,7 +23,7 @@ View::View(QWidget *parent) : QGLWidget(parent)
     }
     frameIndex = 0;
 
-    // game = new WarmupGame::WarmupGame();
+    game = new Minecraft::MinecraftGame();
 }
 
 View::~View()

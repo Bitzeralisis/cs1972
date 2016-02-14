@@ -1,0 +1,6 @@
+#pragma once
+
+#define CHUNK_SIZE_X (32)
+#define CHUNK_SIZE_Y (32)
+#define CHUNK_SIZE_Z (32)
+#define CHUNK_SIZE_BLOCKS (CHUNK_SIZE_X*CHUNK_SIZE_Y*CHUNK_SIZE_Z)
