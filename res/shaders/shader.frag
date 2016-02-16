@@ -39,6 +39,6 @@ void main(){
     // Fog
     if (useFog > 0) {
         float fog = min(max(0.f, (length(position_worldSpace-eye_worldSpace)-fogNear)/(fogFar-fogNear)), 1.f);
-        fragColor = fog*fogColor + (1.f-fog)*fragColor;
+        fragColor = fog*vec4(fogColor,0.f) + (1.f-fog)*fragColor;
     }
 }
