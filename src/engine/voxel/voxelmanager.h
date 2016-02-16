@@ -10,14 +10,17 @@ class Chunk;
 
 class VoxelManager : public TerrainManager {
 public:
-    explicit VoxelManager(ChunkGenerator *generator);
+    explicit VoxelManager(const BlockType *blockDefs, ChunkGenerator *generator);
     virtual ~VoxelManager();
 
 private:
+    const BlockType *const m_blockDefs;
     ChunkGenerator *m_generator;
     std::list<Chunk *> m_chunks;
 
 public:
+    const VALUE_ACCESSOR(BlockType*,blockDefs)
+
     virtual void tick(float seconds) override;
     virtual void draw() override;
 };

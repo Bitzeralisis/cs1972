@@ -8,7 +8,7 @@
     d += 8; \
     d[l] = x1; d[m] = y2; d[n] = z; \
     d[3] = i; d[4] = j; d[5] = k; \
-    d[6] = u1; d[7] = v2; \
+    d[6] = u2; d[7] = v1; \
     d += 8; \
     d[l] = x2; d[m] = y2; d[n] = z; \
     d[3] = i; d[4] = j; d[5] = k; \
@@ -21,7 +21,7 @@
     d += 8; \
     d[l] = x2; d[m] = y1; d[n] = z; \
     d[3] = i; d[4] = j; d[5] = k; \
-    d[6] = u2; d[7] = v1; \
+    d[6] = u1; d[7] = v2; \
     d += 8; \
     d[l] = x1; d[m] = y1; d[n] = z; \
     d[3] = i; d[4] = j; d[5] = k; \
@@ -83,7 +83,6 @@ void Chunk::generateVao() {
 
     // For each face, there are 6 vertex(3)-normal(3)-tex(2) coordinate sets, meaning 4*(3+3+2) floats per face
     m_vertices = 6*nfaces;
-    std::cout << m_vertices << std::endl;
     GLfloat *data = new GLfloat[m_vertices*(3+3+2)];
     GLfloat *d = data;
 
@@ -91,35 +90,37 @@ void Chunk::generateVao() {
     for (int y = 0; y < CHUNK_SIZE_Y; ++y) {
         for (int z = 0; z < CHUNK_SIZE_Z; ++z) {
             for (int x = 0; x < CHUNK_SIZE_X; ++x) {
+                // Skip transparent blocks
+                BlockType t = CHUNK_DEFINITION_AT(x,y,z);
+                if (t.transparent())
+                    continue;
                 GLfloat bx = m_x + x;
                 GLfloat by = m_y + y;
                 GLfloat bz = m_z + z;
-                // Skip transparent blocks
-                if (CHUNK_DEFINITION_AT(x,y,z).transparent())
-                    continue;
+                GLfloat dt = 1.f/16.f;
                 // Left
                 if (x == 0 || CHUNK_DEFINITION_AT(x-1,y,z).transparent()) {
-                    MAKE_FACE(1,2,0,by+1.f,bz+1.f,by,bz,bx,-1.f,0.f,0.f,0.f,0.f,1.f,1.f)
+                    MAKE_FACE(1,2,0,by+1.f,bz+1.f,by,bz,bx,-1.f,0.f,0.f,t.atlassidex(),t.atlassidey()+dt,t.atlassidex()+dt,t.atlassidey())
                 }
                 // Right
                 if (x == CHUNK_SIZE_X-1 || CHUNK_DEFINITION_AT(x+1,y,z).transparent()) {
-                    MAKE_FACE(1,2,0,by,bz+1.f,by+1.f,bz,bx+1.f,1.f,0.f,0.f,0.f,0.f,1.f,1.f)
+                    MAKE_FACE(1,2,0,by+1.f,bz,by,bz+1.f,bx+1.f,1.f,0.f,0.f,t.atlassidex(),t.atlassidey()+dt,t.atlassidex()+dt,t.atlassidey())
                 }
                 // Front
                 if (z == 0 || CHUNK_DEFINITION_AT(x,y,z-1).transparent()) {
-                    MAKE_FACE(1,0,2,by+1.f,bx,by,bx+1.f,bz,0.f,0.f,-1.f,0.f,0.f,1.f,1.f)
+                    MAKE_FACE(1,0,2,by+1.f,bx,by,bx+1.f,bz,0.f,0.f,-1.f,t.atlassidex(),t.atlassidey()+dt,t.atlassidex()+dt,t.atlassidey())
                 }
                 // Back
                 if (z == CHUNK_SIZE_Z-1 || CHUNK_DEFINITION_AT(x,y,z+1).transparent()) {
-                    MAKE_FACE(1,0,2,by+1.f,bx+1.f,by,bx,bz+1.f,0.f,0.f,1.f,0.f,0.f,1.f,1.f)
+                    MAKE_FACE(1,0,2,by+1.f,bx+1.f,by,bx,bz+1.f,0.f,0.f,1.f,t.atlassidex(),t.atlassidey()+dt,t.atlassidex()+dt,t.atlassidey())
                 }
                 // Down
                 if (y == 0 || CHUNK_DEFINITION_AT(x,y-1,z).transparent()) {
-                    MAKE_FACE(0,2,1,bx+1.f,bz,bx,bz+1.f,by,0.f,0.f,0.f,-1.f,0.f,1.f,1.f)
+                    MAKE_FACE(0,2,1,bx+1.f,bz,bx,bz+1.f,by,0.f,0.f,-1.f,t.atlasbotx(),t.atlasboty()+dt,t.atlasbotx()+dt,t.atlasboty())
                 }
                 // Up
                 if (y == CHUNK_SIZE_Y-1 || CHUNK_DEFINITION_AT(x,y+1,z).transparent()) {
-                    MAKE_FACE(0,2,1,bx,bz,bx+1.f,bz+1.f,by+1.f,0.f,1.f,0.f,0.f,0.f,1.f,1.f)
+                    MAKE_FACE(0,2,1,bx,bz,bx+1.f,bz+1.f,by+1.f,0.f,1.f,0.f,t.atlastopx(),t.atlastopy()+dt,t.atlastopx()+dt,t.atlastopy());
                 }
             }
         }
@@ -148,10 +149,9 @@ void Chunk::tick(float seconds) { }
 
 void Chunk::draw() {
     graphics().shaderColor(glm::vec3(1.f, 1.f, 1.f));
-    graphics().shaderUseTexture(false);
-    //graphics().shaderBindTexture(graphics().getTexture("tilemap"));
-    glm::mat4 m = glm::mat4(1.f);
-    graphics().shaderMTransform(m);
+    graphics().shaderUseTexture(true);
+    graphics().shaderBindTexture(graphics().getTexture("atlas"));
+    graphics().shaderMTransform(glm::mat4(1.f));
     glBindVertexArray(m_vao);
     glDrawArrays(GL_TRIANGLES, 0, m_vertices);
     glBindVertexArray(0);

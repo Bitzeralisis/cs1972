@@ -52,6 +52,8 @@ public:
     void shaderUseTexture(bool use);
     void shaderBindTexture(GLuint tex);
     void shaderBindTexture(const char *name);
+    void shaderUseFog(bool use);
+    void shaderUseFog(bool use, float near, float far, glm::vec3 color);
     void shaderUnbindTexture();
 
     // Draw some primitives from the ones included with this object
@@ -60,6 +62,7 @@ public:
 
     // Ui shader helpers
     void uisOrthoTransform(float left, float right, float bottom, float top);
+    void uisColor(glm::vec4 color);
     void uisQuad(float left, float right, float bottom, float top);
 };
 

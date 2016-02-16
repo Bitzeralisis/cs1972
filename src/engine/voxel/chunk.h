@@ -7,9 +7,6 @@
 #include "../../util/CommonIncludes.h"
 #include "../../util/HeaderUtils.h"
 
-#define CHUNK_BLOCK_AT(x,y,z) ((CHUNK_SIZE_X*CHUNK_SIZE_Z*(y))+(CHUNK_SIZE_X*(z))+(x))
-#define CHUNK_DEFINITION_AT(x,y,z) (BLOCK_DEFINITIONS[m_blocks[CHUNK_BLOCK_AT(x,y,z)].type])
-
 namespace CS1972Engine {
 
 class Graphics;

@@ -28,7 +28,8 @@ SOURCES += \
     src/game/minecraftgame.cpp \
     src/game/gamescreen.cpp \
     src/engine/voxel/voxelmanager.cpp \
-    src/game/randomchunkgenerator.cpp
+    src/game/randomchunkgenerator.cpp \
+    src/game/pnchunkgenerator.cpp
 
 HEADERS += \
     libs/glew-1.10.0/include/GL/glew.h \
@@ -53,7 +54,8 @@ HEADERS += \
     src/game/gamescreen.h \
     src/engine/terrainmanager.h \
     src/engine/voxel/voxelmanager.h \
-    src/game/randomchunkgenerator.h
+    src/game/randomchunkgenerator.h \
+    src/game/pnchunkgenerator.h
 
 
 FORMS += src/mainwindow.ui
@@ -61,6 +63,9 @@ FORMS += src/mainwindow.ui
 RESOURCES += \
     res/shaders/shaders.qrc \
     res/images/images.qrc
+
+OTHER_FILES += \
+    res/images/terrain.png
 
 DISTFILES += \
     res/shaders/shader.vert \

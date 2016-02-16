@@ -12,5 +12,7 @@ MinecraftGame::~MinecraftGame() {
 }
 
 void MinecraftGame::initGL() {
+    g.putTexture("atlas", g.loadTextureFromQRC(":/images/terrain.png"));
+
     pushScreen(new GameScreen(this));
 }

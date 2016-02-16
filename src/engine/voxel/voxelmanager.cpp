@@ -3,10 +3,15 @@
 
 using namespace CS1972Engine::Voxel;
 
-VoxelManager::VoxelManager(ChunkGenerator *generator)
-    : m_generator(generator)
+VoxelManager::VoxelManager(const BlockType *blockDefs, ChunkGenerator *generator)
+    : m_blockDefs(blockDefs)
+    , m_generator(generator)
 {
-    m_chunks.push_back(new Chunk(this, 0, 0, 0, generator));
+    for (int x = -1; x <= 0; ++x)
+        for (int y = -1; y <= 0; ++y) {
+            m_chunks.push_back(new Chunk(this, x*CHUNK_SIZE_X, 0, y*CHUNK_SIZE_Z, generator));
+            m_chunks.push_back(new Chunk(this, x*CHUNK_SIZE_X, CHUNK_SIZE_Y, y*CHUNK_SIZE_Z, generator));
+        }
 }
 
 VoxelManager::~VoxelManager() { }

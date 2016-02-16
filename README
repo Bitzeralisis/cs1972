@@ -7,8 +7,95 @@
                     GRASSDASH II: THE BEYOND OF DIMENSION V
                   CHAPTER 0: A SONG OF SKY AND SORROW -SoSaS-
 
+                                indev version 1
+
 1) ANNOTATED RUBRIC. ___________________________________________________________
 
+COMPLETE/INCOMPLETE
+
+Retries used: NONE (2 extra retries left)
+
+[ ] Completed a design check
+
+Voxel Engine Requirements
+========================================
+[ ] Chunk-based world representation (implemented as a "manager")
+
+    Please see engine/voxel/VoxelManager.*. My World class can now optionally
+    use a TerrainManager of some kind, which will be in future weeks extended to
+    collide with entities, load and unload dynamically, etc.
+
+[ ] Block defined as a 1x1x1 cube with (minimally) the following characteristics:
+    [ ] Transparency - should the engine render block faces adjacent to this block?
+    [ ] Passability - can entities pass through this block?
+
+    Please see engine/voxel/Block.*. Blocks are separate from BlockDefinitions:
+    blocks define the content of the world, but BlockDefinitions actually define
+    what the Blocks themselves do. To use a VoxelManager, the game must provide
+    its own block definitions.
+
+[ ] Chunk defined as a CxCxC group of blocks, where C is a single parameter (or
+    3 different ones) determining chunk dimensions
+
+    Please see engine/voxel/chunkdef.h and engine/voxel/chunk.*. chunkdef.h
+    defines the parameters for chunk size (and any possible future variables)
+    and chunk.* defines the actual Chunk class. Chunk actually uses only a
+    one-dimensional array and accesses blocks in three-dimensional space via
+    helper functions / macros.
+
+[ ] Chunks render only block faces that are adjacent to transparent blocks,
+    with the exception of chunk boundaries, which may always be rendered
+
+    I actually went ahead and did the week 2 thing where Chunks build their own
+    VBOs. But yes, only faces that need to be rendered are added to the VBO.
+
+Game Requirements
+========================================
+[ ] Movement and view controls must the same as warmup
+
+    Note that WASD only move in the xz plane even if the camera is not looking
+    straight ahead. Yes, Shift can still be used to dash.
+
+[ ] The world must have no gravity, so the player must have additional controls
+    to change their height
+
+    R moves up and F moves down. These keys can be combined with WASD.
+
+[ ] The terrain in the world must be procedurally generated
+
+    Please see game/pnchunkgenerator.*. VoxelManager takes in a ChunkGenerator
+    which is used when new Chunks are allocated.
+
+    [ ] Chunk composition is algorithmically determined with the complexity of
+        at least a sin wave
+
+        PN stands for "Perlin Noise," which as we know is a combination of sine
+        waves.
+
+    [ ] Terrain contains at least two visually unique blocks besides air/empty
+        blocks
+
+        The current terrain types include grass, dirt, and stone.
+
+[ ] The world must consist of a 2x1x2 grid of size C = 32 chunks
+
+    Yes. These chunks are manually added to the game by VoxelManager.
+
+Global requirements
+========================================
+[ ] Top-level handin directory contains a Qt project file, a README, and an
+    INSTRUCTIONS file
+[ ] README has a copy of the rubric with explanations of how to verify
+    requirements
+[ ] README documents any known bugs
+[ ] README indicates number of hours taken
+[ ] INSTRUCTIONS contains all information needed to play the game
+[ ] Engine and game code logically separated
+[ ] Engine code well designed
+[ ] Game code well designed
+[ ] Runs on department machines
+[ ] Does not crash
+[ ] Works at 800x600 and fullscreen resolutions
 
 
 2) KNOWN BUGS. _________________________________________________________________
@@ -18,4 +105,4 @@ None known.
 
 3) TIME SPENT. _________________________________________________________________
 
-0 hours.
+11 hours.
