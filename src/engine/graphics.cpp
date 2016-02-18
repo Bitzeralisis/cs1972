@@ -52,8 +52,8 @@ GLuint Graphics::loadTextureFromQRC(const char *path) {
     GLuint tex;
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.width(), img.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, img.bits());
     glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -111,6 +111,17 @@ void Graphics::shaderUnbindTexture() {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+void Graphics::shaderUseFog(bool use) {
+    glUniform1i(glGetUniformLocation(m_activeShader, "useFog"), use);
+}
+
+void Graphics::shaderUseFog(bool use, float fogNear, float fogFar, glm::vec3 color) {
+    glUniform1i(glGetUniformLocation(m_activeShader, "useFog"), use);
+    glUniform1f(glGetUniformLocation(m_activeShader, "fogNear"), fogNear);
+    glUniform1f(glGetUniformLocation(m_activeShader, "fogFar"), fogFar);
+    glUniform3fv(glGetUniformLocation(m_activeShader, "fogColor"), 1, glm::value_ptr(color));
+}
+
 void Graphics::drawQuad() {
     m_pQuad->drawArray();
 }
@@ -126,6 +137,10 @@ void Graphics::useUiShader() {
 void Graphics::uisOrthoTransform(float left, float right, float bottom, float top) {
     glm::mat4 m = glm::ortho(left, right, bottom, top, -1.f, 1.f);
     glUniformMatrix4fv(glGetUniformLocation(m_activeShader, "p"), 1, GL_FALSE, glm::value_ptr(m));
+}
+
+void Graphics::uisColor(glm::vec4 color) {
+    glUniform4fv(glGetUniformLocation(m_activeShader, "color"), 1, glm::value_ptr(color));
 }
 
 void Graphics::uisQuad(float left, float right, float bottom, float top) {

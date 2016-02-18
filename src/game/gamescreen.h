@@ -3,10 +3,7 @@
 #include "../engine/screen.h"
 #include "../engine/world.h"
 
-namespace WarmupGame {
-
-class BossEntity;
-class PlayerEntity;
+namespace Minecraft {
 
 class GameScreen : public CS1972Engine::Screen {
 public:
@@ -15,11 +12,8 @@ public:
 
 private:
     CS1972Engine::World m_world;
-    PlayerEntity *m_player;
-    BossEntity *m_boss;
 
-    bool m_keysHeld[6] = {false, false, false, false, false, false};
-    int m_gameOver = 0;
+    bool m_keysHeld[7] = {false, false, false, false, false, false, false};
 
 public:
     virtual void tick(float seconds) override;

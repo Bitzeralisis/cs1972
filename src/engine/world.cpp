@@ -1,10 +1,11 @@
 #include "world.h"
+#include "terrainmanager.h"
 #include "entity.h"
 
 using namespace CS1972Engine;
 
 World::World(Game *par)
-    : parent(par)
+    : m_parent(par)
 { }
 
 World::~World() {
@@ -17,6 +18,13 @@ World::~World() {
                 if ((*it)->m_deleteFlag) delete *it;
         }
     }
+}
+
+void World::useTerrain(TerrainManager *terrain) {
+    if (m_terrain)
+        m_terrain->m_parent = 0;
+    m_terrain = terrain;
+    m_terrain->m_parent = this;
 }
 
 void World::addEntity(Entity *ent) {
@@ -33,6 +41,10 @@ void World::deleteEntity(Entity *ent) {
 }
 
 void World::tick(float seconds) {
+    // Tick terrain
+    if (m_terrain)
+        m_terrain->tick(seconds);
+
     // Tick all entities
     for (std::list<Entity *>::iterator it = m_entities.begin(); it != m_entities.end(); ++it) {
         (*it)->tick(seconds);
@@ -66,6 +78,10 @@ void World::tick(float seconds) {
 }
 
 void World::draw() {
+    // Draw terrain
+    if (m_terrain)
+        m_terrain->draw();
+
     // Draw all entities
     for (std::list<Entity *>::iterator it = m_entities.begin(); it != m_entities.end(); ++it) {
         (*it)->draw();

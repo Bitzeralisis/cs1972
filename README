@@ -1,10 +1,13 @@
                           cs.brown.edu/courses/cs1972
-                                    warmup2
+                                   minecraft1
                                     by ajlin
-                           due: 11:59 PM, 02/09/2016
+                           due: 11:59 PM, 02/16/2016
 
 
-                                   GRASSDASH
+                    GRASSDASH II: THE BEYOND OF DIMENSION V
+                  CHAPTER 0: A SONG OF SKY AND SORROW -SoSaS-
+
+                                indev version 1
 
 1) ANNOTATED RUBRIC. ___________________________________________________________
 
@@ -13,78 +16,70 @@ COMPLETE/INCOMPLETE
 Retries used: NONE (2 extra retries left)
 
 [ ] Completed a design check
-[ ] Participated in playtesting
 
-Common Engine Requirements
+Voxel Engine Requirements
 ========================================
-[ ] Third person support built into your camera, with the ability to toggle
-    between the two cameras
+[ ] Chunk-based world representation (implemented as a "manager")
 
-    See engine/camera.* and CS1972Engine::Camera::mode. 3rd person is
-    implemented as the camera moved in the negative eye direction for some
-    distance.
+    Please see engine/voxel/VoxelManager.*. My World class can now optionally
+    use a TerrainManager of some kind, which will be in future weeks extended to
+    collide with entities, load and unload dynamically, etc.
 
-[ ] Primitive wrapper class for drawing arbitrary geometry
+[ ] Block defined as a 1x1x1 cube with (minimally) the following characteristics:
+    [ ] Transparency - should the engine render block faces adjacent to this block?
+    [ ] Passability - can entities pass through this block?
 
-    See engine/primitive.*. This class wraps OpenGL VAOs and VBOs and performs a
-    minimal amount of calls related to drawing a VAO.
+    Please see engine/voxel/Block.*. Blocks are separate from BlockDefinitions:
+    blocks define the content of the world, but BlockDefinitions actually define
+    what the Blocks themselves do. To use a VoxelManager, the game must provide
+    its own block definitions.
 
-    [ ] Supports VAO/VBO creation and cleanup
-    [ ] Supports sending data to the VBO
-    [ ] Supports drawing the geometry stored in the VBO
+[ ] Chunk defined as a CxCxC group of blocks, where C is a single parameter (or
+    3 different ones) determining chunk dimensions
 
-[ ] Entity/World hierarchy
+    Please see engine/voxel/chunkdef.h and engine/voxel/chunk.*. chunkdef.h
+    defines the parameters for chunk size (and any possible future variables)
+    and chunk.* defines the actual Chunk class. Chunk actually uses only a
+    one-dimensional array and accesses blocks in three-dimensional space via
+    helper functions / macros.
 
-    See engine/entity.* and engine/world.*. Although this rubric specifies that
-    World should be a virtual class, I have decided against that design, since
-    my engine is centered around Screens doing most of the heavy lifting. The
-    World class acts as little more than a sophisticated container for storing
-    and passing events to Entities.
+[ ] Chunks render only block faces that are adjacent to transparent blocks,
+    with the exception of chunk boundaries, which may always be rendered
 
-    [ ] Virtual Entity class representing a single logical game object with
-        (minimally) the following contract:
-        [ ] Timed updates (tick)
-        [ ] Render events (draw)
-        [ ] Creation of a collision shape (for now, getCylinder)
-        [ ] Instance variables for position, velocity, and an acceleration
-            accumulator
-    [ ] Virtual World class representing a collection of Entities with
-        (minimally) the following contract:
-        [ ] Timed updates (tick)
-        [ ] Render events (draw)
-        [ ] Entity management (add/remove an Entity)
-
-[ ] Cylinder-cylinder collision detection, resolution, and generation of a
-    response callback
-
-    See Entity and World. World calls Entity::checkCollide(Entity *) on all pair
-    combinations of Entities (the caller of and argument to checkCollide are
-    commutative). Collisions are resolved in checkCollide and then the responses
-    are dispatched to the Entitys' pure virtual collide methods. A rudimentary
-    static variable allows an Entity to not be moved by collisions and instead
-    have the other Entity recieve the full mtv (if it is not static).
-
-    [ ] Detection - determine that two cylinders are overlapping
-    [ ] Resolution - translate the cylinders out of detection using the MTV
-    [ ] Response - dispatches collision callback to collided Entities
+    I actually went ahead and did the week 2 thing where Chunks build their own
+    VBOs. But yes, only faces that need to be rendered are added to the VBO.
 
 Game Requirements
 ========================================
-[ ] All Warmup1 requirements must still be fulfilled
-[ ] The player can use a key to toggle between first and third person cameras
+[ ] Movement and view controls must the same as warmup
 
-    F1.
+    Note that WASD only move in the xz plane even if the camera is not looking
+    straight ahead. Yes, Shift can still be used to dash.
 
-[ ] Cylinder-cylinder collision response must be used somewhere
-[ ] There must be at least 1 NPC (non-player character), such as an enemy or
-    opponent, with some basic AI
-[ ] The game must have a non-arbitrary and reasonably achievable win or loss
-    condition
-[ ] The game must be resettable upon win or loss without restarting the program
-[ ] The game can never enter an unwinnable or unloseable state
+[ ] The world must have no gravity, so the player must have additional controls
+    to change their height
 
-    The suicide key (K) means the game is always losable, and therefore never
-    unlosable, and therefore never (unwinnable or unlosable).
+    R moves up and F moves down. These keys can be combined with WASD.
+
+[ ] The terrain in the world must be procedurally generated
+
+    Please see game/pnchunkgenerator.*. VoxelManager takes in a ChunkGenerator
+    which is used when new Chunks are allocated.
+
+    [ ] Chunk composition is algorithmically determined with the complexity of
+        at least a sin wave
+
+        PN stands for "Perlin Noise," which as we know is a combination of sine
+        waves.
+
+    [ ] Terrain contains at least two visually unique blocks besides air/empty
+        blocks
+
+        The current terrain types include grass, dirt, and stone.
+
+[ ] The world must consist of a 2x1x2 grid of size C = 32 chunks
+
+    Yes. These chunks are manually added to the game by VoxelManager.
 
 Global requirements
 ========================================
@@ -101,8 +96,6 @@ Global requirements
 [ ] Runs on department machines
 [ ] Does not crash
 [ ] Works at 800x600 and fullscreen resolutions
-[ ] Runs at 30+ UPS and never dips below 20 UPS unless indicated in the specific
-    handout
 
 
 2) KNOWN BUGS. _________________________________________________________________
@@ -112,4 +105,4 @@ None known.
 
 3) TIME SPENT. _________________________________________________________________
 
-13 hours.
+11 hours.
