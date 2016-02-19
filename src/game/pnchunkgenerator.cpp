@@ -8,16 +8,14 @@ PNChunkGenerator::PNChunkGenerator(int seed)
 { }
 
 void PNChunkGenerator::generate(CS1972Engine::Voxel::Block (&chunk)[CHUNK_SIZE_BLOCKS], int x, int y, int z) {
+    m_noise2Dcache.clear();
     float *heightMap = new float[CHUNK_SIZE_X*CHUNK_SIZE_Z];
-    float *heightMap2 = new float[CHUNK_SIZE_X*CHUNK_SIZE_Z];
 
-    for (int zrel = 0; zrel < CHUNK_SIZE_Z; ++zrel)
+    for (int zrel = 0; zrel < CHUNK_SIZE_Z; ++zrel) {
         for (int xrel = 0; xrel < CHUNK_SIZE_X; ++xrel) {
             heightMap[xrel+CHUNK_SIZE_X*zrel] = perlinNoise2D((x+xrel)/32.f, (z+zrel)/32.f, 0.5f, 3) * 48.f;
-            ++m_seed;
-            heightMap2[xrel+CHUNK_SIZE_X*zrel] = perlinNoise2D((x+xrel)/32.f, (z+zrel)/32.f, 0.5f, 3) * 8.f + 3.f;
-            --m_seed;
         }
+    }
 
     for (int i = 0; i < CHUNK_SIZE_BLOCKS; ++i) {
         int xrel = CHUNK_X_AT(i);
@@ -27,12 +25,11 @@ void PNChunkGenerator::generate(CS1972Engine::Voxel::Block (&chunk)[CHUNK_SIZE_B
         float dHeight = ypos - heightMap[hmi];
         if (dHeight > 0.f) chunk[i].type = 0;
         else if (dHeight > -1.f) chunk[i].type = 1;
-        else if (dHeight > -1.f*heightMap2[hmi]) chunk[i].type = 3;
+        else if (dHeight > -6.f) chunk[i].type = 3;
         else chunk[i].type = 2;
     }
 
     delete heightMap;
-    delete heightMap2;
 }
 
 float PNChunkGenerator::perlinNoise2D(float x, float y, float p, int n) {
@@ -74,8 +71,12 @@ float PNChunkGenerator::smoothedNoise2D(int x, int y) {
 float PNChunkGenerator::noise2D(int x, int y) {
     int p = (x+y) * (x+y+1) / 2 + x;
     p = (p+m_seed) * (p+m_seed+1) / 2 + p;
-    srand(p);
-    return (float)rand() / RAND_MAX;
+    if (!m_noise2Dcache.count(p)) {
+        srand(p);
+        float val = (float)rand() / RAND_MAX;
+        m_noise2Dcache[p] = val;
+    }
+    return m_noise2Dcache[p];
 }
 
 float PNChunkGenerator::interpolateCosine(float a, float b, float x) {

@@ -9,6 +9,8 @@ VoxelManager::VoxelManager(const BlockType *blockDefs, ChunkGenerator *generator
 {
     for (int x = -5; x <= 4; ++x)
         for (int y = -5; y <= 4; ++y) {
+            std::cout << "Generating chunk (" << x << "," << y << ")" << std::endl;
+            std::cout.flush();
             m_chunks.push_back(new Chunk(this, x*CHUNK_SIZE_X, 0, y*CHUNK_SIZE_Z, generator));
             m_chunks.push_back(new Chunk(this, x*CHUNK_SIZE_X, CHUNK_SIZE_Y, y*CHUNK_SIZE_Z, generator));
         }

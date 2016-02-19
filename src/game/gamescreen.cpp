@@ -8,8 +8,8 @@
 
 using namespace Minecraft;
 
-#define VIEW_DISTANCE (100.f)
-#define FOG_DISTANCE (75.f)
+#define VIEW_DISTANCE (1000.f)
+#define FOG_DISTANCE (750.f)
 
 using CS1972Engine::Voxel::BlockType;
 const BlockType BLOCK_DEFINITIONS[4] = {
