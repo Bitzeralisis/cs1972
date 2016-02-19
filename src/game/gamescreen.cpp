@@ -1,4 +1,5 @@
 #include "gamescreen.h"
+#include "entity/testentity.h"
 #include "../engine/voxel/voxelmanager.h"
 #include "../engine/voxel/block.h"
 #include "pnchunkgenerator.h"
@@ -7,8 +8,8 @@
 
 using namespace Minecraft;
 
-#define VIEW_DISTANCE (200.f)
-#define FOG_DISTANCE (150.f)
+#define VIEW_DISTANCE (100.f)
+#define FOG_DISTANCE (75.f)
 
 using CS1972Engine::Voxel::BlockType;
 const BlockType BLOCK_DEFINITIONS[4] = {
@@ -26,7 +27,9 @@ GameScreen::GameScreen(CS1972Engine::Game *parent)
     CS1972Engine::Voxel::VoxelManager *m = new CS1972Engine::Voxel::VoxelManager(BLOCK_DEFINITIONS, gen);
     m_world.useTerrain(m);
 
-    graphics().camera->position(glm::vec3(0.f, 65.5f, 0.f));
+    m_player = new TestEntity(glm::vec3(0.f, 66.f, 0.f));
+    m_world.addEntity(m_player);
+    m_world.tick(0.f);
 }
 
 GameScreen::~GameScreen() {
@@ -40,13 +43,9 @@ void GameScreen::tick(float seconds) {
     if (m_keysHeld[1]) walk.z -= 1.f;
     if (m_keysHeld[2]) walk.x -= 1.f;
     if (m_keysHeld[3]) walk.z += 1.f;
-    if (m_keysHeld[4]) walk.y += 1.f;
-    if (m_keysHeld[5]) walk.y -= 1.f;
     bool dashing = m_keysHeld[6];
-    walk *= (dashing ? 40.f : 20.f) * seconds;
-
-    graphics().camera->walk(walk);
-    graphics().camera->position_y(graphics().camera->position().y+walk.y);
+    bool jumping = m_keysHeld[7];
+    m_player->walk(walk, dashing, jumping);
 
     // Tick world
     m_world.tick(seconds);
@@ -55,7 +54,10 @@ void GameScreen::tick(float seconds) {
 void GameScreen::draw() {
     // Prepare to draw
     graphics().useDefaultShader();
-    graphics().camera->far(2.f*VIEW_DISTANCE);
+    graphics().camera->position(m_player->position());
+    graphics().camera->position_y(m_player->position().y + 1.5f);
+    graphics().camera->near(0.1f);
+    graphics().camera->far(VIEW_DISTANCE);
     graphics().shaderPvTransformFromCamera();
     graphics().shaderUseFog(true, FOG_DISTANCE, VIEW_DISTANCE, glm::vec3(0.f, 0.f, 0.f));//glm::vec3(161.f/255.f, 190.f/255.f, 1.f));
 
@@ -107,6 +109,9 @@ void GameScreen::keyPressEvent(QKeyEvent *event) {
     case Qt::Key_Shift:
         m_keysHeld[6] = true;
         break;
+    case Qt::Key_Space:
+        m_keysHeld[7] = true;
+        break;
     default:
         break;
     }
@@ -134,6 +139,9 @@ void GameScreen::keyReleaseEvent(QKeyEvent *event) {
         break;
     case Qt::Key_Shift:
         m_keysHeld[6] = false;
+        break;
+    case Qt::Key_Space:
+        m_keysHeld[7] = false;
         break;
     default:
         break;

@@ -48,18 +48,10 @@ float PNChunkGenerator::perlinNoise2D(float x, float y, float p, int n) {
 }
 
 float PNChunkGenerator::interpolatedNoise2D(float x, float y) {
-    int xIp = (int)x;
-    int yIp = (int)y;
+    int xIp = glm::floor(x);
+    int yIp = glm::floor(y);
     float xFp = x - xIp;
     float yFp = y - yIp;
-    if (xFp < 0.f) {
-        xFp += 1.f;
-        xIp -= 1;
-    }
-    if (yFp < 0.f) {
-        yFp += 1.f;
-        yIp -= 1;
-    }
 
     float v1 = smoothedNoise2D(xIp, yIp);
     float v2 = smoothedNoise2D(xIp+1, yIp);

@@ -2,6 +2,7 @@
 
 #include "../util/CommonIncludes.h"
 #include "../util/HeaderUtils.h"
+#include "../util/csm.h"
 
 namespace CS1972Engine {
 
@@ -37,17 +38,22 @@ public:
     MUTATOR_DEEP(float, position_x, m_position.x)
     MUTATOR_DEEP(float, position_y, m_position.y)
     MUTATOR_DEEP(float, position_z, m_position.z)
-    VALACC_MUT(float, yaw)
-    VALACC_MUT(float, pitch)
+    VALUE_ACCESSOR(float, yaw)
+    void yaw(float yaw);
+    VALUE_ACCESSOR(float, pitch)
+    void pitch(float pitch);
     VALACC_MUT(float, tpdistance)
     VALACC_MUT(float, fovy)
     VALACC_MUT(float, aspect)
     VALACC_MUT(float, near)
     VALACC_MUT(float, far)
 
-    void walk(glm::vec3 dir);
-    glm::mat4 viewMatrix();
-    glm::mat4 perspectiveMatrix();
+    void walk(const glm::vec3& dir);
+    void normalizeView();
+    glm::mat4 viewMatrix() const;
+    glm::mat4 perspectiveMatrix() const;
+
+    bool frustumCullAABB(const csm::aabb& aabb) const;
 };
 
 }

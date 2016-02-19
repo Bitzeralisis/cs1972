@@ -43,7 +43,9 @@ public:
     virtual void tick(float seconds) = 0;
     virtual void draw() = 0;
     virtual glm::vec2 getCylinder() const = 0;
-    virtual void collide(glm::vec3 mtv, const Entity *other) = 0; // Response callback for collisions
+    virtual csm::aabb getAabb() const = 0;
+    virtual void collideTerrain(glm::vec3 tv) = 0;
+    virtual void collide(glm::vec3 mtv, const Entity *other) = 0;
 };
 
 }

@@ -5,6 +5,8 @@
 
 namespace Minecraft {
 
+class TestEntity;
+
 class GameScreen : public CS1972Engine::Screen {
 public:
     explicit GameScreen(CS1972Engine::Game *parent);
@@ -12,8 +14,9 @@ public:
 
 private:
     CS1972Engine::World m_world;
+    TestEntity *m_player;
 
-    bool m_keysHeld[7] = {false, false, false, false, false, false, false};
+    bool m_keysHeld[8] = {false, false, false, false, false, false, false, false};
 
 public:
     virtual void tick(float seconds) override;

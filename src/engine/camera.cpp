@@ -15,12 +15,24 @@ Camera::Camera(Mode m, glm::vec3 pos, float y, float p, float tpd, float fov, fl
 
 { }
 
+void Camera::yaw(float yaw) {
+    m_yaw = yaw;
+    while (m_yaw > glm::pi<float>()) m_yaw -= 2.f*glm::pi<float>();
+    while (m_yaw <= -1.f*glm::pi<float>()) m_yaw += 2.f*glm::pi<float>();
+}
+
+void Camera::pitch(float pitch) {
+    m_pitch = pitch;
+    if (m_pitch > glm::half_pi<float>()) m_pitch = glm::half_pi<float>();
+    else if (m_pitch < -1.f*glm::half_pi<float>()) m_pitch = -1.f*glm::half_pi<float>();
+}
+
 /**
  * @brief Camera::walk
  * Move the camera by dir, but only in the xz (floor) plane, and rotated such that (1, 0, 0) is in the direction of the eye.
  * @param dir
  */
-void Camera::walk(glm::vec3 dir) {
+void Camera::walk(const glm::vec3& dir) {
     // Take xz components of dir as a vector in a 2d plane
     glm::vec2 v(dir.x, dir.z);
 
@@ -35,13 +47,7 @@ void Camera::walk(glm::vec3 dir) {
     m_position += glm::vec3(w.x, 0.f, w.y);
 }
 
-glm::mat4 Camera::viewMatrix() {
-    // Normalize yaw and pitch
-    while (m_yaw > glm::pi<float>()) m_yaw -= 2.f*glm::pi<float>();
-    while (m_yaw <= -1.f*glm::pi<float>()) m_yaw += 2.f*glm::pi<float>();
-    if (m_pitch > glm::half_pi<float>()) m_pitch = glm::half_pi<float>();
-    else if (m_pitch < -1.f*glm::half_pi<float>()) m_pitch = -1.f*glm::half_pi<float>();
-
+glm::mat4 Camera::viewMatrix() const {
     // Make center and up vectors
     glm::vec3 pos = m_position;
     glm::vec3 look(
@@ -66,6 +72,47 @@ glm::mat4 Camera::viewMatrix() {
     return glm::lookAt(pos, center, up);
 }
 
-glm::mat4 Camera::perspectiveMatrix() {
+glm::mat4 Camera::perspectiveMatrix() const {
     return glm::perspective(m_fovy, m_aspect, m_near, m_far);
+}
+
+bool Camera::frustumCullAABB(const csm::aabb& aabb) const {
+    glm::mat4 frust = perspectiveMatrix() * viewMatrix();
+    glm::vec4 rows[4] = {
+        glm::vec4(frust[0][0], frust[1][0], frust[2][0], frust[3][0]),
+        glm::vec4(frust[0][1], frust[1][1], frust[2][1], frust[3][1]),
+        glm::vec4(frust[0][2], frust[1][2], frust[2][2], frust[3][2]),
+        glm::vec4(frust[0][3], frust[1][3], frust[2][3], frust[3][3])
+    };
+    glm::vec4 p[6] = {
+        rows[3]-rows[0], rows[3]-rows[1], rows[3]-rows[2],
+        rows[3]+rows[0], rows[3]+rows[1], rows[3]+rows[2]
+    };
+    glm::vec3 v[8] = {
+        aabb.pos,
+        aabb.pos + glm::vec3(aabb.size.x, 0.f, 0.f),
+        aabb.pos + glm::vec3(0.f, aabb.size.y, 0.f),
+        aabb.pos + glm::vec3(0.f, 0.f, aabb.size.z),
+        aabb.pos + glm::vec3(aabb.size.x, aabb.size.y, 0.f),
+        aabb.pos + glm::vec3(aabb.size.x, 0.f, aabb.size.z),
+        aabb.pos + glm::vec3(0.f, aabb.size.y, aabb.size.z),
+        aabb.pos + aabb.size
+    };
+
+    // Cull aabb if there exists a plane that rejects every vertex
+    bool cull;
+    for (int i = 0; i < 6; ++i) {
+        cull = true;
+        for (int j = 0; j < 8; ++j) {
+            // Test if this vertex is inside this plane; if it is, then we cannot reject the AABB using this plane
+            if (p[i][0]*v[j][0] + p[i][1]*v[j][1] + p[i][2]*v[j][2] + p[i][3] >= 0.f) {
+                cull = false;
+                break;
+            }
+        }
+        if (cull)
+            break;
+    }
+
+    return cull;
 }

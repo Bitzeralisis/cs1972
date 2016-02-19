@@ -46,8 +46,20 @@ void World::tick(float seconds) {
         m_terrain->tick(seconds);
 
     // Tick all entities
-    for (std::list<Entity *>::iterator it = m_entities.begin(); it != m_entities.end(); ++it) {
-        (*it)->tick(seconds);
+    if (m_terrain) {
+        for (std::list<Entity *>::iterator it = m_entities.begin(); it != m_entities.end(); ++it) {
+            // If there's terrain we do swept collision testing with it
+            glm::vec3 pos0 = (*it)->m_position;
+            (*it)->tick(seconds);
+            glm::vec3 pos1 = (*it)->m_position;
+            glm::vec3 pos2 = m_terrain->collideAABB((*it)->getAabb(), pos0, pos1);
+            (*it)->m_position = pos2;
+            (*it)->collideTerrain(pos2-pos1);
+        }
+    } else {
+        for (std::list<Entity *>::iterator it = m_entities.begin(); it != m_entities.end(); ++it) {
+            (*it)->tick(seconds);
+        }
     }
 
     // Collide all entities

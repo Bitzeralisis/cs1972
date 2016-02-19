@@ -29,7 +29,8 @@ SOURCES += \
     src/game/gamescreen.cpp \
     src/engine/voxel/voxelmanager.cpp \
     src/game/randomchunkgenerator.cpp \
-    src/game/pnchunkgenerator.cpp
+    src/game/pnchunkgenerator.cpp \
+    src/game/entity/testentity.cpp
 
 HEADERS += \
     libs/glew-1.10.0/include/GL/glew.h \
@@ -55,7 +56,9 @@ HEADERS += \
     src/engine/terrainmanager.h \
     src/engine/voxel/voxelmanager.h \
     src/game/randomchunkgenerator.h \
-    src/game/pnchunkgenerator.h
+    src/game/pnchunkgenerator.h \
+    src/util/csm.h \
+    src/game/entity/testentity.h
 
 
 FORMS += src/mainwindow.ui
