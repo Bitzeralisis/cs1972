@@ -12,11 +12,13 @@ using namespace Minecraft;
 #define FOG_DISTANCE (750.f)
 
 using CS1972Engine::Voxel::BlockType;
-const BlockType BLOCK_DEFINITIONS[4] = {
+const BlockType BLOCK_DEFINITIONS[6] = {
     BlockType("air", true, true, 0.f, 15.f/16.f, 0.f, 15.f/16.f, 0.f, 15.f/16.f),
     BlockType("grass", false, false, 0.f, 15.f/16.f, 3.f/16.f, 15.f/16.f, 2.f/16.f, 15.f/16.f),
     BlockType("stone", false, false, 1.f/16.f, 15.f/16.f, 1.f/16.f, 15.f/16.f, 1.f/16.f, 15.f/16.f),
-    BlockType("dirt", false, false, 2.f/16.f, 15.f/16.f, 2.f/16.f, 15.f/16.f, 2.f/16.f, 15.f/16.f)
+    BlockType("dirt", false, false, 2.f/16.f, 15.f/16.f, 2.f/16.f, 15.f/16.f, 2.f/16.f, 15.f/16.f),
+    BlockType("snow", false, false, 2.f/16.f, 11.f/16.f, 2.f/16.f, 11.f/16.f, 2.f/16.f, 11.f/16.f),
+    BlockType("sand", false, false, 2.f/16.f, 14.f/16.f, 2.f/16.f, 14.f/16.f, 2.f/16.f, 14.f/16.f)
 };
 
 GameScreen::GameScreen(CS1972Engine::Game *parent)
@@ -56,6 +58,7 @@ void GameScreen::draw() {
     graphics().useDefaultShader();
     graphics().camera->position(m_player->position());
     graphics().camera->position_y(m_player->position().y + 1.5f);
+    graphics().camera->fovy((0.75f+0.125f*m_player->dashEffect()/5.f)*glm::half_pi<float>());
     graphics().camera->near(0.1f);
     graphics().camera->far(VIEW_DISTANCE);
     graphics().shaderPvTransformFromCamera();

@@ -9,6 +9,7 @@ TestEntity::TestEntity(glm::vec3 pos) {
 
 void TestEntity::walk(glm::vec3 walk, bool dashing, bool jumping) {
     glm::vec3 move(0.f);
+    bool dashed = false;
 
     if (walk != glm::vec3(0.f)) {
         walk = glm::normalize(walk) * (dashing ? DASH_VELOCITY : WALK_VELOCITY);
@@ -19,6 +20,8 @@ void TestEntity::walk(glm::vec3 walk, bool dashing, bool jumping) {
         graphics().camera->walk(walk);
         move = (graphics().camera->position() - m_position);
         graphics().camera->position(pos);
+
+        dashed = dashing;
     }
 
     // Set position changes to velocity so collision detection works
@@ -26,13 +29,27 @@ void TestEntity::walk(glm::vec3 walk, bool dashing, bool jumping) {
     m_velocity.z = move.z;
     if (m_standing && jumping)
         m_velocity.y = JUMP_VELOCITY;
+
+    if (dashed && m_dashEffect < 5)
+        ++m_dashEffect;
+    else if (!dashed && m_dashEffect > 0)
+        --m_dashEffect;
 }
 
 void TestEntity::tick(float seconds) {
     tickPhysicsDiscrete(seconds);
 }
 
-void TestEntity::draw() { }
+void TestEntity::draw() {
+    graphics().shaderUseTexture(false);
+    graphics().shaderColor(glm::vec3(0.f, 1.f, 0.f));
+    glm::mat4 m(1.f);
+    m = glm::translate(m, m_position);
+    m = glm::scale(m, glm::vec3(1.f, 1.6f, 1.f));
+    m = glm::translate(m, glm::vec3(0.f, 0.5f, 0.f));
+    graphics().shaderMTransform(m);
+    graphics().drawCylinder();
+}
 
 glm::vec2 TestEntity::getCylinder() const {
     return glm::vec2(0.5f, 2.f);

@@ -167,7 +167,7 @@ void Chunk::draw() {
     glBindVertexArray(0);
 }
 
-glm::vec3 Chunk::collideAABB(const csm::aabb &aabb, const glm::vec3 &pos0, const glm::vec3 &pos1) const {
+glm::vec3 Chunk::collideAABB(const csm::aabb &aabb, const glm::vec3 &pos0, const glm::vec3 &pos1, int dimension) const {
     const csm::aabb t0(aabb.pos+pos0, aabb.size);
     const csm::aabb t1(aabb.pos+pos1, aabb.size);
 
@@ -180,7 +180,8 @@ glm::vec3 Chunk::collideAABB(const csm::aabb &aabb, const glm::vec3 &pos0, const
         return pos1;
 
 /**
- * RETURN - glm::vec3 into which the resolved end position is set
+ * START - glm::vec3 that the object starts at; set by this macro to the resolved position after this sweep
+ * END - glm::vec3 that the object ends at; set by this macro to the sweep dimension resolved after this sweep
  * SWEEP - index of dimension being swept
  * SWEEP_M_VAR - m_x, m_y, or m_z
  * OTHER1 - index of dimension not being swept
@@ -189,14 +190,14 @@ glm::vec3 Chunk::collideAABB(const csm::aabb &aabb, const glm::vec3 &pos0, const
  * ORDER1 - same as ORDER0 but corresponding to 1
  * ORDER2 - same as ORDER0 but corresponding to 2
  */
-#define SWEEP_TEST(RETURN,SWEEP,SWEEP_M_VAR,OTHER1,OTHER2,ORDER0,ORDER1,ORDER2) { \
-    glm::vec3 move = t1.pos-t0.pos; \
+#define SWEEP_TEST(START,END,SWEEP,SWEEP_M_VAR,OTHER1,OTHER2,ORDER0,ORDER1,ORDER2) { \
+    glm::vec3 move = END-START; \
     if (move[SWEEP] != 0.f) { \
-        /* Broadphase aabb for just y-sweep */ \
-        glm::vec3 sweepmin = glm::floor(t0.pos); \
-        glm::vec3 sweepmax = glm::ceil(t0.pos+t0.size-glm::vec3(1.f,1.f,1.f)); \
-        sweepmin[SWEEP] = move[SWEEP] > 0.f ? glm::ceil(t0.pos[SWEEP]+t0.size[SWEEP]) : glm::floor(t1.pos[SWEEP]); \
-        sweepmax[SWEEP] = move[SWEEP] > 0.f ? glm::ceil(t1.pos[SWEEP]+t1.size[SWEEP]-1.f) : glm::floor(t0.pos[SWEEP]-1.f); \
+        /* Broadphase aabb for just sweep in this dimension */ \
+        glm::vec3 sweepmin = glm::floor(START); \
+        glm::vec3 sweepmax = glm::ceil(START+aabb.size-glm::vec3(1.f,1.f,1.f)); \
+        sweepmin[SWEEP] = move[SWEEP] > 0.f ? glm::ceil(START[SWEEP]+aabb.size[SWEEP]) : glm::floor(END[SWEEP]); \
+        sweepmax[SWEEP] = move[SWEEP] > 0.f ? glm::ceil(END[SWEEP]+aabb.size[SWEEP]-1.f) : glm::floor(START[SWEEP]-1.f); \
  \
         /* Bound broadphase values within chunk's aabb for blocks we are testing collisions against */ \
         sweepmin = glm::max(sweepmin, self.pos); \
@@ -217,7 +218,7 @@ glm::vec3 Chunk::collideAABB(const csm::aabb &aabb, const glm::vec3 &pos0, const
                 for (int k = sweepmin[OTHER2]; k <= sweepmax[OTHER2]; ++k) { \
                     if (!CHUNK_DEFINITION_AT(ORDER0,ORDER1,ORDER2).passable()) { \
                         /* Collided with a block */ \
-                        RETURN[SWEEP] = dir>0?i+SWEEP_M_VAR-aabb.size[SWEEP]:i+SWEEP_M_VAR+1.f; \
+                        END[SWEEP] = dir>0?i+SWEEP_M_VAR-aabb.size[SWEEP]:i+SWEEP_M_VAR+1.f; \
                         goto done##SWEEP; \
                     } \
                 } \
@@ -227,12 +228,14 @@ glm::vec3 Chunk::collideAABB(const csm::aabb &aabb, const glm::vec3 &pos0, const
 \
     /* Some say this is the only legitimate use of goto */ \
     done##SWEEP:; \
+    START[SWEEP] = END[SWEEP]; \
 }
 
+    glm::vec3 startPos = t0.pos;
     glm::vec3 endPos = t1.pos;
-    SWEEP_TEST(endPos,1,m_y,2,0,k,i,j);
-    SWEEP_TEST(endPos,2,m_z,1,0,k,j,i);
-    SWEEP_TEST(endPos,0,m_x,1,2,i,j,k);
+    if (dimension == 0) SWEEP_TEST(startPos,endPos,0,m_x,1,2,i,j,k)
+    else if (dimension == 1) SWEEP_TEST(startPos,endPos,1,m_y,2,0,k,i,j)
+    else if (dimension == 2) SWEEP_TEST(startPos,endPos,2,m_z,1,0,k,j,i)
 
     return endPos-aabb.pos;
 }

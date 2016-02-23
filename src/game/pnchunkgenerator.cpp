@@ -9,13 +9,24 @@ PNChunkGenerator::PNChunkGenerator(int seed)
 
 void PNChunkGenerator::generate(CS1972Engine::Voxel::Block (&chunk)[CHUNK_SIZE_BLOCKS], int x, int y, int z) {
     m_noise2Dcache.clear();
+
     float *heightMap = new float[CHUNK_SIZE_X*CHUNK_SIZE_Z];
+    float *tempMap = new float[CHUNK_SIZE_X*CHUNK_SIZE_Z];
 
     for (int zrel = 0; zrel < CHUNK_SIZE_Z; ++zrel) {
         for (int xrel = 0; xrel < CHUNK_SIZE_X; ++xrel) {
-            heightMap[xrel+CHUNK_SIZE_X*zrel] = perlinNoise2D((x+xrel)/32.f, (z+zrel)/32.f, 0.5f, 3) * 48.f;
+            heightMap[xrel+CHUNK_SIZE_X*zrel] = perlinNoise2D((x+xrel)/32.f, (z+zrel)/32.f, 0.5f, 3) / 1.75f * 60.f;
         }
     }
+
+    m_noise2Dcache.clear();
+    ++m_seed;
+    for (int zrel = 0; zrel < CHUNK_SIZE_Z; ++zrel) {
+        for (int xrel = 0; xrel < CHUNK_SIZE_X; ++xrel) {
+            tempMap[xrel+CHUNK_SIZE_X*zrel] = perlinNoise2D((x+xrel)/64.f, (z+zrel)/64.f, 0.5f, 3) / 1.75f;
+        }
+    }
+    --m_seed;
 
     for (int i = 0; i < CHUNK_SIZE_BLOCKS; ++i) {
         int xrel = CHUNK_X_AT(i);
@@ -23,13 +34,28 @@ void PNChunkGenerator::generate(CS1972Engine::Voxel::Block (&chunk)[CHUNK_SIZE_B
         int zrel = CHUNK_Z_AT(i);
         int hmi = xrel+CHUNK_SIZE_X*zrel;
         float dHeight = ypos - heightMap[hmi];
-        if (dHeight > 0.f) chunk[i].type = 0;
-        else if (dHeight > -1.f) chunk[i].type = 1;
-        else if (dHeight > -6.f) chunk[i].type = 3;
-        else chunk[i].type = 2;
+        if (tempMap[hmi] < 0.3f) {
+            // Cold biome
+            if (dHeight > 1.f) chunk[i].type = 0;
+            else if (dHeight > -1.f) chunk[i].type = 4;
+            else if (dHeight > -6.f) chunk[i].type = 3;
+            else chunk[i].type = 2;
+        } else if (tempMap[hmi] < 0.7f) {
+            // Temperate biome
+            if (dHeight > 0.f) chunk[i].type = 0;
+            else if (dHeight > -1.f) chunk[i].type = 1;
+            else if (dHeight > -6.f) chunk[i].type = 3;
+            else chunk[i].type = 2;
+        } else {
+            // Hot biome
+            if (dHeight > 0.f) chunk[i].type = 0;
+            else if (dHeight > -6.f) chunk[i].type = 5;
+            else chunk[i].type = 2;
+        }
     }
 
     delete heightMap;
+    delete tempMap;
 }
 
 float PNChunkGenerator::perlinNoise2D(float x, float y, float p, int n) {
@@ -71,12 +97,17 @@ float PNChunkGenerator::smoothedNoise2D(int x, int y) {
 float PNChunkGenerator::noise2D(int x, int y) {
     int p = (x+y) * (x+y+1) / 2 + x;
     p = (p+m_seed) * (p+m_seed+1) / 2 + p;
+#ifdef _WIN32
+    srand(p);
+    return (float)rand() / RAND_MAX;
+#else
     if (!m_noise2Dcache.count(p)) {
         srand(p);
         float val = (float)rand() / RAND_MAX;
         m_noise2Dcache[p] = val;
     }
     return m_noise2Dcache[p];
+#endif
 }
 
 float PNChunkGenerator::interpolateCosine(float a, float b, float x) {

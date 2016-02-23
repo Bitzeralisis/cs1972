@@ -48,7 +48,7 @@ public:
 
     void tick(float seconds);
     void draw();
-    glm::vec3 collideAABB(const csm::aabb &aabb, const glm::vec3 &pos0, const glm::vec3 &pos1) const;
+    glm::vec3 collideAABB(const csm::aabb &aabb, const glm::vec3 &pos0, const glm::vec3 &pos1, int dimension) const;
 };
 
 }

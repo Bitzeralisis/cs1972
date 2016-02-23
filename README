@@ -55,6 +55,9 @@ Game Requirements
 ========================================
 [ ] Movement and view controls must the same as warmup (including gravity and
 	jumping)
+
+	Yes. You can dash, too!
+
 [ ] The world must consists of a 10x2x10 grid of size C = 32 chunks
 
 	Yes. Like in minecraft1, these chunks are manually created in VoxelManager.
@@ -94,5 +97,5 @@ None known.
 
 3) TIME SPENT. _________________________________________________________________
 
-7 hours.
+13 hours.
 

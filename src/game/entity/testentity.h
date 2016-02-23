@@ -12,12 +12,15 @@ public:
 private:
     const float GRAVITY_ACCEL = -20.f;
     const float WALK_VELOCITY = 4.f;
-    const float DASH_VELOCITY = 40.f;
+    const float DASH_VELOCITY = 7.f;
     const float JUMP_VELOCITY = 6.9f;
 
     bool m_standing = false;
+    int m_dashEffect = 0;
 
 public:
+    VALUE_ACCESSOR(int,dashEffect)
+
     void walk(glm::vec3 walk, bool dashing, bool jumping);
 
     virtual void tick(float seconds) override;

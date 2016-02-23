@@ -35,8 +35,12 @@ void VoxelManager::draw() {
 glm::vec3 VoxelManager::collideAABB(const csm::aabb &aabb, const glm::vec3 &pos0, const glm::vec3 &pos1) const {
     glm::vec3 p0 = pos0;
     glm::vec3 p1 = pos1;
-    for (std::list<Chunk *>::const_iterator it = m_chunks.begin(); it != m_chunks.end(); ++it) {
-        p1 = (*it)->collideAABB(aabb, p0, p1);
-    }
+    // Must sweep in each dimension across all chunks at once, or else boxes start running into edges at chunk boundaries
+    for (std::list<Chunk *>::const_iterator it = m_chunks.begin(); it != m_chunks.end(); ++it)
+        p1 = (*it)->collideAABB(aabb, p0, p1, 1);
+    for (std::list<Chunk *>::const_iterator it = m_chunks.begin(); it != m_chunks.end(); ++it)
+        p1 = (*it)->collideAABB(aabb, p0, p1, 0);
+    for (std::list<Chunk *>::const_iterator it = m_chunks.begin(); it != m_chunks.end(); ++it)
+        p1 = (*it)->collideAABB(aabb, p0, p1, 2);
     return p1;
 }
