@@ -10,7 +10,9 @@ using namespace CS1972Engine;
 
 Graphics::~Graphics() {
     delete m_pQuad;
+    delete m_pBox;
     delete m_pCylinder;
+    delete m_uiQuad;
     delete camera;
 }
 
@@ -31,6 +33,53 @@ void Graphics::initializeGL() {
     };
     int quadDataSize = 48 * sizeof(GLfloat);
     m_pQuad = new Primitive(quadNumVertices, quadDataSize, quadData);
+
+    int boxNumVertices = 36;
+    GLfloat boxData[48*6] = {
+        -.5f,.5f,-.5f, 0.f,1.f,0.f, 0.f,1.f,
+        -.5f,.5f, .5f, 0.f,1.f,0.f, 0.f,0.f,
+         .5f,.5f,-.5f, 0.f,1.f,0.f, 1.f,1.f,
+         .5f,.5f,-.5f, 0.f,1.f,0.f, 1.f,1.f,
+        -.5f,.5f, .5f, 0.f,1.f,0.f, 0.f,0.f,
+         .5f,.5f, .5f, 0.f,1.f,0.f, 1.f,0.f,
+
+        -.5f,-.5f,-.5f, 0.f,-1.f,0.f, 0.f,1.f,
+         .5f,-.5f,-.5f, 0.f,-1.f,0.f, 1.f,1.f,
+        -.5f,-.5f, .5f, 0.f,-1.f,0.f, 0.f,0.f,
+        -.5f,-.5f, .5f, 0.f,-1.f,0.f, 0.f,0.f,
+         .5f,-.5f,-.5f, 0.f,-1.f,0.f, 1.f,1.f,
+         .5f,-.5f, .5f, 0.f,-1.f,0.f, 1.f,0.f,
+
+        -.5f,-.5f,.5f, 0.f,0.f,1.f, 0.f,1.f,
+         .5f,-.5f,.5f, 0.f,0.f,1.f, 1.f,1.f,
+        -.5f, .5f,.5f, 0.f,0.f,1.f, 0.f,0.f,
+        -.5f, .5f,.5f, 0.f,0.f,1.f, 0.f,0.f,
+         .5f,-.5f,.5f, 0.f,0.f,1.f, 1.f,1.f,
+         .5f, .5f,.5f, 0.f,0.f,1.f, 1.f,0.f,
+
+        -.5f,-.5f,-.5f, 0.f,0.f,-1.f, 0.f,1.f,
+        -.5f, .5f,-.5f, 0.f,0.f,-1.f, 0.f,0.f,
+         .5f,-.5f,-.5f, 0.f,0.f,-1.f, 1.f,1.f,
+         .5f,-.5f,-.5f, 0.f,0.f,-1.f, 1.f,1.f,
+        -.5f, .5f,-.5f, 0.f,0.f,-1.f, 0.f,0.f,
+         .5f, .5f,-.5f, 0.f,0.f,-1.f, 1.f,0.f,
+
+        .5f,-.5f,-.5f, 1.f,0.f,0.f, 0.f,1.f,
+        .5f, .5f,-.5f, 1.f,0.f,0.f, 1.f,1.f,
+        .5f,-.5f, .5f, 1.f,0.f,0.f, 0.f,0.f,
+        .5f,-.5f, .5f, 1.f,0.f,0.f, 0.f,0.f,
+        .5f, .5f,-.5f, 1.f,0.f,0.f, 1.f,1.f,
+        .5f, .5f, .5f, 1.f,0.f,0.f, 1.f,0.f,
+
+        -.5f,-.5f,-.5f, -1.f,0.f,0.f, 0.f,1.f,
+        -.5f,-.5f, .5f, -1.f,0.f,0.f, 0.f,0.f,
+        -.5f, .5f,-.5f, -1.f,0.f,0.f, 1.f,1.f,
+        -.5f, .5f,-.5f, -1.f,0.f,0.f, 1.f,1.f,
+        -.5f,-.5f, .5f, -1.f,0.f,0.f, 0.f,0.f,
+        -.5f, .5f, .5f, -1.f,0.f,0.f, 1.f,0.f
+    };
+    int boxDataSize = 48*6 * sizeof(GLfloat);
+    m_pBox = new Primitive(boxNumVertices, boxDataSize, boxData);
 
     m_pCylinder = new Primitive(cylinderVertexCount, cylinderDataSize, cylinderVertexBufferData);
 
@@ -124,6 +173,10 @@ void Graphics::shaderUseFog(bool use, float fogNear, float fogFar, glm::vec3 col
 
 void Graphics::drawQuad() {
     m_pQuad->drawArray();
+}
+
+void Graphics::drawBox() {
+    m_pBox->drawArray();
 }
 
 void Graphics::drawCylinder() {

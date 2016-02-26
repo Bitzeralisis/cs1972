@@ -27,6 +27,7 @@ private:
     std::map<std::string, GLuint> m_textures;
 
     Primitive *m_pQuad;
+    Primitive *m_pBox;
     Primitive *m_pCylinder;
     Primitive *m_uiQuad;
 
@@ -58,6 +59,7 @@ public:
 
     // Draw some primitives from the ones included with this object
     void drawQuad();
+    void drawBox();
     void drawCylinder();
 
     // Ui shader helpers

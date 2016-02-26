@@ -42,11 +42,13 @@ public:
     VALUE_ACCESSOR(int,x)
     VALUE_ACCESSOR(int,y)
     VALUE_ACCESSOR(int,z)
-    Block blockAt(int x, int y, int z) const { return m_blocks[CHUNK_BLOCK_AT(x,y,z)]; }
-    Block blockAtGlobal(int x, int y, int z) const { return m_blocks[CHUNK_BLOCK_AT(x-m_x,y-m_y,z-m_z)]; }
+    inline csm::aabb aabb() const { return csm::aabb(glm::vec3((float)m_x,(float)m_y,(float)m_z), glm::vec3((float)CHUNK_SIZE_X,(float)CHUNK_SIZE_Y,(float)CHUNK_SIZE_Z)); }
+    inline Block blockAt(int x, int y, int z) const { return m_blocks[CHUNK_BLOCK_AT(x,y,z)]; }
+    inline Block blockAtGlobal(int x, int y, int z) const { return m_blocks[CHUNK_BLOCK_AT(x-m_x,y-m_y,z-m_z)]; }
 
-    virtual void tick(float seconds);
-    virtual void draw();
+    void tick(float seconds);
+    void draw();
+    glm::vec3 collideAABB(const csm::aabb &aabb, const glm::vec3 &pos0, const glm::vec3 &pos1, int dimension) const;
 };
 
 }

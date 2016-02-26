@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../engine/voxel/chunkgenerator.h"
+#include <unordered_map>
 
 namespace Minecraft {
 
@@ -11,6 +12,10 @@ public:
 
 private:
     int m_seed;
+
+    // Cache for the values returned by noise2D, which is a surprisingly expensive function.
+    // srand and rand took up over 90% cpu time of chunk generation according to valgrind.
+    std::unordered_map<int,float> m_noise2Dcache;
 
 public:
     virtual void generate(CS1972Engine::Voxel::Block (&chunk)[CHUNK_SIZE_BLOCKS], int x, int y, int z);

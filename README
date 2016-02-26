@@ -1,13 +1,13 @@
                           cs.brown.edu/courses/cs1972
-                                   minecraft1
+                                   minecraft2
                                     by ajlin
-                           due: 11:59 PM, 02/16/2016
+                           due: 11:59 PM, 02/23/2016
 
 
                     GRASSDASH II: THE BEYOND OF DIMENSION V
                   CHAPTER 0: A SONG OF SKY AND SORROW -SoSaS-
 
-                                indev version 1
+                                indev version 2
 
 1) ANNOTATED RUBRIC. ___________________________________________________________
 
@@ -16,77 +16,67 @@ COMPLETE/INCOMPLETE
 Retries used: NONE (2 extra retries left)
 
 [ ] Completed a design check
+[ ] Participated in playtesting
+
+Common Engine Requirements
+========================================
+[ ] Camera or graphics object supports view frustum culling of axis-aligned
+	bounding boxes
+
+	Please see Camera::frustumCullAABB in src/engine/camera.*. Note that I am
+	very bad at spelling frustum so I accidentally had it named "frustrum"
+	everywhere for a long time.
+
 
 Voxel Engine Requirements
 ========================================
-[ ] Chunk-based world representation (implemented as a "manager")
+[ ] Collision detection and sliding response with collided blocks for arbitrary
+	size axis-asligned bounding boxes
 
-    Please see engine/voxel/VoxelManager.*. My World class can now optionally
-    use a TerrainManager of some kind, which will be in future weeks extended to
-    collide with entities, load and unload dynamically, etc.
+	Please see Chunk::collideAABB in engine/voxel/Chunk.* for the nitty-gritty
+	stuff. I use a macro that does sliding response in some dimension, and
+	repeat that macro three times, once for each dimension.
 
-[ ] Block defined as a 1x1x1 cube with (minimally) the following characteristics:
-    [ ] Transparency - should the engine render block faces adjacent to this block?
-    [ ] Passability - can entities pass through this block?
+[ ] Per-chunk dynamic VBOs
 
-    Please see engine/voxel/Block.*. Blocks are separate from BlockDefinitions:
-    blocks define the content of the world, but BlockDefinitions actually define
-    what the Blocks themselves do. To use a VoxelManager, the game must provide
-    its own block definitions.
+	Was already implemented as part of my minecraft1. Please see
+	Chunk::generateVao in src/engine/voxel/chunk.*. I use a macro to populate
+	an array per face, and repeat the macro six times to define how to populate
+	faces in different directions.
 
-[ ] Chunk defined as a CxCxC group of blocks, where C is a single parameter (or
-    3 different ones) determining chunk dimensions
+[ ] Texture atlas support for per-chunk VBOs (must use the texture coordinates
+	in the VBO)
 
-    Please see engine/voxel/chunkdef.h and engine/voxel/chunk.*. chunkdef.h
-    defines the parameters for chunk size (and any possible future variables)
-    and chunk.* defines the actual Chunk class. Chunk actually uses only a
-    one-dimensional array and accesses blocks in three-dimensional space via
-    helper functions / macros.
-
-[ ] Chunks render only block faces that are adjacent to transparent blocks,
-    with the exception of chunk boundaries, which may always be rendered
-
-    I actually went ahead and did the week 2 thing where Chunks build their own
-    VBOs. But yes, only faces that need to be rendered are added to the VBO.
+	Was already implemented as part of my minecraft1. I additionally support
+	three different face textures for my blocks: a top, sides, and bottom
+	texture.
 
 Game Requirements
 ========================================
-[ ] Movement and view controls must the same as warmup
+[ ] Movement and view controls must the same as warmup (including gravity and
+	jumping)
 
-    Note that WASD only move in the xz plane even if the camera is not looking
-    straight ahead. Yes, Shift can still be used to dash.
+	Yes. You can dash, too!
 
-[ ] The world must have no gravity, so the player must have additional controls
-    to change their height
+[ ] The world must consists of a 10x2x10 grid of size C = 32 chunks
 
-    R moves up and F moves down. These keys can be combined with WASD.
+	Yes. Like in minecraft1, these chunks are manually created in VoxelManager.
 
-[ ] The terrain in the world must be procedurally generated
+[ ] The game must run at 40+ FPS on department machines: this requirement
+	overrides the standard 30+ FPS requirement
 
-    Please see game/pnchunkgenerator.*. VoxelManager takes in a ChunkGenerator
-    which is used when new Chunks are allocated.
+	Hopefully
 
-    [ ] Chunk composition is algorithmically determined with the complexity of
-        at least a sin wave
+[ ] All terrain is textured from a single atlas
 
-        PN stands for "Perlin Noise," which as we know is a combination of sine
-        waves.
-
-    [ ] Terrain contains at least two visually unique blocks besides air/empty
-        blocks
-
-        The current terrain types include grass, dirt, and stone.
-
-[ ] The world must consist of a 2x1x2 grid of size C = 32 chunks
-
-    Yes. These chunks are manually added to the game by VoxelManager.
+	Yes; everything is textured from res/images/terrain.png.
 
 Global requirements
 ========================================
 [ ] Top-level handin directory contains a Qt project file, a README, and an
-    INSTRUCTIONS file
+	INSTRUCTIONS file
 [ ] README has a copy of the rubric with explanations of how to verify
-    requirements
+	requirements
 [ ] README documents any known bugs
 [ ] README indicates number of hours taken
 [ ] INSTRUCTIONS contains all information needed to play the game
@@ -96,6 +86,8 @@ Global requirements
 [ ] Runs on department machines
 [ ] Does not crash
 [ ] Works at 800x600 and fullscreen resolutions
+[ ] Runs at 30+ UPS and never dips below 20 UPS unless indicated in the specific
+	handout
 
 
 2) KNOWN BUGS. _________________________________________________________________
@@ -105,4 +97,5 @@ None known.
 
 3) TIME SPENT. _________________________________________________________________
 
-11 hours.
+13 hours.
+
