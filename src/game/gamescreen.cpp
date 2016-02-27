@@ -67,6 +67,26 @@ void GameScreen::draw() {
     // Draw world
     m_world.draw();
 
+    // Highlight targeted block face
+    glm::vec3 i, n;
+    if (m_world.terrain()->rayCast(graphics().camera->position(), graphics().camera->lookVector(), FOG_DISTANCE, i, n)) {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
+        graphics().shaderColor(glm::vec3(0.3f, 0.3f, 0.f));
+        graphics().shaderUseTexture(false);
+        // I'm actually just protruding a box that's a tiny bit smaller than a block, a tiny bit out of the block.
+        // When it's close the tiny distance needs to be real tiny so it's not visible to the eye.
+        // But actually if it's too far away then there would be z-fighting, so the tiny distance needs to be less tiny when it's far away.
+        // A wise person once told me that graphics code is just a series of hacks (please have mercy)
+        float dist = glm::distance(graphics().camera->position(), i+glm::vec3(0.5f));
+        glm::mat4 m = glm::mat4(1.f);
+        m = glm::translate(m, i+glm::vec3(0.5f)+n*glm::vec3(0.0002f*dist));
+        m = glm::scale(m, glm::vec3(1.f-0.0001f*dist));
+        graphics().shaderMTransform(m);
+        graphics().drawBox();
+        glDisable(GL_BLEND);
+    }
+
     // Clean up
     graphics().shaderUnbindTexture();
     graphics().useShader(0);

@@ -239,3 +239,59 @@ glm::vec3 Chunk::collideAABB(const csm::aabb &aabb, const glm::vec3 &pos0, const
 
     return endPos-aabb.pos;
 }
+
+bool Chunk::rayCast(const glm::vec3 &p, const glm::vec3 &v, float range, glm::vec3 &intersect, glm::vec3 &normal) const {
+    range *= glm::length(v);
+
+    // First check for collision with entire chunk with ray-AABB collision test
+    glm::vec3 pLoc = p - glm::vec3(m_x, m_y, m_z); // Local coord
+
+    float t1 = (0.f - pLoc.x) / v.x;
+    float t2 = (CHUNK_SIZE_X - pLoc.x) / v.x;
+    float t3 = (0.f - pLoc.y) / v.y;
+    float t4 = (CHUNK_SIZE_Y - pLoc.y) / v.y;
+    float t5 = (0.f - pLoc.z) / v.z;
+    float t6 = (CHUNK_SIZE_Z - pLoc.z) / v.z;
+
+    float sweepMin = glm::max(glm::max(glm::min(t1, t2), glm::min(t3, t4)), glm::min(t5, t6));
+    float sweepMax = glm::min(glm::min(glm::max(t1, t2), glm::max(t3, t4)), glm::max(t5, t6));
+
+    if (sweepMax <= 0.f || sweepMin >= sweepMax) {
+        // Ray ahead of chunk || No intersect
+        return false;
+    }
+
+    // Do actual raycasting in this chunk
+    int istep[3] = { v[0] < 0.f ? -1 : 1, v[1] < 0 ? -1 : 1, v[2] < 0.f ? -1 : 1 };
+    int iexit[3] = { v[0] < 0.f ? 0 : CHUNK_SIZE_X-1, v[1] < 0.f ? 0 : CHUNK_SIZE_Y-1, v[2] < 0.f ? 0 : CHUNK_SIZE_Z-1 }; // Local coord
+    glm::vec3 step(v[0] < 0.f ? -1.f : 1.f, v[1] < 0.f ? -1.f : 1.f, v[2] < 0.f ? -1.f : 1.f);
+    glm::vec3 tdelta = step / v;
+
+    glm::vec3 enter = step*glm::ceil(step*p); // ceil if positive step, floor if negative step
+    glm::vec3 denter = enter-p;
+    glm::vec3 tmax = denter / v;
+
+    // posneg required to deal with position exactly on a block boundary properly
+    glm::vec3 posneg(v[0] < 0.f ? 0.f : 1.f, v[1] < 0.f ? 0.f : 1.f, v[2] < 0.f ? 0.f : 1.f);
+    glm::vec3 fpLoc = step*glm::ceil(step*pLoc) - 1.f*posneg;
+    int ipos[3] = { (int)fpLoc[0], (int)fpLoc[1], (int)fpLoc[2] }; // Local coord
+
+    while (1) {
+        int d = tmax[0] < tmax[1] ? (tmax[0] < tmax[2] ? 0 : 2) : (tmax[1] < tmax[2] ? 1 : 2);
+        ipos[d] += istep[d];
+        tmax[d] += tdelta[d];
+        if (istep[d]*ipos[d] > istep[d]*iexit[d] || tmax[d] > range)
+            return false;
+
+        if (ipos[0] >= 0 && ipos[0] < CHUNK_SIZE_X &&
+            ipos[1] >= 0 && ipos[1] < CHUNK_SIZE_Y &&
+            ipos[2] >= 0 && ipos[2] < CHUNK_SIZE_Z ) {
+            if (!CHUNK_DEFINITION_AT(ipos[0],ipos[1],ipos[2]).passable()) {
+                intersect = glm::vec3(ipos[0]+m_x,ipos[1]+m_y,ipos[2]+m_z);
+                normal = glm::vec3(0.f);
+                normal[d] = -1.f*step[d];
+                return true;
+            }
+        }
+    }
+}

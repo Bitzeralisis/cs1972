@@ -44,3 +44,21 @@ glm::vec3 VoxelManager::collideAABB(const csm::aabb &aabb, const glm::vec3 &pos0
         p1 = (*it)->collideAABB(aabb, p0, p1, 2);
     return p1;
 }
+
+bool VoxelManager::rayCast(const glm::vec3 &p, const glm::vec3 &v, float range, glm::vec3 &intersect, glm::vec3 &normal) const {
+    bool retval = false;
+    float maxDist = std::numeric_limits<float>::infinity();
+    glm::vec3 i, n;
+    for (std::list<Chunk *>::const_iterator it = m_chunks.begin(); it != m_chunks.end(); ++it) {
+        if ((*it)->rayCast(p, v, range, i, n)) {
+            float dist = glm::distance2(p, i);
+            if (dist < maxDist) {
+                maxDist = dist;
+                intersect = i;
+                normal = n;
+                retval = true;
+            }
+        }
+    }
+    return retval;
+}

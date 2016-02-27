@@ -50,6 +50,7 @@ public:
 
     void walk(const glm::vec3& dir);
     void normalizeView();
+    glm::vec3 lookVector() const;
     glm::mat4 viewMatrix() const;
     glm::mat4 perspectiveMatrix() const;
 

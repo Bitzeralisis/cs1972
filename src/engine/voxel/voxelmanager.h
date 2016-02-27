@@ -24,6 +24,7 @@ public:
     virtual void tick(float seconds) override;
     virtual void draw() override;
     virtual glm::vec3 collideAABB(const csm::aabb &aabb, const glm::vec3 &pos0, const glm::vec3 &pos1) const override;
+    virtual bool rayCast(const glm::vec3 &p, const glm::vec3 &v, float range, glm::vec3 &intersect, glm::vec3 &normal) const override;
 };
 
 }

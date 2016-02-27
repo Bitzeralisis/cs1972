@@ -1,13 +1,13 @@
                           cs.brown.edu/courses/cs1972
-                                   minecraft2
+                                   minecraft3
                                     by ajlin
-                           due: 11:59 PM, 02/23/2016
+                           due: 11:59 PM, 03/01/2016
 
 
                     GRASSDASH II: THE BEYOND OF DIMENSION V
                   CHAPTER 0: A SONG OF SKY AND SORROW -SoSaS-
 
-                                indev version 2
+                                indev version 3
 
 1) ANNOTATED RUBRIC. ___________________________________________________________
 
@@ -18,65 +18,41 @@ Retries used: NONE (2 extra retries left)
 [ ] Completed a design check
 [ ] Participated in playtesting
 
-Common Engine Requirements
-========================================
-[ ] Camera or graphics object supports view frustum culling of axis-aligned
-	bounding boxes
-
-	Please see Camera::frustumCullAABB in src/engine/camera.*. Note that I am
-	very bad at spelling frustum so I accidentally had it named "frustrum"
-	everywhere for a long time.
-
-
 Voxel Engine Requirements
 ========================================
-[ ] Collision detection and sliding response with collided blocks for arbitrary
-	size axis-asligned bounding boxes
-
-	Please see Chunk::collideAABB in engine/voxel/Chunk.* for the nitty-gritty
-	stuff. I use a macro that does sliding response in some dimension, and
-	repeat that macro three times, once for each dimension.
-
-[ ] Per-chunk dynamic VBOs
-
-	Was already implemented as part of my minecraft1. Please see
-	Chunk::generateVao in src/engine/voxel/chunk.*. I use a macro to populate
-	an array per face, and repeat the macro six times to define how to populate
-	faces in different directions.
-
-[ ] Texture atlas support for per-chunk VBOs (must use the texture coordinates
-	in the VBO)
-
-	Was already implemented as part of my minecraft1. I additionally support
-	three different face textures for my blocks: a top, sides, and bottom
-	texture.
+[ ] Analytic voxel-based raycasting
+[ ] Automated chunk streaming 
+    [ ] Chunks within a certain distance of a selected focus point are
+        automatically loaded into the game
+    [ ] Loaded chunks outside a certain distance are unloaded from the game
 
 Game Requirements
 ========================================
-[ ] Movement and view controls must the same as warmup (including gravity and
-	jumping)
-
-	Yes. You can dash, too!
-
-[ ] The world must consists of a 10x2x10 grid of size C = 32 chunks
-
-	Yes. Like in minecraft1, these chunks are manually created in VoxelManager.
-
-[ ] The game must run at 40+ FPS on department machines: this requirement
-	overrides the standard 30+ FPS requirement
-
-	Hopefully
-
-[ ] All terrain is textured from a single atlas
-
-	Yes; everything is textured from res/images/terrain.png.
+[ ] Addition and removal of blocks
+    [ ] Ray shot from the camera eye extending along the look vector
+    [ ] Visual highlighting of the nearest intersected face
+    [ ] Targeted block can be removed
+    [ ] Block can be added to the empty block adjacent to the targeted face
+    [ ] Addition or removal of blocks updates the appropriate VBO's
+[ ] Continuous chunk streaming
+    [ ] Chunks within 2 chunks of the player must be in memory
+    [ ] Chunks further than this distance must be unloaded from memory (you do
+        not need to save changes to unloaded chunks)
+    [ ] Initialization of newly visible chunks must be spread across multiple
+        frames or performed in a separate thread
+[ ] Simplistic enemies
+    [ ] Spawn either at the beginning of the game or at intervals during play
+    [ ] Collide and interact with both the world and the player
+    [ ] No complex AI required, but cannot remain stationary or jump in place
+[ ] It must be possible to restart the game without quitting the program
+[ ] The game must have at least two screens
 
 Global requirements
 ========================================
 [ ] Top-level handin directory contains a Qt project file, a README, and an
-	INSTRUCTIONS file
+    INSTRUCTIONS file
 [ ] README has a copy of the rubric with explanations of how to verify
-	requirements
+    requirements
 [ ] README documents any known bugs
 [ ] README indicates number of hours taken
 [ ] INSTRUCTIONS contains all information needed to play the game
@@ -87,7 +63,7 @@ Global requirements
 [ ] Does not crash
 [ ] Works at 800x600 and fullscreen resolutions
 [ ] Runs at 30+ UPS and never dips below 20 UPS unless indicated in the specific
-	handout
+    handout
 
 
 2) KNOWN BUGS. _________________________________________________________________
@@ -97,5 +73,5 @@ None known.
 
 3) TIME SPENT. _________________________________________________________________
 
-13 hours.
+5 hours.
 
