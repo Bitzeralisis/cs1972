@@ -49,13 +49,14 @@ public:
     // Default shader helpers
     void shaderPvTransformFromCamera();
     void shaderMTransform(glm::mat4 m);
-    void shaderColor(glm::vec3 color);
+    void shaderColor(glm::vec4 color);
     void shaderUseTexture(bool use);
     void shaderBindTexture(GLuint tex);
     void shaderBindTexture(const char *name);
+    void shaderUnbindTexture();
     void shaderUseFog(bool use);
     void shaderUseFog(bool use, float near, float far, glm::vec3 color);
-    void shaderUnbindTexture();
+    void shaderUseLight(bool use);
 
     // Draw some primitives from the ones included with this object
     void drawQuad();

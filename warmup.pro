@@ -7,7 +7,7 @@ win32 {
     DEFINES += GLEW_STATIC
     LIBS += -lopengl32
 }
-QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -lpthread -std=c++11
 
 INCLUDEPATH += src libs glm libs/glew-1.10.0/include
 DEPENDPATH += src libs glm libs/glew-1.10.0/include
@@ -30,7 +30,12 @@ SOURCES += \
     src/engine/voxel/voxelmanager.cpp \
     src/game/randomchunkgenerator.cpp \
     src/game/pnchunkgenerator.cpp \
-    src/game/entity/testentity.cpp
+    src/game/entity/playerentity.cpp \
+    src/game/entity/enemyentity.cpp \
+    src/game/entity/playerattackentity.cpp \
+    src/util/commonincludes.cpp \
+    src/game/entity/playershotentity.cpp \
+    src/game/entity/stormentity.cpp
 
 HEADERS += \
     libs/glew-1.10.0/include/GL/glew.h \
@@ -58,7 +63,12 @@ HEADERS += \
     src/game/randomchunkgenerator.h \
     src/game/pnchunkgenerator.h \
     src/util/csm.h \
-    src/game/entity/testentity.h
+    src/game/entity/minecraftentity.h \
+    src/game/entity/playerentity.h \
+    src/game/entity/enemyentity.h \
+    src/game/entity/playerattackentity.h \
+    src/game/entity/playershotentity.h \
+    src/game/entity/stormentity.h
 
 
 FORMS += src/mainwindow.ui
