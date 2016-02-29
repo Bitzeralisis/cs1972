@@ -33,7 +33,7 @@ private:
     std::list<Chunk *> m_protoDone;
 
 private:
-    void thread_chunkStreamWorker();
+    static void thread_chunkStreamWorker(VoxelManager *self);
 
 public:
     const VALUE_ACCESSOR(BlockType*,blockDefs)

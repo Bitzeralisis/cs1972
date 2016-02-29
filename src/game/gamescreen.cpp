@@ -219,8 +219,8 @@ void GameScreen::draw() {
         // A wise person once told me that graphics code is just a series of hacks (please have mercy)
         float dist = glm::distance(graphics().camera->position(), m_targetBlock+glm::vec3(0.5f));
         m = glm::mat4(1.f);
-        m = glm::translate(m, m_targetBlock+glm::vec3(0.5f)+m_targetFace*glm::vec3(0.0002f*dist));
-        m = glm::scale(m, glm::vec3(1.f-0.0001f*dist));
+        m = glm::translate(m, m_targetBlock+glm::vec3(0.5f)+m_targetFace*glm::vec3(0.002f*dist));
+        m = glm::scale(m, glm::vec3(1.f-0.001f*dist));
         graphics().shaderMTransform(m);
         graphics().drawBox();
     }

@@ -23,6 +23,7 @@ void PlayerShotEntity::draw() {
     graphics().shaderColor(glm::vec4(1.f, 0.f, 1.f, 1.f));
     glm::mat4 m(1.f);
     m = glm::translate(m, m_position);
+    m = glm::rotate(m, 4.f*m_lifetime, glm::vec3(1.f));
     m = glm::scale(m, glm::vec3(0.4f));
     graphics().shaderMTransform(m);
     graphics().drawBox();

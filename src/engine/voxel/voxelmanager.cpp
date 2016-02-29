@@ -25,30 +25,30 @@ VoxelManager::~VoxelManager() {
         delete *it;
 }
 
-void VoxelManager::thread_chunkStreamWorker() {
-    while (!m_genDone.load()) {
+void VoxelManager::thread_chunkStreamWorker(VoxelManager *self) {
+    while (!self->m_genDone.load()) {
         // Wait for work
-        m_protoWait.wait_for(m_protoWaitLock, std::chrono::seconds(1));
-        if (m_genDone.load())
+        self->m_protoWait.wait_for(self->m_protoWaitLock, std::chrono::seconds(1));
+        if (self->m_genDone.load())
             return;
 
         // Get one chunk to generate
-        m_protoLock.lock();
-        if (m_protoChunks.empty()) {
-            m_protoLock.unlock();
+        self->m_protoLock.lock();
+        if (self->m_protoChunks.empty()) {
+            self->m_protoLock.unlock();
             continue;
         }
-        Chunk *chunk = m_protoChunks.front();
-        m_protoChunks.pop_front();
-        m_protoLock.unlock();
+        Chunk *chunk = self->m_protoChunks.front();
+        self->m_protoChunks.pop_front();
+        self->m_protoLock.unlock();
 
         // Generate the blocks; this takes a long time
-        chunk->generateBlocks(m_generator);
+        chunk->generateBlocks(self->m_generator);
 
         // Put finished chunk into finished chunks list
-        m_protoLock.lock();
-        m_protoDone.push_back(chunk);
-        m_protoLock.unlock();
+        self->m_protoLock.lock();
+        self->m_protoDone.push_back(chunk);
+        self->m_protoLock.unlock();
     }
 }
 
