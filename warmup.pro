@@ -35,7 +35,8 @@ SOURCES += \
     src/game/entity/playerattackentity.cpp \
     src/util/commonincludes.cpp \
     src/game/entity/playershotentity.cpp \
-    src/game/entity/stormentity.cpp
+    src/game/entity/stormentity.cpp \
+    src/game/mainmenu.cpp
 
 HEADERS += \
     libs/glew-1.10.0/include/GL/glew.h \
@@ -68,7 +69,8 @@ HEADERS += \
     src/game/entity/enemyentity.h \
     src/game/entity/playerattackentity.h \
     src/game/entity/playershotentity.h \
-    src/game/entity/stormentity.h
+    src/game/entity/stormentity.h \
+    src/game/mainmenu.h
 
 
 FORMS += src/mainwindow.ui
@@ -78,7 +80,12 @@ RESOURCES += \
     res/images/images.qrc
 
 OTHER_FILES += \
-    res/images/terrain.png
+    res/images/terrain.png \
+    res/images/lose.png \
+    res/images/win.png \
+    res/images/chaostime.png \
+    res/images/howto1.png \
+    res/images/howto2.png
 
 DISTFILES += \
     res/shaders/shader.vert \

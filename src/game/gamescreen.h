@@ -46,11 +46,11 @@ private:
     const glm::vec3 CHAOS_SKY_COLOR = glm::vec3(1.f, 0.f, 1.f);
 
     const float MAX_CHAOS_TIMER = 120.f;
-    const float CHAOS_TIME_GAIN[5] = { 0.f, 0.5f, 1.f, 2.f, 3.f };
+    const float CHAOS_TIME_GAIN[5] = { 0.f, 1.f, 2.f, 3.f, 0.f };
     const float CHAOS_FADE_TIME = 1.f;
-    const float SPAWN_INIT_AMOUNT[5] = { 0.f, 5.f, 10.f, 15.f, 20.f };
-    const float SPAWN_TIMER[5] = { 10.f, 3.f, 2.f, 1.f, 0.5f };
-    const float KILLS_REQUIRED[5] = { 5.f, 5.f, 15.f, 30.f, 40.f };
+    const float SPAWN_INIT_AMOUNT[5] = { 0.f, 3.f, 6.f, 10.f, 20.f };
+    const float SPAWN_TIMER[5] = { 0.f, 3.f, 2.f, 0.5f, 0.5f };
+    const float KILLS_REQUIRED[5] = { 0.f, 4.f, 10.f, 36.f, 50.f };
     const float SPAWN_DIST = 30.f;
     const float DESPAWN_DIST = 35.f;
 
@@ -62,6 +62,8 @@ private:
     float m_chaosFading = 0.f;
     float m_chaosTimer = 0.f;
     float m_spawnTimer = 0.f;
+
+    int m_gameOver = 0;
 
     // Controls-related stuff
     bool m_hasTargetBlock;

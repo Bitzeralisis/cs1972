@@ -1,4 +1,5 @@
 #include "gamescreen.h"
+#include "mainmenu.h"
 #include "entity/enemyentity.h"
 #include "entity/playerentity.h"
 #include "../engine/primitive.h"
@@ -77,21 +78,34 @@ GameScreen::~GameScreen() {
 }
 
 void GameScreen::tick(float seconds) {
-    glm::vec2 walk(0.f);
-    if (m_keysHeld[0]) walk.x += 1.f;
-    if (m_keysHeld[1]) walk.y -= 1.f;
-    if (m_keysHeld[2]) walk.x -= 1.f;
-    if (m_keysHeld[3]) walk.y += 1.f;
-    // Set walk from camera-relative to world-absolute
-    if (walk != glm::vec2(0.f)) {
-        float yaw = graphics().camera->yaw();
-        glm::vec2 dir = glm::vec2(glm::cos(yaw), glm::sin(yaw));
-        glm::mat2 m(dir.x, dir.y, -1.f*dir.y, dir.x);
-        walk = m*walk;
+    // Check win/loss conditions
+    if (m_player->dead())
+        m_gameOver = 2;
+    if (m_player->chaosLevel() == 4 && m_chaosTimer <= 0.f)
+        m_gameOver = 1;
+
+    if (m_gameOver == 2)
+        graphics().camera->pitch(graphics().camera->pitch()+2.f*seconds);
+
+    if (!m_gameOver) {
+        glm::vec2 walk(0.f);
+        if (m_keysHeld[0]) walk.x += 1.f;
+        if (m_keysHeld[1]) walk.y -= 1.f;
+        if (m_keysHeld[2]) walk.x -= 1.f;
+        if (m_keysHeld[3]) walk.y += 1.f;
+        // Set walk from camera-relative to world-absolute
+        if (walk != glm::vec2(0.f)) {
+            float yaw = graphics().camera->yaw();
+            glm::vec2 dir = glm::vec2(glm::cos(yaw), glm::sin(yaw));
+            glm::mat2 m(dir.x, dir.y, -1.f*dir.y, dir.x);
+            walk = m*walk;
+        }
+        bool dashing = m_keysHeld[6];
+        bool jumping = m_keysHeld[7];
+        m_player->walk(seconds, walk, dashing, jumping);
+    } else {
+        m_player->walk(seconds, glm::vec2(0.f), false, false);
     }
-    bool dashing = m_keysHeld[6];
-    bool jumping = m_keysHeld[7];
-    m_player->walk(seconds, walk, dashing, jumping);
 
     // Tick world
     m_vox->streamChunksAround(m_player->position(), 175.f, 225.f);
@@ -143,11 +157,11 @@ void GameScreen::tick(float seconds) {
                 continue;
             }
 
-            // Teleport enemies that are too far away. This counts as spawning an enemy
+            // Teleport enemies that are too far away. This resets the spawn timer
             glm::vec2 xzPos((*it)->position().x, (*it)->position().z);
             glm::vec2 xzPlayer(m_player->position().x, m_player->position().z);
             if (glm::distance2(xzPos, xzPlayer) > DESPAWN_DIST*DESPAWN_DIST) {
-                m_spawnTimer += SPAWN_TIMER[m_player->chaosLevel()];
+                m_spawnTimer = SPAWN_TIMER[m_player->chaosLevel()];
                 float dir = 2.f*glm::pi<float>() * (float)rand2() / RAND2_MAX;
                 (*it)->position(m_player->position() + glm::vec3(SPAWN_DIST*glm::cos(dir), 66.f, SPAWN_DIST*glm::sin(dir)));
             }
@@ -167,8 +181,17 @@ void GameScreen::tick(float seconds) {
             // Chaos time is over
             m_chaosTimer = 0.f;
             m_chaosTime = false;
-            for (std::list<EnemyEntity *>::iterator it = m_enemies.begin(); it != m_enemies.end(); ++it)
-                (*it)->runAway();
+            // Despawn enemies that are too far away and make the rest of them start running away
+            for (std::list<EnemyEntity *>::iterator it = m_enemies.begin(); it != m_enemies.end(); ++it) {
+                glm::vec2 xzPos((*it)->position().x, (*it)->position().z);
+                glm::vec2 xzPlayer(m_player->position().x, m_player->position().z);
+                if (glm::distance2(xzPos, xzPlayer) > DESPAWN_DIST*DESPAWN_DIST) {
+                    m_world.deleteEntity(*it);
+                    it = m_enemies.erase(it);
+                    continue;
+                } else
+                    (*it)->runAway();
+            }
         }
     }
 
@@ -248,11 +271,38 @@ void GameScreen::draw() {
 
         float W = parent->width();
         float H = parent->height();
+        float hW = 0.5f*W;
+        float hH = 0.5f*H;
         graphics().useUiShader();
         graphics().uisOrthoTransform(0.f, W, H, 0.f);
-        graphics().shaderUseTexture(false);
+
+        // Win/loss graphics
+        if (m_gameOver == 1) {
+            graphics().uisColor(glm::vec4(1.f));
+            graphics().shaderUseTexture(true);
+            graphics().shaderBindTexture("win");
+            graphics().uisQuad(hW-400.f, hW+400.f, hH-100.f, hH+100.f);
+        } else if (m_gameOver == 2) {
+            graphics().shaderUseTexture(false);
+            graphics().uisColor(glm::vec4(0.5f, 0.f, 0.f, 0.5f));
+            graphics().uisQuad(0.f, W, 0.f, H);
+
+            graphics().uisColor(glm::vec4(1.f));
+            graphics().shaderUseTexture(true);
+            graphics().shaderBindTexture("lose");
+            graphics().uisQuad(hW-400.f, hW+400.f, hH-100.f, hH+100.f);
+        }
+
+        // Reticle
+        graphics().uisColor(glm::vec4(1.f, 1.f, 1.f, 0.5f));
+        m = glm::mat4(1.f);
+        m = glm::translate(m, glm::vec3(0.5f*W, 0.5f*H, 0.f));
+        m = glm::scale(m, glm::vec3(5.f));
+        graphics().shaderMTransform(m);
+        m_circleLoop->drawArray(GL_LINE_LOOP, 0, 360);
 
         // Health bar
+        graphics().shaderUseTexture(false);
         graphics().uisColor(glm::vec4(1.f, 0.f, 0.f, 1.f));
         graphics().uisQuad(30.f, 70.f, H-30.f-m_player->health(), H-30.f);
 
@@ -272,7 +322,16 @@ void GameScreen::draw() {
         graphics().uisColor(glm::vec4(1.f, 0.f, 1.f, 1.f));
         graphics().uisQuad(210.f, 250.f, H-30.f-m_player->chaos()/4.f, H-30.f);
 
+        // "Chaos Time" indicator
+        if (m_chaosTime) {
+            graphics().uisColor(glm::vec4(0.5f+0.5f*glm::cos(3.f*glm::pi<float>()*m_time), 0.f, 1.f, 1.f));
+            graphics().shaderUseTexture(true);
+            graphics().shaderBindTexture("chaostime");
+            graphics().uisQuad(W-230.f, W-30.f, H-350.f, H-150.f);
+        }
+
         // Chaos clock
+        graphics().shaderUseTexture(false);
         graphics().uisColor(glm::vec4(1.f, 0.f, 1.f, 1.f));
         if (m_chaosTime)
             graphics().uisColor(glm::vec4(0.5f+0.5f*glm::cos(3.f*glm::pi<float>()*m_time), 0.f, 1.f, 1.f));
@@ -331,6 +390,9 @@ void GameScreen::draw() {
 }
 
 void GameScreen::mousePressEvent(QMouseEvent *event) {
+    if (m_gameOver)
+        return;
+
     switch (event->button()) {
     case Qt::LeftButton:
         if (event->modifiers() & Qt::AltModifier)
@@ -382,6 +444,9 @@ void GameScreen::mousePressEvent(QMouseEvent *event) {
 }
 
 void GameScreen::mouseMoveEvent(QMouseEvent *event) {
+    if (m_gameOver)
+        return;
+
     int dx = event->x() - parent->width() / 2;
     int dy = event->y() - parent->height() / 2;
     graphics().camera->yaw(graphics().camera->yaw() + (float)(dx)/500.f);
@@ -422,6 +487,12 @@ void GameScreen::keyPressEvent(QKeyEvent *event) {
     case Qt::Key_Space:
         m_keysHeld[7] = true;
         break;
+    case Qt::Key_Return:
+        if (m_gameOver) {
+            parent->popScreen();
+            parent->pushScreen(new MainMenu(parent));
+            delete this;
+        }
     default:
         break;
     }

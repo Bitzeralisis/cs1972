@@ -14,15 +14,15 @@ protected:
 
 public:
     const float WALK_VELOCITY = 6.f;
-    const float DASH_VELOCITY = 120.f;
+    const float DASH_VELOCITY = 12.f;
     const float CHAOS_DASH_VELOCITY = 70.f;
     const float JUMP_VELOCITY = 6.9f;
     const float DASH_JUMP_VELOCITY = 11.5f;
     const float CHAOS_JUMP_VELOCITY = 25.f;
 
     const float MAX_HEALTH = 100.f;
-    const float HEALTH_REGEN = 1.f/1.2f;
-    const float CHAOS_DAMAGE = 2.f/1.2f;
+    const float HEALTH_REGEN = 2.f/1.2f;
+    const float CHAOS_DAMAGE = 3.f/1.2f;
     const float IFRAMES = 0.5f;
     const float MAX_ENERGY = 110.f;
     const float ENERGY_LOCK_LOW = 10.f;
@@ -38,7 +38,7 @@ public:
     const float ATTACK_COOLDOWN = 0.5f;
     const float ATTACK_COST = 20.f;
     const float SHOOT_COST = 30.f;
-    const float STORM_COST = 400.f;
+    const float STORM_COST = 300.f;
     const float DIG_COST = 60.f;
     const float DIG_DIRT_GAIN = 100.f;
     const float PLACE_COST = 40.f;
@@ -51,9 +51,9 @@ private:
     float m_energy = MAX_ENERGY;
     bool m_energyLocked = false;
     float m_dirt = 0.f;
-    float m_chaos = 400.f;
+    float m_chaos = 0.f;
     float m_chaosCd = 0.f;
-    int m_chaosLevel = 4;
+    int m_chaosLevel = 0;
 
     bool m_standing = false;
     int m_dashEffect = 0;

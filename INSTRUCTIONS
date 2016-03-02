@@ -11,25 +11,65 @@
 
 1) OVERVIEW. ___________________________________________________________________
 
+    The GRASSDASHER, hit by ROBOCYLINDER's d-beam, has been transported to a
+    strange BEYOND known only as DIMENSION V. To escape, the GRASSDASHER must
+    learn to harness the strange power of CHAOS and fight back the endless
+    hordes of CHAOS BEINGS. But DIMENSION V reveals secrets to the GRASSDASHER
+    that cylinder-kind was never meant to know. Will the GRASSDASHER be able to
+    escape? And how will the GRASSDASHER cope with those dark secrets?
 
 
 2) HOW TO PLAY. ________________________________________________________________
 
+    Collect 4 CHAOS CUBES and survive CHAOS TIME to win. You lose if you lose
+    all your health.
 
+    Use the compass in the lower-right to find CHAOS CUBES.
+    
+    The CHAOS CLOCK will fill up faster the more CHAOS CUBES you collect; when
+    the CHAOS CLOCK fills up, CHAOS TIME will begin.
+
+    During CHAOS TIME, you will slowly lose health. Defeat CHAOS BEINGS in order
+    to exit CHAOS TIME.
 
 
 3) CONTROLS. ___________________________________________________________________
 
-    GAME
+    REGULAR CONTROLS
 
-        > WASD: walk
-        > Space: jump
-        > Shift: dash
-        > Mouse: look
-        > F1: switch first-person and third-person
+        Mouse > Look
+        WASD  > Walk
+        Space > Jump
+
+    NORMAL ABILITIES
+
+        Normal abilities use energy (green gauge). If you use up all your
+        energy, you will become energy-locked (gray gauge) and cannot use normal
+        abilities until your energy fully recovers.
+
+        Left-click   > Attack. Hits one enemy. Low energy cost.
+        Right-click  > Dig or Place block. High energy cost. Places block when
+                       dirt meter (brown) is full; digs otherwise.
+        Shift (hold) > Dash mode. Low energy cost. Changes Walk to Dash, and
+                       Jump to Dash-jump.
+
+    CHAOS POWERS
+
+        Chaos powers use chaos energy (purple gauge). You gain more chaos powers
+        and max chaos energy as you collect CHAOS CUBES. Chaos energy only
+        regenerates if you do not use a chaos power for a short time.
+
+        Alt+Left-click  > CHAOS BOLT. Requires level 2. Shoots one projectile.
+                          Low chaos energy cost.
+        Alt+Right-click > CHAOS FLARE. Requires level 3. Shoots a chaos flare
+                          that fires multiple chaos bolts. High chaos energy
+                          cost.
 
 
 4) ALEX'S IDOL CORNER. _________________________________________________________
 
-    Nana Abe is actually 90000000 years old and she is about to beat me up for
-    telling everyone the truth that they deserve. Aaaaaaaa
+    Bandai Namco has announced a renewal of the Aikatsu series named Aikatsu
+    Stars, thereby axeing about 20 characters from the original series and thus
+    making everyone butthurt. However, after watching the preview, I can certify
+    that Aikatsu Stars will be Probably At Least As Good As Aikatsu. Also Nijino
+    Yume is best idol.

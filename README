@@ -42,8 +42,16 @@ Voxel Engine Requirements
 Game Requirements
 ========================================
 [ ] Addition and removal of blocks
+
+    The grassdasher has limited block manipulation with right click that digs
+    non-rock blocks and places dirt if the dirt bar is full.
+
     [ ] Ray shot from the camera eye extending along the look vector
     [ ] Visual highlighting of the nearest intersected face
+
+    Note that the range on this is only about 10 units, so faces further than
+    that won't be highlighted.
+
     [ ] Targeted block can be removed
     [ ] Block can be added to the empty block adjacent to the targeted face
     [ ] Addition or removal of blocks updates the appropriate VBO's
@@ -61,8 +69,8 @@ Game Requirements
 
 [ ] Simplistic enemies
 
-    Please see game/entity/enemyentity.*. These enemies spawn periodically and
-    run/jump towards the player.
+    Please see game/entity/enemyentity.*. These enemies spawn during chaos time
+    and run/jump towards the player, or away once chaos time has ended.
 
     [ ] Spawn either at the beginning of the game or at intervals during play
     [ ] Collide and interact with both the world and the player
@@ -99,5 +107,5 @@ Global requirements
 
 3) TIME SPENT. _________________________________________________________________
 
-8 hours.
+20 hours.
 

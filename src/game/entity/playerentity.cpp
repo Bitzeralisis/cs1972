@@ -70,14 +70,14 @@ bool PlayerEntity::attack() {
 
 bool PlayerEntity::shoot() {
     if (m_chaosLevel >= 2 && tryToPayChaos(SHOOT_COST)) {
-        parent()->addEntity(new PlayerShotEntity(m_position+glm::vec3(0.f, 1.5f, 0.f), m_velocity + 5.f*glm::normalize(graphics().camera->lookVector())));
+        parent()->addEntity(new PlayerShotEntity(m_position+glm::vec3(0.f, 1.5f, 0.f), m_velocity + 20.f*glm::normalize(graphics().camera->lookVector())));
         return true;
     }
     return false;
 }
 
 bool PlayerEntity::storm() {
-    if (m_chaosLevel >= 4 && tryToPayChaos(STORM_COST)) {
+    if (m_chaosLevel >= 3 && tryToPayChaos(STORM_COST)) {
         parent()->addEntity(new StormEntity(m_position+glm::vec3(0.f, 1.5f, 0.f), m_velocity + 5.f*glm::normalize(graphics().camera->lookVector())));
         return true;
     }
@@ -144,25 +144,30 @@ void PlayerEntity::tick(float seconds) {
     if (m_attackEffect < 0.f)
         m_attackEffect = 0.f;
 
-    m_health += seconds*HEALTH_REGEN;
-    if (m_health > MAX_HEALTH)
-        m_health = MAX_HEALTH;
-    m_iframe -= seconds;
-    if (m_iframe < 0.f)
-        m_iframe = 0.f;
+    if (m_dead) {
+        m_health = 0.f;
+        m_energy = 0.f;
+    } else {
+        m_health += seconds*HEALTH_REGEN;
+        if (m_health > MAX_HEALTH)
+            m_health = MAX_HEALTH;
+        m_iframe -= seconds;
+        if (m_iframe < 0.f)
+            m_iframe = 0.f;
 
-    m_energy += seconds*ENERGY_REGEN;
-    if (m_energy > MAX_ENERGY)
-        m_energy = MAX_ENERGY;
-    if (m_energy >= ENERGY_LOCK_HIGH)
-        m_energyLocked = false;
+        m_energy += seconds*ENERGY_REGEN;
+        if (m_energy > MAX_ENERGY)
+            m_energy = MAX_ENERGY;
+        if (m_energy >= ENERGY_LOCK_HIGH)
+            m_energyLocked = false;
 
-    m_chaosCd -= seconds;
-    if (m_chaosCd <= 0.f) {
-        m_chaosCd = 0.f;
-        m_chaos += seconds*CHAOS_REGEN;
-        if (m_chaos > m_chaosLevel*MAX_CHAOS_PER_LEVEL)
-            m_chaos = m_chaosLevel*MAX_CHAOS_PER_LEVEL;
+        m_chaosCd -= seconds;
+        if (m_chaosCd <= 0.f) {
+            m_chaosCd = 0.f;
+            m_chaos += seconds*CHAOS_REGEN;
+            if (m_chaos > m_chaosLevel*MAX_CHAOS_PER_LEVEL)
+                m_chaos = m_chaosLevel*MAX_CHAOS_PER_LEVEL;
+        }
     }
 
     tickPhysicsDiscrete(seconds);
