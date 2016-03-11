@@ -34,7 +34,7 @@ void Entity::checkCollide(Entity *other) {
     float xzMtv = radii - glm::sqrt(xzDelta.x*xzDelta.x + xzDelta.y*xzDelta.y);
 
     glm::vec3 totalMtv;
-    if (glm::abs(yMtv) <= glm::abs(xzMtv))
+    if (glm::abs(yMtv) <= glm::abs(xzMtv) || xzDelta == glm::vec2(0.f))
         totalMtv = glm::vec3(0.f, yMtv, 0.f);
     else
         totalMtv = xzMtv * glm::normalize(glm::vec3(xzDelta.x, 0.f, xzDelta.y));

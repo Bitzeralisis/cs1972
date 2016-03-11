@@ -18,6 +18,7 @@ public:
 private:
     World *m_parent;
 
+    glm::vec3 m_startPosition;
     bool m_removeFlag = false;
     bool m_deleteFlag = false;
 
@@ -25,7 +26,9 @@ protected:
     glm::vec3 m_position;
     glm::vec3 m_velocity;
     glm::vec3 m_accel;
+    bool m_collides = true;
     bool m_static = false; // Will not be moved by collisions if true
+    bool m_collidesTerrain = true;
 
 protected:
     inline REFERENCE_ACCESSOR_DEEP(Graphics,graphics,parent()->parent()->g)
@@ -38,7 +41,9 @@ public:
     VALUE_ACCESSOR(glm::vec3,position)
     VALUE_ACCESSOR(glm::vec3,velocity)
     VALUE_ACCESSOR(glm::vec3,accel)
+    VALUE_ACCESSOR(bool,collides)
     VALUE_ACCESSOR_DEEP(bool,is_static,m_static)
+    VALUE_ACCESSOR(bool,collidesTerrain)
 
     virtual void tick(float seconds) = 0;
     virtual void draw() = 0;

@@ -137,8 +137,8 @@ void Graphics::shaderMTransform(glm::mat4 m) {
     glUniformMatrix4fv(glGetUniformLocation(m_activeShader, "m"), 1, GL_FALSE, glm::value_ptr(m));
 }
 
-void Graphics::shaderColor(glm::vec3 color) {
-    glUniform3fv(glGetUniformLocation(m_activeShader, "color"), 1, glm::value_ptr(color));
+void Graphics::shaderColor(glm::vec4 color) {
+    glUniform4fv(glGetUniformLocation(m_activeShader, "color"), 1, glm::value_ptr(color));
 }
 
 void Graphics::shaderUseTexture(bool use) {
@@ -169,6 +169,10 @@ void Graphics::shaderUseFog(bool use, float fogNear, float fogFar, glm::vec3 col
     glUniform1f(glGetUniformLocation(m_activeShader, "fogNear"), fogNear);
     glUniform1f(glGetUniformLocation(m_activeShader, "fogFar"), fogFar);
     glUniform3fv(glGetUniformLocation(m_activeShader, "fogColor"), 1, glm::value_ptr(color));
+}
+
+void Graphics::shaderUseLight(bool use) {
+    glUniform1i(glGetUniformLocation(m_activeShader, "useLight"), use);
 }
 
 void Graphics::drawQuad() {

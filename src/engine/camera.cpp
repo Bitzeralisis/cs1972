@@ -47,15 +47,19 @@ void Camera::walk(const glm::vec3& dir) {
     m_position += glm::vec3(w.x, 0.f, w.y);
 }
 
-glm::mat4 Camera::viewMatrix() const {
-    // Make center and up vectors
-    glm::vec3 pos = m_position;
+glm::vec3 Camera::lookVector() const {
     glm::vec3 look(
         glm::cos(m_yaw) * glm::cos(m_pitch),
         glm::sin(m_pitch),
         glm::sin(m_yaw) * glm::cos(m_pitch)
     );
-    look = glm::normalize(look);
+    return glm::normalize(look);
+}
+
+glm::mat4 Camera::viewMatrix() const {
+    // Make center and up vectors
+    glm::vec3 pos = m_position;
+    glm::vec3 look = lookVector();
     if (m_mode == Mode::THIRD_PERSON) {
         pos -= m_tpdistance*look;
     }

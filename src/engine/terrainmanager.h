@@ -26,6 +26,7 @@ public:
     virtual void tick(float seconds) = 0;
     virtual void draw() = 0;
     virtual glm::vec3 collideAABB(const csm::aabb &aabb, const glm::vec3 &pos0, const glm::vec3 &pos1) const = 0;
+    virtual bool rayCast(const glm::vec3 &p, const glm::vec3 &v, float range, glm::vec3 &intersect, glm::vec3 &normal) const = 0;
 };
 
 }

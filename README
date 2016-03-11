@@ -1,13 +1,13 @@
                           cs.brown.edu/courses/cs1972
-                                   minecraft2
+                                   minecraft3
                                     by ajlin
-                           due: 11:59 PM, 02/23/2016
+                           due: 11:59 PM, 03/01/2016
 
 
                     GRASSDASH II: THE BEYOND OF DIMENSION V
                   CHAPTER 0: A SONG OF SKY AND SORROW -SoSaS-
 
-                                indev version 2
+                                indev version 3
 
 1) ANNOTATED RUBRIC. ___________________________________________________________
 
@@ -18,65 +18,72 @@ Retries used: NONE (2 extra retries left)
 [ ] Completed a design check
 [ ] Participated in playtesting
 
-Common Engine Requirements
-========================================
-[ ] Camera or graphics object supports view frustum culling of axis-aligned
-	bounding boxes
-
-	Please see Camera::frustumCullAABB in src/engine/camera.*. Note that I am
-	very bad at spelling frustum so I accidentally had it named "frustrum"
-	everywhere for a long time.
-
-
 Voxel Engine Requirements
 ========================================
-[ ] Collision detection and sliding response with collided blocks for arbitrary
-	size axis-asligned bounding boxes
+[ ] Analytic voxel-based raycasting
 
-	Please see Chunk::collideAABB in engine/voxel/Chunk.* for the nitty-gritty
-	stuff. I use a macro that does sliding response in some dimension, and
-	repeat that macro three times, once for each dimension.
+    Please see VoxelManager::rayCast, which calls Chunk::rayCast, where the bulk
+    of the ray-casting code is. The function returns true if a block face was
+    encountered before limit distance, and sets the intersected block's
+    information in to i and n.
 
-[ ] Per-chunk dynamic VBOs
+[ ] Automated chunk streaming 
+    
+    Please see VoxelManager::streamChunksAround, into which the certain
+    distances mentioned below should be passed. Chunks to be streamed in are put
+    into a queue that a worker thread processes, except for the VBO generation,
+    which must be done in the original thread. Chunks to be streamed out are
+    deleted by the parent thread because it is a cheap operation.
 
-	Was already implemented as part of my minecraft1. Please see
-	Chunk::generateVao in src/engine/voxel/chunk.*. I use a macro to populate
-	an array per face, and repeat the macro six times to define how to populate
-	faces in different directions.
-
-[ ] Texture atlas support for per-chunk VBOs (must use the texture coordinates
-	in the VBO)
-
-	Was already implemented as part of my minecraft1. I additionally support
-	three different face textures for my blocks: a top, sides, and bottom
-	texture.
+    [ ] Chunks within a certain distance of a selected focus point are
+        automatically loaded into the game
+    [ ] Loaded chunks outside a certain distance are unloaded from the game
 
 Game Requirements
 ========================================
-[ ] Movement and view controls must the same as warmup (including gravity and
-	jumping)
+[ ] Addition and removal of blocks
 
-	Yes. You can dash, too!
+    The grassdasher has limited block manipulation with right click that digs
+    non-rock blocks and places dirt if the dirt bar is full.
 
-[ ] The world must consists of a 10x2x10 grid of size C = 32 chunks
+    [ ] Ray shot from the camera eye extending along the look vector
+    [ ] Visual highlighting of the nearest intersected face
 
-	Yes. Like in minecraft1, these chunks are manually created in VoxelManager.
+    Note that the range on this is only about 10 units, so faces further than
+    that won't be highlighted.
 
-[ ] The game must run at 40+ FPS on department machines: this requirement
-	overrides the standard 30+ FPS requirement
+    [ ] Targeted block can be removed
+    [ ] Block can be added to the empty block adjacent to the targeted face
+    [ ] Addition or removal of blocks updates the appropriate VBO's
+[ ] Continuous chunk streaming
 
-	Hopefully
+    I actually use a much larger distance for streaming chunks in and out of
+    memory. New chunks are generated in a worker thread; this is done
+    engine-side, not game-side.
 
-[ ] All terrain is textured from a single atlas
+    [ ] Chunks within 2 chunks of the player must be in memory
+    [ ] Chunks further than this distance must be unloaded from memory (you do
+        not need to save changes to unloaded chunks)
+    [ ] Initialization of newly visible chunks must be spread across multiple
+        frames or performed in a separate thread
 
-	Yes; everything is textured from res/images/terrain.png.
+[ ] Simplistic enemies
+
+    Please see game/entity/enemyentity.*. These enemies spawn during chaos time
+    and run/jump towards the player, or away once chaos time has ended.
+
+    [ ] Spawn either at the beginning of the game or at intervals during play
+    [ ] Collide and interact with both the world and the player
+    [ ] No complex AI required, but cannot remain stationary or jump in place
+[ ] It must be possible to restart the game without quitting the program
+[ ] The game must have at least two screens
 
 Global requirements
 ========================================
 [ ] Top-level handin directory contains a Qt project file, a README, and an
-	INSTRUCTIONS file
+    INSTRUCTIONS file
 [ ] README has a copy of the rubric with explanations of how to verify
-	requirements
+    requirements
 [ ] README documents any known bugs
 [ ] README indicates number of hours taken
 [ ] INSTRUCTIONS contains all information needed to play the game
@@ -87,15 +94,18 @@ Global requirements
 [ ] Does not crash
 [ ] Works at 800x600 and fullscreen resolutions
 [ ] Runs at 30+ UPS and never dips below 20 UPS unless indicated in the specific
-	handout
+    handout
 
 
 2) KNOWN BUGS. _________________________________________________________________
 
-None known.
+    Cantor pairing is symmetrical over x and y, so there's a chance that
+    PnChunkGenerator will either generate symmetrical maps (based on seed) or
+    inconsistent maps (if a bad seed causes the Cantor pair values to make
+    PnChunkGenerator read the wrong value from its noise caches).
 
 
 3) TIME SPENT. _________________________________________________________________
 
-13 hours.
+20 hours.
 

@@ -35,3 +35,9 @@ void Primitive::drawArray() const {
     glDrawArrays(GL_TRIANGLES, 0, m_vertices);
     glBindVertexArray(0);
 }
+
+void Primitive::drawArray(GLenum mode, GLint first, GLsizei count) const {
+    glBindVertexArray(m_vao);
+    glDrawArrays(mode, first, count);
+    glBindVertexArray(0);
+}

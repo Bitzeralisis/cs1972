@@ -3,24 +3,30 @@
 
 using namespace CS1972Engine::Voxel;
 
-Chunk::Chunk(VoxelManager *parent, int x, int y, int z, ChunkGenerator *g)
+Chunk::Chunk(VoxelManager *parent, int x, int y, int z, ChunkGenerator *g, bool proto)
     : m_parent(parent)
     , m_x(x)
     , m_y(y)
     , m_z(z)
 {
-    g->generate(m_blocks, x, y, z);
-
     glGenBuffers(1, &m_vbo);
     glGenVertexArrays(1, &m_vao);
     m_vertices = 0;
 
-    generateVao();
+    // Non proto-chunks generate themselves immediately on construction
+    if (!proto) {
+        generateBlocks(g);
+        generateVao();
+    }
 }
 
 Chunk::~Chunk() {
     glDeleteVertexArrays(1, &m_vao);
     glDeleteBuffers(1, &m_vbo);
+}
+
+void Chunk::generateBlocks(ChunkGenerator *g) {
+    g->generate(m_blocks, m_x, m_y, m_z);
 }
 
 void Chunk::generateVao() {
@@ -30,8 +36,9 @@ void Chunk::generateVao() {
         int x = CHUNK_X_AT(i);
         int y = CHUNK_Y_AT(i);
         int z = CHUNK_Z_AT(i);
-        // Skip transparent blocks
-        if (CHUNK_DEFINITION_AT(x,y,z).transparent())
+        BlockType t = CHUNK_DEFINITION_AT(x,y,z);
+        // Skip transparent and special-render blocks
+        if (t.transparent() || t.special())
             continue;
         // Left
         if (x == 0 || CHUNK_DEFINITION_AT(x-1,y,z).transparent())
@@ -52,6 +59,8 @@ void Chunk::generateVao() {
         if (y == CHUNK_SIZE_Y-1 || CHUNK_DEFINITION_AT(x,y+1,z).transparent())
             ++nfaces;
     }
+
+    m_special.clear();
 
     // For each face, there are 6 vertex(3)-normal(3)-tex(2) coordinate sets, meaning 4*(3+3+2) floats per face
     m_vertices = 6*nfaces;
@@ -103,8 +112,11 @@ void Chunk::generateVao() {
         int y = CHUNK_Y_AT(i);
         int z = CHUNK_Z_AT(i);
         BlockType t = CHUNK_DEFINITION_AT(x,y,z);
-        // Skip transparent blocks
-        if (t.transparent())
+        // Add special-render blocks to special-render list
+        if (t.special())
+            m_special.push_back(glm::vec3(x,y,z));
+        // Skip transparent and special-render blocks
+        if (t.transparent() || t.special())
             continue;
         GLfloat bx = m_x + x;
         GLfloat by = m_y + y;
@@ -153,18 +165,30 @@ void Chunk::generateVao() {
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+
+    delete data;
 }
 
-void Chunk::tick(float seconds) { }
+void Chunk::tick(float seconds) {
+    m_time += seconds;
+}
 
 void Chunk::draw() {
-    graphics().shaderColor(glm::vec3(1.f, 1.f, 1.f));
+    graphics().shaderColor(glm::vec4(1.f, 1.f, 1.f, 1.f));
     graphics().shaderUseTexture(true);
     graphics().shaderBindTexture(graphics().getTexture("atlas"));
     graphics().shaderMTransform(glm::mat4(1.f));
     glBindVertexArray(m_vao);
     glDrawArrays(GL_TRIANGLES, 0, m_vertices);
     glBindVertexArray(0);
+
+    // Draw special-render blocks
+    graphics().shaderColor(glm::vec4(0.5f+0.5f*glm::cos(3.f*glm::pi<float>()*m_time), 0.f, 1.f, 1.f));
+    graphics().shaderUseTexture(false);
+    for (std::list<glm::vec3>::iterator it = m_special.begin(); it != m_special.end(); ++it) {
+        graphics().shaderMTransform(glm::translate(glm::mat4(1.f), (*it)+glm::vec3(0.5f, 0.5f, 0.5f)+glm::vec3(m_x,m_y,m_z)));
+        graphics().drawBox();
+    }
 }
 
 glm::vec3 Chunk::collideAABB(const csm::aabb &aabb, const glm::vec3 &pos0, const glm::vec3 &pos1, int dimension) const {
@@ -238,4 +262,60 @@ glm::vec3 Chunk::collideAABB(const csm::aabb &aabb, const glm::vec3 &pos0, const
     else if (dimension == 2) SWEEP_TEST(startPos,endPos,2,m_z,1,0,k,j,i)
 
     return endPos-aabb.pos;
+}
+
+bool Chunk::rayCast(const glm::vec3 &p, const glm::vec3 &v, float range, glm::vec3 &intersect, glm::vec3 &normal) const {
+    range *= glm::length(v);
+
+    // First check for collision with entire chunk with ray-AABB collision test
+    glm::vec3 pLoc = p - glm::vec3(m_x, m_y, m_z); // Local coord
+
+    float t1 = (0.f - pLoc.x) / v.x;
+    float t2 = (CHUNK_SIZE_X - pLoc.x) / v.x;
+    float t3 = (0.f - pLoc.y) / v.y;
+    float t4 = (CHUNK_SIZE_Y - pLoc.y) / v.y;
+    float t5 = (0.f - pLoc.z) / v.z;
+    float t6 = (CHUNK_SIZE_Z - pLoc.z) / v.z;
+
+    float sweepMin = glm::max(glm::max(glm::min(t1, t2), glm::min(t3, t4)), glm::min(t5, t6));
+    float sweepMax = glm::min(glm::min(glm::max(t1, t2), glm::max(t3, t4)), glm::max(t5, t6));
+
+    if (sweepMax <= 0.f || sweepMin >= sweepMax || sweepMin > range) {
+        // Ray ahead of chunk || No intersect || Ray enters chunk too later
+        return false;
+    }
+
+    // Do actual raycasting in this chunk
+    int istep[3] = { v[0] < 0.f ? -1 : 1, v[1] < 0 ? -1 : 1, v[2] < 0.f ? -1 : 1 };
+    int iexit[3] = { v[0] < 0.f ? 0 : CHUNK_SIZE_X-1, v[1] < 0.f ? 0 : CHUNK_SIZE_Y-1, v[2] < 0.f ? 0 : CHUNK_SIZE_Z-1 }; // Local coord
+    glm::vec3 step(v[0] < 0.f ? -1.f : 1.f, v[1] < 0.f ? -1.f : 1.f, v[2] < 0.f ? -1.f : 1.f);
+    glm::vec3 tdelta = step / v;
+
+    glm::vec3 enter = step*glm::ceil(step*p); // ceil if positive step, floor if negative step
+    glm::vec3 denter = enter-p;
+    glm::vec3 tmax = denter / v;
+
+    // posneg required to deal with position exactly on a block boundary properly
+    glm::vec3 posneg(v[0] < 0.f ? 0.f : 1.f, v[1] < 0.f ? 0.f : 1.f, v[2] < 0.f ? 0.f : 1.f);
+    glm::vec3 fpLoc = step*glm::ceil(step*pLoc) - 1.f*posneg;
+    int ipos[3] = { (int)fpLoc[0], (int)fpLoc[1], (int)fpLoc[2] }; // Local coord
+
+    while (1) {
+        int d = tmax[0] < tmax[1] ? (tmax[0] < tmax[2] ? 0 : 2) : (tmax[1] < tmax[2] ? 1 : 2);
+        ipos[d] += istep[d];
+        tmax[d] += tdelta[d];
+        if (istep[d]*ipos[d] > istep[d]*iexit[d] || tmax[d] > range)
+            return false;
+
+        if (ipos[0] >= 0 && ipos[0] < CHUNK_SIZE_X &&
+            ipos[1] >= 0 && ipos[1] < CHUNK_SIZE_Y &&
+            ipos[2] >= 0 && ipos[2] < CHUNK_SIZE_Z ) {
+            if (!CHUNK_DEFINITION_AT(ipos[0],ipos[1],ipos[2]).passable()) {
+                intersect = glm::vec3(ipos[0]+m_x,ipos[1]+m_y,ipos[2]+m_z);
+                normal = glm::vec3(0.f);
+                normal[d] = -1.f*step[d];
+                return true;
+            }
+        }
+    }
 }

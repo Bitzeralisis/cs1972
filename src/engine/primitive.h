@@ -16,6 +16,7 @@ private:
 
 public:
     void drawArray() const;
+    void drawArray(GLenum mode, GLint first, GLsizei count) const;
 };
 
 }

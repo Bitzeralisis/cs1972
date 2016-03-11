@@ -13,4 +13,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/constants.hpp>
 
+#define RAND2_MAX USHRT_MAX
+unsigned rand2();
+
 #endif // COMMONINCLUDES_H
