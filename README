@@ -1,13 +1,10 @@
                           cs.brown.edu/courses/cs1972
-                                   minecraft3
+                                  platformer2
                                     by ajlin
-                           due: 11:59 PM, 03/01/2016
+                           due: 11:59 PM, 03/15/2016
 
 
-                    GRASSDASH II: THE BEYOND OF DIMENSION V
-                  CHAPTER 0: A SONG OF SKY AND SORROW -SoSaS-
-
-                                indev version 3
+                                 GRASSDASH III
 
 1) ANNOTATED RUBRIC. ___________________________________________________________
 
@@ -18,72 +15,32 @@ Retries used: NONE (2 extra retries left)
 [ ] Completed a design check
 [ ] Participated in playtesting
 
-Voxel Engine Requirements
+Common Engine Requirements
 ========================================
-[ ] Analytic voxel-based raycasting
+[ ] Able to load OBJ models using the support code
+[ ] Able to render OBJ models using the support code
+[ ] Stores only one copy of any single model (never load the same model twice)
 
-    Please see VoxelManager::rayCast, which calls Chunk::rayCast, where the bulk
-    of the ray-casting code is. The function returns true if a block face was
-    encountered before limit distance, and sets the intersected block's
-    information in to i and n.
-
-[ ] Automated chunk streaming 
-    
-    Please see VoxelManager::streamChunksAround, into which the certain
-    distances mentioned below should be passed. Chunks to be streamed in are put
-    into a queue that a worker thread processes, except for the VBO generation,
-    which must be done in the original thread. Chunks to be streamed out are
-    deleted by the parent thread because it is a cheap operation.
-
-    [ ] Chunks within a certain distance of a selected focus point are
-        automatically loaded into the game
-    [ ] Loaded chunks outside a certain distance are unloaded from the game
+Geometric Engine Requirements
+========================================
+[ ] Analytic collision response
+    [ ] Collision response slides for at least N iterations of the sweep test in the plane horizontal to collision (N = 4 is a good value)
+    [ ] Collision routines return a struct containing the contact point and normal
+    [ ] At least one hack from the lecture slides is implemented and documented in code
 
 Game Requirements
 ========================================
-[ ] Addition and removal of blocks
-
-    The grassdasher has limited block manipulation with right click that digs
-    non-rock blocks and places dirt if the dirt bar is full.
-
-    [ ] Ray shot from the camera eye extending along the look vector
-    [ ] Visual highlighting of the nearest intersected face
-
-    Note that the range on this is only about 10 units, so faces further than
-    that won't be highlighted.
-
-    [ ] Targeted block can be removed
-    [ ] Block can be added to the empty block adjacent to the targeted face
-    [ ] Addition or removal of blocks updates the appropriate VBO's
-[ ] Continuous chunk streaming
-
-    I actually use a much larger distance for streaming chunks in and out of
-    memory. New chunks are generated in a worker thread; this is done
-    engine-side, not game-side.
-
-    [ ] Chunks within 2 chunks of the player must be in memory
-    [ ] Chunks further than this distance must be unloaded from memory (you do
-        not need to save changes to unloaded chunks)
-    [ ] Initialization of newly visible chunks must be spread across multiple
-        frames or performed in a separate thread
-
-[ ] Simplistic enemies
-
-    Please see game/entity/enemyentity.*. These enemies spawn during chaos time
-    and run/jump towards the player, or away once chaos time has ended.
-
-    [ ] Spawn either at the beginning of the game or at intervals during play
-    [ ] Collide and interact with both the world and the player
-    [ ] No complex AI required, but cannot remain stationary or jump in place
-[ ] It must be possible to restart the game without quitting the program
-[ ] The game must have at least two screens
+[ ] Collision debugger support code is not present
+[ ] Movement and view controls must be the same as warmup and minecraft (including gravity and jumping)
+[ ] The camera must be able to use a 3rd-person view
+[ ] The player must be drawn as an ellipsoid
+[ ] The game must have a menu screen that allows the player to choose between different levels (different OBJ models)
+[ ] The player must be able to return to the menu screen without restarting the program
 
 Global requirements
 ========================================
-[ ] Top-level handin directory contains a Qt project file, a README, and an
-    INSTRUCTIONS file
-[ ] README has a copy of the rubric with explanations of how to verify
-    requirements
+[ ] Top-level handin directory contains a Qt project file, a README, and an INSTRUCTIONS file
+[ ] README has a copy of the rubric with explanations of how to verify requirements
 [ ] README documents any known bugs
 [ ] README indicates number of hours taken
 [ ] INSTRUCTIONS contains all information needed to play the game
@@ -93,19 +50,14 @@ Global requirements
 [ ] Runs on department machines
 [ ] Does not crash
 [ ] Works at 800x600 and fullscreen resolutions
-[ ] Runs at 30+ UPS and never dips below 20 UPS unless indicated in the specific
-    handout
+[ ] Runs at 30+ UPS and never dips below 20 UPS unless indicated in the specific handout
 
 
 2) KNOWN BUGS. _________________________________________________________________
 
-    Cantor pairing is symmetrical over x and y, so there's a chance that
-    PnChunkGenerator will either generate symmetrical maps (based on seed) or
-    inconsistent maps (if a bad seed causes the Cantor pair values to make
-    PnChunkGenerator read the wrong value from its noise caches).
 
 
 3) TIME SPENT. _________________________________________________________________
 
-20 hours.
+ hours.
 
