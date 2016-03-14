@@ -3,6 +3,11 @@
 
 using namespace CS1972Engine;
 
+Game::~Game() {
+    for (Screen *s = popScreen(); s != 0; s = popScreen())
+        delete s;
+}
+
 void Game::pushScreen(Screen *s) {
     m_screenStack.push_back(s);
 }

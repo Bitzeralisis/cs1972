@@ -25,18 +25,15 @@ SOURCES += \
     src/engine/world.cpp \
     src/engine/entity.cpp \
     src/engine/voxel/chunk.cpp \
-    src/game/minecraftgame.cpp \
-    src/game/gamescreen.cpp \
     src/engine/voxel/voxelmanager.cpp \
-    src/game/randomchunkgenerator.cpp \
-    src/game/pnchunkgenerator.cpp \
-    src/game/entity/playerentity.cpp \
-    src/game/entity/enemyentity.cpp \
-    src/game/entity/playerattackentity.cpp \
     src/util/commonincludes.cpp \
-    src/game/entity/playershotentity.cpp \
-    src/game/entity/stormentity.cpp \
-    src/game/mainmenu.cpp
+    src/csm/csm_collide.cpp \
+    src/util/obj.cpp \
+    src/game/platformergame.cpp \
+    src/game/gamescreen.cpp \
+    src/engine/geometric/geometricmanager.cpp \
+    src/game/entity/playerentity.cpp \
+    src/game/mainmenuscreen.cpp
 
 HEADERS += \
     libs/glew-1.10.0/include/GL/glew.h \
@@ -44,7 +41,6 @@ HEADERS += \
     src/view.h \
     src/util/CommonIncludes.h \
     src/util/ResourceLoader.h \
-    src/util/CylinderData.h \
     src/engine/game.h \
     src/engine/screen.h \
     src/engine/camera.h \
@@ -55,37 +51,35 @@ HEADERS += \
     src/engine/entity.h \
     src/engine/voxel/chunk.h \
     src/engine/voxel/block.h \
-    src/game/minecraftgame.h \
     src/engine/voxel/chunkgenerator.h \
     src/engine/voxel/chunkdef.h \
-    src/game/gamescreen.h \
     src/engine/terrainmanager.h \
     src/engine/voxel/voxelmanager.h \
-    src/game/randomchunkgenerator.h \
-    src/game/pnchunkgenerator.h \
-    src/util/csm.h \
-    src/game/entity/minecraftentity.h \
+    src/csm/csm.h \
+    src/csm/csm_collide.h \
+    src/csm/csm_primitive.h \
+    src/util/NewCylinderData.h \
+    src/util/obj.h \
+    src/util/SphereData.h \
+    src/game/platformergame.h \
+    src/game/gamescreen.h \
+    src/engine/geometric/geometricmanager.h \
     src/game/entity/playerentity.h \
-    src/game/entity/enemyentity.h \
-    src/game/entity/playerattackentity.h \
-    src/game/entity/playershotentity.h \
-    src/game/entity/stormentity.h \
-    src/game/mainmenu.h
+    src/game/mainmenuscreen.h
 
 
 FORMS += src/mainwindow.ui
 
 RESOURCES += \
     res/shaders/shaders.qrc \
-    res/images/images.qrc
+    res/images/images.qrc \
+    res/obj/obj.qrc
 
 OTHER_FILES += \
-    res/images/terrain.png \
-    res/images/lose.png \
-    res/images/win.png \
-    res/images/chaostime.png \
-    res/images/howto1.png \
-    res/images/howto2.png
+    res/obj/level_easy.obj \
+    res/obj/level_hard.obj \
+    res/obj/level_island.obj \
+    res/images/mainmenu.png
 
 DISTFILES += \
     res/shaders/shader.vert \

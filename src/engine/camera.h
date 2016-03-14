@@ -2,7 +2,7 @@
 
 #include "../util/CommonIncludes.h"
 #include "../util/HeaderUtils.h"
-#include "../util/csm.h"
+#include "../csm/csm_primitive.h"
 
 namespace CS1972Engine {
 

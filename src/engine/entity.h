@@ -13,7 +13,7 @@ class Entity {
     friend class World;
 
 public:
-    virtual ~Entity() {}
+    virtual ~Entity() { }
 
 private:
     World *m_parent;
@@ -49,7 +49,8 @@ public:
     virtual void draw() = 0;
     virtual glm::vec2 getCylinder() const = 0;
     virtual csm::aabb getAabb() const = 0;
-    virtual void collideTerrain(glm::vec3 tv) = 0;
+    virtual csm::ellipsoid getEllipsoid() const = 0;
+    virtual void collideTerrain(const glm::vec3 &tv, const glm::vec3 &normal) = 0;
     virtual void collide(glm::vec3 mtv, const Entity *other) = 0;
 };
 

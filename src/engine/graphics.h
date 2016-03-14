@@ -5,6 +5,9 @@
 #include <map>
 #include <string>
 
+class OBJ;
+class QFont;
+
 namespace CS1972Engine {
 
 class Primitive;
@@ -29,6 +32,7 @@ private:
     Primitive *m_pQuad;
     Primitive *m_pBox;
     Primitive *m_pCylinder;
+    Primitive *m_pSphere;
     Primitive *m_uiQuad;
 
 public:
@@ -57,11 +61,13 @@ public:
     void shaderUseFog(bool use);
     void shaderUseFog(bool use, float near, float far, glm::vec3 color);
     void shaderUseLight(bool use);
+    void shaderUseLight(bool use, int type, glm::vec3 pos);
 
     // Draw some primitives from the ones included with this object
     void drawQuad();
     void drawBox();
     void drawCylinder();
+    void drawSphere();
 
     // Ui shader helpers
     void uisOrthoTransform(float left, float right, float bottom, float top);

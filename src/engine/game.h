@@ -19,7 +19,7 @@ class Screen;
  */
 class Game {
 public:
-    virtual ~Game() {}
+    virtual ~Game();
 
 private:
     int m_width;

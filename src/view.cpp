@@ -2,7 +2,8 @@
 #include "view.h"
 #include <QApplication>
 #include <QKeyEvent>
-#include "game/minecraftgame.h"
+
+#include "game/platformergame.h"
 
 View::View(QWidget *parent) : QGLWidget(parent)
 {
@@ -23,7 +24,7 @@ View::View(QWidget *parent) : QGLWidget(parent)
     }
     frameIndex = 0;
 
-    game = new Minecraft::MinecraftGame();
+    game = new Platformer::PlatformerGame();
 }
 
 View::~View()

@@ -1,7 +1,8 @@
 #include "graphics.h"
 #include "primitive.h"
 #include "../util/CommonIncludes.h"
-#include "../util/CylinderData.h"
+#include "../util/NewCylinderData.h"
+#include "../util/SphereData.h"
 #include "../util/ResourceLoader.h"
 #include <QGLWidget>
 #include <QImage>
@@ -12,6 +13,7 @@ Graphics::~Graphics() {
     delete m_pQuad;
     delete m_pBox;
     delete m_pCylinder;
+    delete m_pSphere;
     delete m_uiQuad;
     delete camera;
 }
@@ -82,6 +84,7 @@ void Graphics::initializeGL() {
     m_pBox = new Primitive(boxNumVertices, boxDataSize, boxData);
 
     m_pCylinder = new Primitive(cylinderVertexCount, cylinderDataSize, cylinderVertexBufferData);
+    m_pSphere = new Primitive(sphereVertexCount, sphereArraySize, sphereVertexBufferData);
 
     GLfloat uiQuadData[48] = {
         0.f,0.f,0.f, 0.f,0.f,-1.f, 0.f,1.f,
@@ -101,8 +104,8 @@ GLuint Graphics::loadTextureFromQRC(const char *path) {
     GLuint tex;
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.width(), img.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, img.bits());
     glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -175,6 +178,12 @@ void Graphics::shaderUseLight(bool use) {
     glUniform1i(glGetUniformLocation(m_activeShader, "useLight"), use);
 }
 
+void Graphics::shaderUseLight(bool use, int type, glm::vec3 pos) {
+    glUniform1i(glGetUniformLocation(m_activeShader, "useLight"), use);
+    glUniform1i(glGetUniformLocation(m_activeShader, "lightType"), type);
+    glUniform3fv(glGetUniformLocation(m_activeShader, "lightPosition"), 1, glm::value_ptr(pos));
+}
+
 void Graphics::drawQuad() {
     m_pQuad->drawArray();
 }
@@ -185,6 +194,10 @@ void Graphics::drawBox() {
 
 void Graphics::drawCylinder() {
     m_pCylinder->drawArray();
+}
+
+void Graphics::drawSphere() {
+    m_pSphere->drawArray();
 }
 
 void Graphics::useUiShader() {

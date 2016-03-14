@@ -6,17 +6,31 @@
 
                                  GRASSDASH III
 
-1) OVERVIEW. ___________________________________________________________________
+1) CONTROLS. ___________________________________________________________________
+
+    MAIN MENU
+
+        1 > select level_easy.obj
+        2 > select level_hard.obj
+        3 > select level_island.obj
 
 
+    GAME
 
-2) HOW TO PLAY. ________________________________________________________________
+        mouse > look
+        WASD  > move
+        space > jump
+        shift > dash
+
+        F1    > toggle 1st/3rd person camera
+
+        1     > toggle ramp sliding prevention hack
+        2     > toggle ramp bouncing prevention hack
+        3     > toggle ramp deflection hack
+        9     > toggle no-clipping 3rd person camera
+        0     > reset player position
 
 
+2) ALEX'S IDOL CORNER. _________________________________________________________
 
-3) CONTROLS. ___________________________________________________________________
-
-
-
-4) ALEX'S IDOL CORNER. _________________________________________________________
-
+    BiBi's song, PSYCHIC FIRE, is so hot that it caused global warming.
