@@ -58,6 +58,9 @@ void GameScreen::draw() {
     m_player->yaw(graphics().camera->yaw());
 
     m_world.draw();
+
+    graphics().shaderUnbindTexture();
+    graphics().useShader(0);
 }
 
 void GameScreen::mousePressEvent(QMouseEvent *) { }

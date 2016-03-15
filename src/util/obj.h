@@ -1,6 +1,7 @@
 #ifndef OBJ_H
 #define OBJ_H
 
+#include <QStringList>
 #include <QVector>
 #include <QHash>
 #include <QString>

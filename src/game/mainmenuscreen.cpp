@@ -21,6 +21,9 @@ void MainMenuScreen::draw() {
     graphics().shaderUseTexture(true);
     graphics().shaderBindTexture("mainmenu");
     graphics().uisQuad(0.f, 256.f, parent->height()-64.f, parent->height());
+
+    graphics().shaderUnbindTexture();
+    graphics().useShader(0);
 }
 
 void MainMenuScreen::mousePressEvent(QMouseEvent *) { }

@@ -1,5 +1,6 @@
 #include "csm_collide.h"
 #include "csm.h"
+#define GLM_FORCE_RADIANS
 #include <glm/gtx/norm.hpp>
 #include <iostream>
 
