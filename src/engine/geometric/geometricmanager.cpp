@@ -6,20 +6,21 @@
 
 using namespace CS1972Engine;
 
-GeometricManager::GeometricManager(OBJ *terrain)
-    : m_terrain(terrain)
+GeometricManager::GeometricManager(World *parent, const char *terrain)
+    : TerrainManager(parent)
 {
-    m_primitive = new CS1972Engine::Primitive(m_terrain->vertexCount, m_terrain->vertexCount*8*sizeof(GLfloat), m_terrain->vboData.data());
+    if (!graphics().hasObj(terrain))
+        graphics().putObj(terrain, new OBJ(terrain));
+    m_terrain = graphics().getObj(terrain);
+
+    if (!graphics().hasPrimitive(terrain))
+        graphics().putPrimitive(terrain, graphics().loadPrimitiveFromOBJ(m_terrain));
+    m_primitive = graphics().getPrimitive(terrain);
 }
 
-GeometricManager::~GeometricManager() {
-    delete m_terrain;
-    delete m_primitive;
-}
+GeometricManager::~GeometricManager() { }
 
-void GeometricManager::tick(float seconds) {
-
-}
+void GeometricManager::tick(float seconds) { }
 
 void GeometricManager::draw() {
     graphics().shaderColor(glm::vec4(1.f));

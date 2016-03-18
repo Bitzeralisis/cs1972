@@ -9,9 +9,10 @@ namespace CS1972Engine {
 class Graphics;
 
 class TerrainManager {
-    friend class World;
-
 public:
+    explicit TerrainManager(World *parent)
+        : m_parent(parent)
+    { }
     virtual ~TerrainManager() { }
 
 private:

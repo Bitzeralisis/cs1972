@@ -2,19 +2,30 @@
 #include "primitive.h"
 #include "../util/CommonIncludes.h"
 #include "../util/NewCylinderData.h"
-#include "../util/SphereData.h"
+#include "../util/OBJ.h"
 #include "../util/ResourceLoader.h"
+#include "../util/SphereData.h"
 #include <QGLWidget>
 #include <QImage>
 
 using namespace CS1972Engine;
 
 Graphics::~Graphics() {
+    glDeleteProgram(m_defaultShader);
+    glDeleteProgram(m_uiShader);
+
+    for (std::map<std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); ++it)
+        glDeleteTextures(1, &(it->second));
+
+    for (std::map<std::string, OBJ *>::iterator it = m_objs.begin(); it != m_objs.end(); ++it)
+        delete it->second;
+
     delete m_pQuad;
     delete m_pBox;
     delete m_pCylinder;
     delete m_pSphere;
     delete m_uiQuad;
+
     delete camera;
 }
 
@@ -112,14 +123,6 @@ GLuint Graphics::loadTextureFromQRC(const char *path) {
     return tex;
 }
 
-void Graphics::putTexture(const char *name, GLuint tex) {
-    m_textures[name] = tex;
-}
-
-GLuint Graphics::getTexture(const char *name) {
-    return m_textures[name];
-}
-
 void Graphics::useDefaultShader() {
     useShader(m_defaultShader);
 }
@@ -127,6 +130,10 @@ void Graphics::useDefaultShader() {
 void Graphics::useShader(GLuint shader) {
     m_activeShader = shader;
     glUseProgram(m_activeShader);
+}
+
+Primitive *Graphics::loadPrimitiveFromOBJ(OBJ *obj) {
+    return new Primitive(obj->vertexCount, obj->vertexCount*8*sizeof(GLfloat), obj->vboData.data());
 }
 
 void Graphics::shaderPvTransformFromCamera() {

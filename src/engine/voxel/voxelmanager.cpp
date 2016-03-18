@@ -3,8 +3,9 @@
 
 using namespace CS1972Engine::Voxel;
 
-VoxelManager::VoxelManager(const BlockType *blockDefs, ChunkGenerator *generator)
-    : m_blockDefs(blockDefs)
+VoxelManager::VoxelManager(World *parent, const BlockType *blockDefs, ChunkGenerator *generator)
+    : TerrainManager(parent)
+    , m_blockDefs(blockDefs)
     , m_generator(generator)
 {
     m_genDone.store(false);

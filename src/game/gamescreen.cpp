@@ -12,7 +12,7 @@ GameScreen::GameScreen(CS1972Engine::Game *parent, const char *map)
     : Screen(parent)
     , m_world(parent)
 {
-    m_terrain = new CS1972Engine::GeometricManager(new OBJ(map));
+    m_terrain = new CS1972Engine::GeometricManager(&m_world, map);
     m_world.useTerrain(m_terrain);
 
     m_player = new PlayerEntity(glm::vec3(0.f, 1.f, 0.f));

@@ -30,10 +30,7 @@ World::~World() {
 }
 
 void World::useTerrain(TerrainManager *terrain) {
-    if (m_terrain)
-        m_terrain->m_parent = 0;
     m_terrain = terrain;
-    m_terrain->m_parent = this;
 }
 
 void World::addEntity(Entity *ent) {

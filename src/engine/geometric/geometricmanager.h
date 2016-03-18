@@ -8,7 +8,7 @@ namespace CS1972Engine {
 
 class GeometricManager : public CS1972Engine::TerrainManager {
 public:
-    GeometricManager(OBJ *terrain);
+    GeometricManager(World *parent, const char *terrain);
     virtual ~GeometricManager();
 
 private:

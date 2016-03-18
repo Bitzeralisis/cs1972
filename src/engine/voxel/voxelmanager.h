@@ -14,7 +14,7 @@ class Chunk;
 
 class VoxelManager : public TerrainManager {
 public:
-    explicit VoxelManager(const BlockType *blockDefs, ChunkGenerator *generator);
+    VoxelManager(World *parent, const BlockType *blockDefs, ChunkGenerator *generator);
     virtual ~VoxelManager();
 
 private:
