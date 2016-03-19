@@ -2,7 +2,7 @@
 #include "primitive.h"
 #include "../util/CommonIncludes.h"
 #include "../util/NewCylinderData.h"
-#include "../util/OBJ.h"
+#include "../util/obj.h"
 #include "../util/ResourceLoader.h"
 #include "../util/SphereData.h"
 #include <QGLWidget>
