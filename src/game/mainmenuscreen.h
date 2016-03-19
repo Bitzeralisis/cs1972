@@ -2,15 +2,12 @@
 
 #include "../engine/screen.h"
 
-namespace Minecraft {
+namespace Platformer {
 
-class MainMenu : public CS1972Engine::Screen {
+class MainMenuScreen : public CS1972Engine::Screen {
 public:
-    explicit MainMenu(CS1972Engine::Game *parent);
-    virtual ~MainMenu() { }
-
-private:
-    int m_state = 0;
+    explicit MainMenuScreen(CS1972Engine::Game *parent);
+    virtual ~MainMenuScreen();
 
 public:
     virtual void tick(float seconds) override;

@@ -30,10 +30,7 @@ World::~World() {
 }
 
 void World::useTerrain(TerrainManager *terrain) {
-    if (m_terrain)
-        m_terrain->m_parent = 0;
     m_terrain = terrain;
-    m_terrain->m_parent = this;
 }
 
 void World::addEntity(Entity *ent) {
@@ -75,9 +72,11 @@ void World::tick(float seconds) {
             if (!(*it)->m_collidesTerrain) continue;
             glm::vec3 pos0 = (*it)->m_startPosition;
             glm::vec3 pos1 = (*it)->m_position;
-            glm::vec3 pos2 = m_terrain->collideAABB((*it)->getAabb(), pos0, pos1);
-            (*it)->m_position = pos2;
-            (*it)->collideTerrain(pos2-pos1);
+            glm::vec3 pos2, n;
+            if (m_terrain->collideEntity(*it, pos0, pos1, pos2, n)) {
+                (*it)->m_position = pos2;
+                (*it)->collideTerrain(pos2-pos1, n);
+            }
         }
     }
 

@@ -1,75 +1,36 @@
                           cs.brown.edu/courses/cs1972
-                                   minecraft3
+                                  platformer2
                                     by ajlin
-                           due: 11:59 PM, 03/01/2016
+                           due: 11:59 PM, 04/15/2016
 
 
-                    GRASSDASH II: THE BEYOND OF DIMENSION V
-                  CHAPTER 0: A SONG OF SKY AND SORROW -SoSaS-
+                                 GRASSDASH III
 
-                                indev version 3
+1) CONTROLS. ___________________________________________________________________
 
-1) OVERVIEW. ___________________________________________________________________
+    MAIN MENU
 
-    The GRASSDASHER, hit by ROBOCYLINDER's d-beam, has been transported to a
-    strange BEYOND known only as DIMENSION V. To escape, the GRASSDASHER must
-    learn to harness the strange power of CHAOS and fight back the endless
-    hordes of CHAOS BEINGS. But DIMENSION V reveals secrets to the GRASSDASHER
-    that cylinder-kind was never meant to know. Will the GRASSDASHER be able to
-    escape? And how will the GRASSDASHER cope with those dark secrets?
+        1 > select level_easy.obj
+        2 > select level_hard.obj
+        3 > select level_island.obj
 
 
-2) HOW TO PLAY. ________________________________________________________________
+    GAME
 
-    Collect 4 CHAOS CUBES and survive CHAOS TIME to win. You lose if you lose
-    all your health.
+        mouse > look
+        WASD  > move
+        space > jump
+        shift > dash
 
-    Use the compass in the lower-right to find CHAOS CUBES.
-    
-    The CHAOS CLOCK will fill up faster the more CHAOS CUBES you collect; when
-    the CHAOS CLOCK fills up, CHAOS TIME will begin.
+        F1    > toggle 1st/3rd person camera
 
-    During CHAOS TIME, you will slowly lose health. Defeat CHAOS BEINGS in order
-    to exit CHAOS TIME.
-
-
-3) CONTROLS. ___________________________________________________________________
-
-    REGULAR CONTROLS
-
-        Mouse > Look
-        WASD  > Walk
-        Space > Jump
-
-    NORMAL ABILITIES
-
-        Normal abilities use energy (green gauge). If you use up all your
-        energy, you will become energy-locked (gray gauge) and cannot use normal
-        abilities until your energy fully recovers.
-
-        Left-click   > Attack. Hits one enemy. Low energy cost.
-        Right-click  > Dig or Place block. High energy cost. Places block when
-                       dirt meter (brown) is full; digs otherwise.
-        Shift (hold) > Dash mode. Low energy cost. Changes Walk to Dash, and
-                       Jump to Dash-jump.
-
-    CHAOS POWERS
-
-        Chaos powers use chaos energy (purple gauge). You gain more chaos powers
-        and max chaos energy as you collect CHAOS CUBES. Chaos energy only
-        regenerates if you do not use a chaos power for a short time.
-
-        Alt+Left-click  > CHAOS BOLT. Requires level 2. Shoots one projectile.
-                          Low chaos energy cost.
-        Alt+Right-click > CHAOS FLARE. Requires level 3. Shoots a chaos flare
-                          that fires multiple chaos bolts. High chaos energy
-                          cost.
+        1     > toggle ramp sliding prevention hack
+        2     > toggle ramp bouncing prevention hack
+        3     > toggle ramp deflection hack
+        9     > toggle no-clipping 3rd person camera
+        0     > reset player position
 
 
-4) ALEX'S IDOL CORNER. _________________________________________________________
+2) ALEX'S IDOL CORNER. _________________________________________________________
 
-    Bandai Namco has announced a renewal of the Aikatsu series named Aikatsu
-    Stars, thereby axeing about 20 characters from the original series and thus
-    making everyone butthurt. However, after watching the preview, I can certify
-    that Aikatsu Stars will be Probably At Least As Good As Aikatsu. Also Nijino
-    Yume is best idol.
+    BiBi's song, PSYCHIC FIRE, is so hot that it caused global warming.

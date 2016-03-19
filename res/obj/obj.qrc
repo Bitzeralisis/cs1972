@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/obj">
+        <file>level_easy.obj</file>
+        <file>level_hard.obj</file>
+        <file>level_island.obj</file>
+    </qresource>
+</RCC>

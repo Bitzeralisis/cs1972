@@ -12,6 +12,8 @@ uniform float fogNear;
 uniform float fogFar;
 
 uniform int useLight = 1;
+uniform int lightType = 1;
+uniform vec3 lightPosition = vec3(10.f, 10.f, 5.f);
 
 in vec4 normal_worldSpace;
 in vec4 position_worldSpace;
@@ -32,8 +34,18 @@ void main( ){
         fragColor += vec4(0.5f*base_color.xyz, base_color.w);
 
         // Diffuse lighting
-        vec4 vertexToLight = normalize(vec4(1.f, 1.f, 0.5f, 0.f));
-        float diffuseIntensity = max(0.f, dot(vertexToLight, normal_worldSpace));
+        vec4 vertexToLight = vec4(0.f);
+        float lightIntensity = 1.f;
+        if (lightType == 1) {
+            // Directional light
+            vertexToLight = normalize(vec4(lightPosition, 0.f));
+            lightIntensity = 1.f;
+        } else if (lightType == 2) {
+            // Point light
+            vertexToLight = normalize(vec4(lightPosition, 0.f) - position_worldSpace);
+            lightIntensity = min(10.f / distance(vec4(lightPosition, 0.f), position_worldSpace), 1.f);
+        }
+        float diffuseIntensity = max(0.f, lightIntensity * dot(vertexToLight, normal_worldSpace));
         fragColor += 0.5f*vec4(max(vec3(0.f), vec3(1.f) * base_color.xyz * diffuseIntensity), 0.f);
 
         // Specular lighting
