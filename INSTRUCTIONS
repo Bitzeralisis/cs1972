@@ -1,7 +1,7 @@
                           cs.brown.edu/courses/cs1972
-                                  platformer2
+                                  platformer3
                                     by ajlin
-                           due: 11:59 PM, 04/15/2016
+                           due: 11:59 PM, 04/22/2016
 
 
                                  GRASSDASH III
@@ -22,6 +22,9 @@
         space > jump
         shift > dash
 
+		R     > toggle pathfinding on/off
+		F     > raycast a new pathfinding destination, and toggle pathfinding on
+
         F1    > toggle 1st/3rd person camera
 
         1     > toggle ramp sliding prevention hack
@@ -33,4 +36,3 @@
 
 2) ALEX'S IDOL CORNER. _________________________________________________________
 
-    BiBi's song, PSYCHIC FIRE, is so hot that it caused global warming.

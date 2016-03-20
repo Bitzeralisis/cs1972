@@ -24,6 +24,21 @@ public:
     inline glm::vec3 at(const float t) const { return p + d*t; }
 };
 
+class line {
+public:
+    line(glm::vec3 point0, glm::vec3 point1)
+        : p0(point0)
+        , p1(point1)
+    { }
+
+public:
+    const glm::vec3 p0;
+    const glm::vec3 p1;
+
+public:
+    inline bool operator==(const csm::line &rhs) const { return p0 == rhs.p0 && p1 == rhs.p1; }
+};
+
 class triangle {
 public:
     triangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3)

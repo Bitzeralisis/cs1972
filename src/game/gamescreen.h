@@ -15,7 +15,7 @@ class PlayerEntity;
 
 class GameScreen : public CS1972Engine::Screen {
 public:
-    GameScreen(CS1972Engine::Game *parent, const char *map);
+    GameScreen(CS1972Engine::Game *parent, const char *map, const char *navmesh);
     virtual ~GameScreen();
 
 private:

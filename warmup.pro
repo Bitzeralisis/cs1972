@@ -77,8 +77,10 @@ RESOURCES += \
 
 OTHER_FILES += \
     res/obj/level_easy.obj \
+    res/obj/level_easy_navmesh.obj \
     res/obj/level_hard.obj \
     res/obj/level_island.obj \
+    res/obj/level_island_navmesh.obj \
     res/images/mainmenu.png
 
 DISTFILES += \

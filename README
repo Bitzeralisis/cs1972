@@ -1,95 +1,30 @@
                           cs.brown.edu/courses/cs1972
                                   platformer2
                                     by ajlin
-                           due: 11:59 PM, 04/15/2016
+                           due: 11:59 PM, 04/22/2016
 
 
                                  GRASSDASH III
 
 1) ANNOTATED RUBRIC. ___________________________________________________________
 
-COMPLETE/INCOMPLETE
+Please see src/engine/geometric/geometricmanager.*. The class takes in a
+navigation mesh and builds the pathfinding graph in its constructor.
 
-Retries used: NONE (2 extra retries left)
+Please see GeometricManager::nav_*. These methods perform the various steps
+required for string pulling. In general, games will use
+GeometricManager::nav_getPathFrom to get paths.
 
-[ ] Completed a design check
-[ ] Participated in playtesting
+Use [R] to toggle the navigation visualization.
 
-Common Engine Requirements
-========================================
-[ ] Able to load OBJ models using the support code
-[ ] Able to render OBJ models using the support code
-[ ] Stores only one copy of any single model (never load the same model twice)
-
-    GeometricManager takes in an OBJ, from which it creates a Primitive that it
-    uses to render.
-
-Geometric Engine Requirements
-========================================
-[ ] Analytic collision response
-    [ ] Collision response slides for at least N iterations of the sweep test in
-        the plane horizontal to collision (N = 4 is a good value)
-
-        Please see engine/geometric/geometricmanager.*, and
-        GeometricManager::collideEntity.
-
-    [ ] Collision routines return a struct containing the contact point and
-        normal
-
-        Please see csm/csm_collide.*. They already return the intersection point
-        and normal since platformer1, into two glm::vec3&s.
-
-    [ ] At least one hack from the lecture slides is implemented and documented
-        in code
-
-        I have implemented three hacks: ramp sliding, ramp bouncing, and ramp
-        deflection. These can be toggled with the [1] [2] [3] keys, and are all
-        on by default. For sliding and deflection, please see
-        engine/geometric/geometricmanager.*.  For bouncing, please see
-        game/entity/playerentity.*.
-
-Game Requirements
-========================================
-[ ] Collision debugger support code is not present
-[ ] Movement and view controls must be the same as warmup and minecraft
-    (including gravity and jumping)
-[ ] The camera must be able to use a 3rd-person view
-
-    Press F1 to toggle.
-
-[ ] The player must be drawn as an ellipsoid
-[ ] The game must have a menu screen that allows the player to choose between
-    different levels (different OBJ models)
-[ ] The player must be able to return to the menu screen without restarting the program
-
-    Press Enter to return to the main menu.
-
-Global requirements
-========================================
-[ ] Top-level handin directory contains a Qt project file, a README, and an
-    INSTRUCTIONS file
-[ ] README has a copy of the rubric with explanations of how to verify
-    requirements
-[ ] README documents any known bugs
-[ ] README indicates number of hours taken
-[ ] INSTRUCTIONS contains all information needed to play the game
-[ ] Engine and game code logically separated
-[ ] Engine code well designed
-[ ] Game code well designed
-[ ] Runs on department machines
-[ ] Does not crash
-[ ] Works at 800x600 and fullscreen resolutions
-[ ] Runs at 30+ UPS and never dips below 20 UPS unless indicated in the specific
-    handout
+Use [F] to raycast to set a new pathfinding destination point.
 
 
 2) KNOWN BUGS. _________________________________________________________________
 
-    The player can still clip through walls sometimes, especially when running
-    into corners made of a lot of triangles, and against acute angles.
 
 
 3) TIME SPENT. _________________________________________________________________
 
-    10 hours.
+   10 hours.
 

@@ -72,6 +72,16 @@ void PlayerEntity::draw() {
     graphics().shaderMTransform(m);
     graphics().drawSphere();
     graphics().shaderUseLight(true);
+
+    if (m_doPathfind) {
+        graphics().shaderColor(glm::vec4(1.f, 1.f, 0.f, 1.f));
+        m = glm::mat4(1.f);
+        m = glm::translate(m, m_pfPosition);
+        m = glm::scale(m, glm::vec3(1.f, 2.f, 1.f));
+        m = glm::translate(m, glm::vec3(0.f, 0.5f, 0.f));
+        graphics().shaderMTransform(m);
+        graphics().drawSphere();
+    }
 }
 
 void PlayerEntity::collideTerrain(const glm::vec3 &tv, const glm::vec3 &normal) {

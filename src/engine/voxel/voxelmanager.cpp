@@ -190,7 +190,7 @@ glm::vec3 VoxelManager::collideAABB(const csm::aabb &aabb, const glm::vec3 &pos0
     return p1;
 }
 
-bool VoxelManager::rayCast(const glm::vec3 &p, const glm::vec3 &v, float range, glm::vec3 &intersect, glm::vec3 &normal) const {
+float VoxelManager::rayCast(const glm::vec3 &p, const glm::vec3 &v, float range, glm::vec3 &intersect, glm::vec3 &normal) const {
     bool retval = false;
     float maxDist = std::numeric_limits<float>::infinity();
     glm::vec3 i, n;

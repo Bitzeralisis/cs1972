@@ -23,6 +23,9 @@ private:
     bool m_standing = false;
     int m_dashEffect = 0;
 
+    bool m_doPathfind = false;
+    glm::vec3 m_pfPosition = glm::vec3(0.1f, 0.f, 0.f);
+
     bool m_rampBounceHack = true; // Prevent bouncing off (gradual) ramps
 
 public:
@@ -34,6 +37,10 @@ public:
 
     VALACC_MUT(float,yaw)
     VALUE_ACCESSOR(int,dashEffect)
+
+    VALACC_MUT(bool,doPathfind)
+    VALACC_MUT(glm::vec3,pfPosition)
+
     VALACC_MUT(bool,rampBounceHack)
 
     virtual void tick(float seconds) override;

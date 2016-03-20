@@ -35,17 +35,17 @@ void MainMenuScreen::keyPressEvent(QKeyEvent *event) {
     switch (event->key()) {
     case Qt::Key_1:
         parent->popScreen();
-        parent->pushScreen(new GameScreen(parent, ":/obj/level_easy.obj"));
+        parent->pushScreen(new GameScreen(parent, ":/obj/level_easy.obj", ":/obj/level_easy_navmesh.obj"));
         delete this;
         break;
     case Qt::Key_2:
-        parent->popScreen();
-        parent->pushScreen(new GameScreen(parent, ":/obj/level_hard.obj"));
-        delete this;
+        //parent->popScreen();
+        //parent->pushScreen(new GameScreen(parent, ":/obj/level_hard.obj"));
+        //delete this;
         break;
     case Qt::Key_3:
         parent->popScreen();
-        parent->pushScreen(new GameScreen(parent, ":/obj/level_island.obj"));
+        parent->pushScreen(new GameScreen(parent, ":/obj/level_island.obj", ":/obj/level_island_navmesh.obj"));
         delete this;
         break;
     default:
