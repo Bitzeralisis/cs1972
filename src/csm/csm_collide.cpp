@@ -117,21 +117,21 @@ inline float collide_unitSphere_triangleVertices(const glm::vec3 &v0, const glm:
     if (0.f <= time && time < 1.f && time < bestTime) {
         bestTime = time;
         intersect = t.vertices[0];
-        normal = n;
+        normal = -1.f*n;
     }
 
     time = csm::raycast_ellipsoid(ray(t.vertices[1], v0-v1), e, i, n);
     if (0.f <= time && time < 1.f && time < bestTime) {
         bestTime = time;
         intersect = t.vertices[1];
-        normal = n;
+        normal = -1.f*n;
     }
 
     time = csm::raycast_ellipsoid(ray(t.vertices[2], v0-v1), e, i, n);
     if (0.f <= time && time < 1.f && time < bestTime) {
         bestTime = time;
         intersect = t.vertices[2];
-        normal = n;
+        normal = -1.f*n;
     }
 
     return (bestTime == std::numeric_limits<float>::infinity()) ? -1.f : bestTime;

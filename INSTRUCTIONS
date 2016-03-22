@@ -11,7 +11,6 @@
     MAIN MENU
 
         1 > select level_easy.obj
-        2 > select level_hard.obj
         3 > select level_island.obj
 
 
@@ -22,8 +21,8 @@
         space > jump
         shift > dash
 
-		R     > toggle pathfinding on/off
-		F     > raycast a new pathfinding destination, and toggle pathfinding on
+        R     > toggle pathfinding on/off
+        F     > raycast a new pathfinding destination, and toggle pathfinding on
 
         F1    > toggle 1st/3rd person camera
 
@@ -36,3 +35,6 @@
 
 2) ALEX'S IDOL CORNER. _________________________________________________________
 
+    There will be a panel about idols at Anime Boston on Friday, 10 AM sharp! I
+    can't make it, unfortunately, but if you're going to ABos early, I highly
+    recommend you go to this panel.
