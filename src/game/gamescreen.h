@@ -12,6 +12,7 @@ class GeometricManager;
 namespace Platformer {
 
 class PlayerEntity;
+class PlayerShotEntity;
 
 class GameScreen : public CS1972Engine::Screen {
 public:
@@ -26,6 +27,7 @@ private:
 
     bool m_tpcNoclip = true;
     bool m_keysHeld[8] = {false, false, false, false, false, false, false, false};
+    bool m_mouseHeld[2] = {false, false};
 
 public:
     virtual void tick(float seconds) override;

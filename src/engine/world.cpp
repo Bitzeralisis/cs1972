@@ -99,13 +99,13 @@ void World::tick(float seconds) {
     m_addEntities.clear();
 }
 
-void World::draw() {
+void World::draw(int pass) {
     // Draw terrain
     if (m_terrain)
-        m_terrain->draw();
+        m_terrain->draw(pass);
 
     // Draw all entities
     for (std::list<Entity *>::iterator it = m_entities.begin(); it != m_entities.end(); ++it) {
-        (*it)->draw();
+        (*it)->draw(pass);
     }
 }

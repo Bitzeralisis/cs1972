@@ -1,6 +1,8 @@
 #include "gamescreen.h"
 #include "mainmenuscreen.h"
+#include "entity/enemyentity.h"
 #include "entity/playerentity.h"
+#include "entity/playershotentity.h"
 #include "../engine/primitive.h"
 #include "../engine/geometric/geometricmanager.h"
 #include "../util/obj.h"
@@ -19,12 +21,16 @@ GameScreen::GameScreen(CS1972Engine::Game *parent, const char *map, const char *
 
     m_player = new PlayerEntity(glm::vec3(0.f, 1.f, 0.f));
     m_world.addEntity(m_player);
+    m_world.addEntity(new EnemyEntity(glm::vec3(0.f, 2.f, 0.f)));
     m_world.tick(0.f);
 
+    graphics().dr_init(parent->width(), parent->height());
     graphics().camera->position(m_player->position());
 }
 
 GameScreen::~GameScreen() {
+    graphics().dr_cleanup();
+
     m_world.deleteEntitiesOnDeconstruct(true);
 }
 
@@ -37,11 +43,25 @@ void GameScreen::tick(float seconds) {
     walk = glm::rotate(walk, graphics().camera->yaw(), glm::vec3(0.f, -1.f, 0.f));
     m_player->walk(seconds, walk, m_keysHeld[6], m_keysHeld[7]);
 
+    if (m_mouseHeld[0])
+        m_player->shoot(graphics().camera->lookVector());
+
     m_world.tick(seconds);
 }
 
+int m_renderMode = 1;
+
 void GameScreen::draw() {
-    graphics().useDefaultShader();
+    if (m_renderMode == 2) {
+        graphics().dr_bindGbuffer();
+        glClearColor(0.0, 0.0, 0.0, 0.0);
+        glClearDepth(1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        graphics().dr_useGbufferShader();
+    }
+
+    if (m_renderMode == 1)
+        graphics().useDefaultShader();
     graphics().camera->fovy((0.75f+0.125f*m_player->dashEffect()/5.f)*glm::half_pi<float>());
     graphics().camera->near(0.1f);
     graphics().camera->far(200.f);
@@ -53,17 +73,67 @@ void GameScreen::draw() {
     else
         graphics().camera->tpdistance(10.f);
     graphics().shaderPvTransformFromCamera();
-    graphics().shaderUseLight(true, 2, m_player->position() + glm::rotate(glm::vec3(0.75f, 1.f, 0.5f), m_player->yaw(), glm::vec3(0.f, -1.f, 0.f)));
+    if (m_renderMode == 1) {
+        graphics().shaderUseLight(true, 1, glm::vec3(0.5f, 1.f, 1.f));
+        graphics().shaderUseFog(true, 150.f, 200.f, glm::vec3(0.f));
+    }
     graphics().shaderColor(glm::vec4(1.f));
-    graphics().shaderUseFog(true, 150.f, 200.f, glm::vec3(0.f));
 
     m_player->yaw(graphics().camera->yaw());
 
-    m_world.draw();
+    // Draw pass 0 (lit geometry)
+    m_world.draw(0);
+
+    graphics().shaderUnbindTexture();
+    graphics().useShader(0);
+
+    if (m_renderMode == 2)
+        graphics().dr_unbindGbuffer();
+
+    if (m_renderMode == 2) {
+        graphics().dr_useDeferredShader();
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
+        glDisable(GL_DEPTH_TEST);
+        graphics().shaderPvTransformFromCamera();
+        graphics().uisOrthoTransform(0.f, 1.f, 1.f, 0.f);
+        graphics().shaderMTransform(glm::mat4(1.f));
+
+        // Draw pass 1 (lighting pass)
+        m_world.draw(1);
+
+        graphics().dr_lightDirectional(glm::vec3(0.5f, 1.f, 1.f), glm::vec3(0.5f));
+        graphics().dr_drawLight();
+        graphics().dr_lightAmbient(glm::vec3(0.25f));
+        graphics().dr_drawLight();
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_BLEND);
+        graphics().useShader(0);
+    }
+
+    graphics().useDefaultShader();
+    graphics().shaderPvTransformFromCamera();
+
+    // When using deferred shading, have to copy depth buffer from gbuffer to backbuffer
+    if (m_renderMode == 2)
+        graphics().dr_blitGbufferDepthToBb(parent->width(), parent->height());
+
+    // Draw pass 2 (non-lit geometry)
+    m_world.draw(2);
 
     // Draw the pathfinding line
-    glDisable(GL_DEPTH_TEST);
     if (m_player->doPathfind()) {
+        m_terrain->draw(3);
+
+        glDisable(GL_DEPTH_TEST);
         int length = 0;
         CS1972Engine::GeometricManager::NavPath *p = m_terrain->nav_getPathFrom(m_player->position()+glm::vec3(0.f, 1.4f, 0.f), m_player->pfPosition()+glm::vec3(0.f, 1.5f, 0.f));
         for (CS1972Engine::GeometricManager::NavPath *p2 = p; p2; p2 = p2->next)
@@ -84,14 +154,16 @@ void GameScreen::draw() {
         CS1972Engine::Primitive(length, 8*length*sizeof(GLfloat), v).drawArray(GL_LINE_STRIP, 0, length);
         delete v;
         delete p;
+        glEnable(GL_DEPTH_TEST);
     }
-    glEnable(GL_DEPTH_TEST);
 
-    graphics().shaderUnbindTexture();
     graphics().useShader(0);
 }
 
-void GameScreen::mousePressEvent(QMouseEvent *) { }
+void GameScreen::mousePressEvent(QMouseEvent *event) {
+    if (event->button() == Qt::LeftButton)
+        m_mouseHeld[0] = true;
+}
 
 void GameScreen::mouseMoveEvent(QMouseEvent *event) {
     int dx = event->x() - parent->width() / 2;
@@ -100,7 +172,10 @@ void GameScreen::mouseMoveEvent(QMouseEvent *event) {
     graphics().camera->pitch(graphics().camera->pitch() - (float)(dy)/500.f);
 }
 
-void GameScreen::mouseReleaseEvent(QMouseEvent *) { }
+void GameScreen::mouseReleaseEvent(QMouseEvent *event) {
+    if (event->button() == Qt::LeftButton)
+        m_mouseHeld[0] = false;
+}
 
 void GameScreen::wheelEvent(QWheelEvent *) { }
 
@@ -109,6 +184,10 @@ void GameScreen::keyPressEvent(QKeyEvent *event) {
     case Qt::Key_F1:
         if (graphics().camera->mode() == CS1972Engine::Camera::Mode::FIRST_PERSON) graphics().camera->mode(CS1972Engine::Camera::Mode::THIRD_PERSON);
         else graphics().camera->mode(CS1972Engine::Camera::Mode::FIRST_PERSON);
+        break;
+
+    case Qt::Key_F2:
+        m_renderMode = m_renderMode == 1 ? 2 : 1;
         break;
 
     case Qt::Key_1:
@@ -225,4 +304,7 @@ void GameScreen::keyReleaseEvent(QKeyEvent *event) {
     }
 }
 
-void GameScreen::resizeEvent(int, int) { }
+void GameScreen::resizeEvent(int w, int h) {
+    graphics().dr_cleanup();
+    graphics().dr_init(w, h);
+}

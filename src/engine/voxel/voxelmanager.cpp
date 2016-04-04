@@ -156,7 +156,7 @@ void VoxelManager::tick(float seconds) {
     }
 }
 
-void VoxelManager::draw() {
+void VoxelManager::draw(int) {
     for (std::list<Chunk *>::iterator it = m_chunks.begin(); it != m_chunks.end(); ++it) {
         if (!graphics().camera->frustumCullAABB((*it)->aabb())) {
             (*it)->draw();

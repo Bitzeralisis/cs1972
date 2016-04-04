@@ -31,7 +31,13 @@ public:
 private:
     GLuint m_defaultShader;
     GLuint m_uiShader;
+    GLuint m_gShader;
+    GLuint m_dShader;
     GLuint m_activeShader;
+
+    GLuint dr_fb;
+    GLuint dr_gPos, dr_gNorm, dr_gColor;
+    GLuint dr_gDepth;
 
     std::map<std::string, GLuint> m_textures;
     std::map<std::string, OBJ *> m_objs;
@@ -53,16 +59,15 @@ public:
     GLuint loadTextureFromQRC(const char *path);
     MAP_OPS(GLuint,Texture,texture)
 
-    void useDefaultShader();
-    void useUiShader();
-    void useShader(GLuint shader);
-
     // OBJ & Primitive helpers
     MAP_OPS(OBJ *,Obj,obj)
     Primitive *loadPrimitiveFromOBJ(OBJ *obj);
     MAP_OPS(Primitive *,Primitive,primitive)
 
+    void useShader(GLuint shader);
+
     // Default shader helpers
+    void useDefaultShader();
     void shaderPvTransformFromCamera();
     void shaderMTransform(glm::mat4 m);
     void shaderColor(glm::vec4 color);
@@ -75,6 +80,21 @@ public:
     void shaderUseLight(bool use);
     void shaderUseLight(bool use, int type, glm::vec3 pos);
 
+    // Deferred shader helpers
+    void dr_init(int width, int height);
+    void dr_cleanup();
+    void dr_bindGbuffer();
+    void dr_unbindGbuffer();
+    void dr_useGbufferShader();
+    void dr_blitGbufferDepthToBb(int width, int height);
+    VALUE_ACCESSOR(GLuint,gShader)
+    VALUE_ACCESSOR(GLuint,dShader)
+    void dr_useDeferredShader();
+    void dr_lightAmbient(glm::vec3 color);
+    void dr_lightDirectional(glm::vec3 dir, glm::vec3 color);
+    void dr_lightPoint(glm::vec3 dir, glm::vec3 color, glm::vec3 atten);
+    void dr_drawLight();
+
     // Draw some primitives from the ones included with this object
     void drawQuad();
     void drawBox();
@@ -82,6 +102,7 @@ public:
     void drawSphere();
 
     // Ui shader helpers
+    void useUiShader();
     void uisOrthoTransform(float left, float right, float bottom, float top);
     void uisColor(glm::vec4 color);
     void uisQuad(float left, float right, float bottom, float top);

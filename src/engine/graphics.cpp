@@ -33,6 +33,8 @@ void Graphics::initializeGL() {
     // Load default shader
     m_defaultShader = ResourceLoader::loadShaders(":/shaders/shader.vert", ":/shaders/shader.frag");
     m_uiShader = ResourceLoader::loadShaders(":/shaders/2d.vert", ":/shaders/2d.frag");
+    m_gShader = ResourceLoader::loadShaders(":/shaders/gbuffer.vert", ":/shaders/gbuffer.frag");
+    m_dShader = ResourceLoader::loadShaders(":/shaders/deferred.vert", ":/shaders/deferred.frag");
 
     // Make some primitives or something
     int quadNumVertices = 6;
@@ -123,8 +125,8 @@ GLuint Graphics::loadTextureFromQRC(const char *path) {
     return tex;
 }
 
-void Graphics::useDefaultShader() {
-    useShader(m_defaultShader);
+Primitive *Graphics::loadPrimitiveFromOBJ(OBJ *obj) {
+    return new Primitive(obj->vertexCount, obj->vertexCount*8*sizeof(GLfloat), obj->vboData.data());
 }
 
 void Graphics::useShader(GLuint shader) {
@@ -132,8 +134,8 @@ void Graphics::useShader(GLuint shader) {
     glUseProgram(m_activeShader);
 }
 
-Primitive *Graphics::loadPrimitiveFromOBJ(OBJ *obj) {
-    return new Primitive(obj->vertexCount, obj->vertexCount*8*sizeof(GLfloat), obj->vboData.data());
+void Graphics::useDefaultShader() {
+    useShader(m_defaultShader);
 }
 
 void Graphics::shaderPvTransformFromCamera() {

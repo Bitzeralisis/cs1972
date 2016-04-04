@@ -68,11 +68,11 @@ public:
     NavFunnel *nav_getFunnelFrom(glm::vec3 p0, glm::vec3 p1);
     NavPath *nav_getPathFrom(glm::vec3 p0, glm::vec3 p1);
 
-    virtual void tick(float seconds);
-    virtual void draw();
-    virtual bool collideEntity(const CS1972Engine::Entity *ent, const glm::vec3 &pos0, const glm::vec3 &pos1, glm::vec3 &pos2, glm::vec3 &normal) const;
+    virtual void tick(float seconds) override;
+    virtual void draw(int pass) override;
+    virtual bool collideEntity(const CS1972Engine::Entity *ent, const glm::vec3 &pos0, const glm::vec3 &pos1, glm::vec3 &pos2, glm::vec3 &normal) const override;
     virtual glm::vec3 collideAABB(const csm::aabb &aabb, const glm::vec3 &pos0, const glm::vec3 &pos1) const { return pos1; }
-    virtual float rayCast(const glm::vec3 &p, const glm::vec3 &v, float range, glm::vec3 &intersect, glm::vec3 &normal) const;
+    virtual float rayCast(const glm::vec3 &p, const glm::vec3 &v, float range, glm::vec3 &intersect, glm::vec3 &normal) const override;
 };
 
 }

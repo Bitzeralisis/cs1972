@@ -33,7 +33,10 @@ SOURCES += \
     src/game/gamescreen.cpp \
     src/engine/geometric/geometricmanager.cpp \
     src/game/entity/playerentity.cpp \
-    src/game/mainmenuscreen.cpp
+    src/game/mainmenuscreen.cpp \
+    src/engine/graphics_dr.cpp \
+    src/game/entity/playershotentity.cpp \
+    src/game/entity/enemyentity.cpp
 
 HEADERS += \
     libs/glew-1.10.0/include/GL/glew.h \
@@ -65,7 +68,10 @@ HEADERS += \
     src/game/gamescreen.h \
     src/engine/geometric/geometricmanager.h \
     src/game/entity/playerentity.h \
-    src/game/mainmenuscreen.h
+    src/game/mainmenuscreen.h \
+    src/game/entity/platformerentity.h \
+    src/game/entity/playershotentity.h \
+    src/game/entity/enemyentity.h
 
 
 FORMS += src/mainwindow.ui
@@ -87,4 +93,8 @@ DISTFILES += \
     res/shaders/shader.vert \
     res/shaders/shader.frag \
     res/shaders/2d.vert \
-    res/shaders/2d.frag
+    res/shaders/2d.frag \
+    res/shaders/gbuffer.vert \
+    res/shaders/gbuffer.frag \
+    res/shaders/deferred.vert \
+    res/shaders/deferred.frag

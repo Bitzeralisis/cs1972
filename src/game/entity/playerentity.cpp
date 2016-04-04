@@ -1,8 +1,11 @@
 #include "playerentity.h"
+#include "playershotentity.h"
 
 using namespace Platformer;
 
-PlayerEntity::PlayerEntity(glm::vec3 pos) {
+PlayerEntity::PlayerEntity(glm::vec3 pos)
+    : PlatformerEntity(Type::PLAYER)
+{
     m_position = pos;
     m_accel = GRAVITY_ACCEL;
 }
@@ -47,40 +50,51 @@ void PlayerEntity::walk(float, glm::vec3 walk, bool dashing, bool jumping) {
         --m_dashEffect;
 }
 
+bool PlayerEntity::shoot(glm::vec3 dir) {
+    if (m_shotCd <= 0.f) {
+        m_shotCd = SHOT_CD;
+        PlayerShotEntity *shot = new PlayerShotEntity(m_position + glm::vec3(0.f, 1.5f, 0.f), glm::normalize(dir)*SHOT_SPEED);
+        parent()->addEntity(shot);
+        return true;
+    }
+    return false;
+}
+
 void PlayerEntity::tick(float seconds) {
+    if (m_shotCd > 0.f)
+        m_shotCd -= seconds;
     tickPhysicsDiscrete(seconds);
     m_standing = false;
 }
 
-void PlayerEntity::draw() {
-    graphics().shaderUseTexture(false);
-    graphics().shaderColor(glm::vec4(0.f, 1.f, 0.f, 1.f));
-    glm::mat4 m(1.f);
-    m = glm::translate(m, m_position);
-    m = glm::scale(m, glm::vec3(1.f, 2.f, 1.f));
-    m = glm::translate(m, glm::vec3(0.f, 0.5f, 0.f));
-    graphics().shaderMTransform(m);
-    graphics().drawSphere();
-
-    graphics().shaderUseLight(false);
-    graphics().shaderColor(glm::vec4(1.f));
-    m = glm::mat4(1.f);
-    m = glm::translate(m, m_position);
-    m = glm::rotate(m, m_yaw, glm::vec3(0.f, -1.f, 0.f));
-    m = glm::translate(m, glm::vec3(0.75f, 1.0f, 0.5f));
-    m = glm::scale(m, glm::vec3(0.25f));
-    graphics().shaderMTransform(m);
-    graphics().drawSphere();
-    graphics().shaderUseLight(true);
-
-    if (m_doPathfind) {
-        graphics().shaderColor(glm::vec4(1.f, 1.f, 0.f, 1.f));
-        m = glm::mat4(1.f);
-        m = glm::translate(m, m_pfPosition);
+void PlayerEntity::draw(int pass) {
+    switch (pass) {
+    case 0: {
+        graphics().shaderUseTexture(false);
+        graphics().shaderColor(glm::vec4(0.f, 1.f, 0.f, 1.f));
+        glm::mat4 m(1.f);
+        m = glm::translate(m, m_position);
         m = glm::scale(m, glm::vec3(1.f, 2.f, 1.f));
         m = glm::translate(m, glm::vec3(0.f, 0.5f, 0.f));
         graphics().shaderMTransform(m);
         graphics().drawSphere();
+
+        if (m_doPathfind) {
+            graphics().shaderColor(glm::vec4(1.f, 1.f, 0.f, 1.f));
+            m = glm::mat4(1.f);
+            m = glm::translate(m, m_pfPosition);
+            m = glm::scale(m, glm::vec3(1.f, 2.f, 1.f));
+            m = glm::translate(m, glm::vec3(0.f, 0.5f, 0.f));
+            graphics().shaderMTransform(m);
+            graphics().drawSphere();
+        }
+        break;
+    }
+
+    case 1:
+        graphics().dr_lightPoint(m_position + glm::vec3(0.f, 1.f, 0.f), glm::vec3(0.5f), glm::vec3(1.f, 0.01f, 0.0003f));
+        graphics().dr_drawLight();
+        break;
     }
 }
 
@@ -93,6 +107,6 @@ void PlayerEntity::collideTerrain(const glm::vec3 &tv, const glm::vec3 &normal) 
     }
 }
 
-void PlayerEntity::collide(glm::vec3 mtv, const Entity *other) {
-
+void PlayerEntity::collide(glm::vec3 mtv, const PlatformerEntity *other) {
+    m_position -= mtv;
 }

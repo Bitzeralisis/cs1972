@@ -37,7 +37,7 @@ public:
     void deleteEntity(Entity *ent); // Remove ent from the world and also deallocate it
 
     void tick(float seconds);
-    void draw();
+    void draw(int pass);
 };
 
 }

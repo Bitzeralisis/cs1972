@@ -193,24 +193,32 @@ GeometricManager::NavPath *GeometricManager::nav_getPathFrom(glm::vec3 p0, glm::
 
 void GeometricManager::tick(float seconds) { }
 
-void GeometricManager::draw() {
-    graphics().shaderColor(glm::vec4(1.f));
-    graphics().shaderUseTexture(false);
-    graphics().shaderMTransform(glm::mat4(1.f));
-    m_primitive->drawArray();
+void GeometricManager::draw(int pass) {
+    switch (pass) {
+    case 0:
+        graphics().shaderColor(glm::vec4(1.f));
+        graphics().shaderUseTexture(false);
+        graphics().shaderMTransform(glm::mat4(1.f));
+        m_primitive->drawArray();
+        break;
 
-    if (m_nav_render) {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-        glDisable(GL_DEPTH_TEST);
-        glDisable(GL_CULL_FACE);
-        graphics().shaderUseLight(false);
-        graphics().shaderColor(glm::vec4(1.f, 0.f, 1.f, 0.2f));
-        m_navmeshPrimitive->drawArray();
-        graphics().shaderUseLight(true);
-        glEnable(GL_CULL_FACE);
-        glEnable(GL_DEPTH_TEST);
-        glDisable(GL_BLEND);
+    case 3:
+        if (m_nav_render) {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+            glDisable(GL_DEPTH_TEST);
+            glDisable(GL_CULL_FACE);
+            graphics().shaderUseTexture(false);
+            graphics().shaderUseLight(false);
+            graphics().shaderColor(glm::vec4(1.f, 0.f, 1.f, 0.2f));
+            graphics().shaderMTransform(glm::mat4(1.f));
+            m_navmeshPrimitive->drawArray();
+            graphics().shaderUseLight(true);
+            glEnable(GL_CULL_FACE);
+            glEnable(GL_DEPTH_TEST);
+            glDisable(GL_BLEND);
+        }
+        break;
     }
 }
 
