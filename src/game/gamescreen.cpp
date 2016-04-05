@@ -1,5 +1,6 @@
 #include "gamescreen.h"
 #include "mainmenuscreen.h"
+#include "entity/enemybossentity.h"
 #include "entity/enemyentity.h"
 #include "entity/playerentity.h"
 #include "entity/playershotentity.h"
@@ -20,8 +21,9 @@ GameScreen::GameScreen(CS1972Engine::Game *parent, const char *map, const char *
     m_world.useTerrain(m_terrain);
 
     m_player = new PlayerEntity(glm::vec3(0.f, 1.f, 0.f));
+    m_boss = new EnemyBossEntity(m_player);
     m_world.addEntity(m_player);
-    m_world.addEntity(new EnemyEntity(glm::vec3(0.f, 2.f, 0.f)));
+    m_world.addEntity(m_boss);
     m_world.tick(0.f);
 
     graphics().dr_init(parent->width(), parent->height());
@@ -29,27 +31,41 @@ GameScreen::GameScreen(CS1972Engine::Game *parent, const char *map, const char *
 }
 
 GameScreen::~GameScreen() {
+    delete m_boss;
+
     graphics().dr_cleanup();
 
     m_world.deleteEntitiesOnDeconstruct(true);
 }
 
 void GameScreen::tick(float seconds) {
-    glm::vec3 walk(0.f);
-    if (m_keysHeld[0]) walk.x += 1.f;
-    if (m_keysHeld[1]) walk.z -= 1.f;
-    if (m_keysHeld[2]) walk.x -= 1.f;
-    if (m_keysHeld[3]) walk.z += 1.f;
-    walk = glm::rotate(walk, graphics().camera->yaw(), glm::vec3(0.f, -1.f, 0.f));
-    m_player->walk(seconds, walk, m_keysHeld[6], m_keysHeld[7]);
+    // Check win/loss conditions
+    if (m_player->health() <= 0.f)
+        m_gameOver = 2;
+    if (m_boss->health() <= 0.f)
+        m_gameOver = 1;
 
-    if (m_mouseHeld[0])
-        m_player->shoot(graphics().camera->lookVector());
+    if (m_gameOver == 2)
+        graphics().camera->pitch(graphics().camera->pitch()+2.f*seconds);
+
+    if (!m_gameOver) {
+        glm::vec3 walk(0.f);
+        if (m_keysHeld[0]) walk.x += 1.f;
+        if (m_keysHeld[1]) walk.z -= 1.f;
+        if (m_keysHeld[2]) walk.x -= 1.f;
+        if (m_keysHeld[3]) walk.z += 1.f;
+        walk = glm::rotate(walk, graphics().camera->yaw(), glm::vec3(0.f, -1.f, 0.f));
+        m_player->walk(seconds, walk, m_keysHeld[6], m_keysHeld[7]);
+
+        if (m_mouseHeld[0])
+            m_player->shoot(graphics().camera->lookVector());
+    } else
+        m_player->walk(seconds, glm::vec3(0.f), false, false);
 
     m_world.tick(seconds);
 }
 
-int m_renderMode = 1;
+int m_renderMode = 2;
 
 void GameScreen::draw() {
     if (m_renderMode == 2) {
@@ -96,7 +112,7 @@ void GameScreen::draw() {
         glBlendFunc(GL_ONE, GL_ONE);
         glDisable(GL_DEPTH_TEST);
         graphics().shaderPvTransformFromCamera();
-        graphics().uisOrthoTransform(0.f, 1.f, 1.f, 0.f);
+        graphics().uis_orthoTransform(0.f, 1.f, 1.f, 0.f);
         graphics().shaderMTransform(glm::mat4(1.f));
 
         // Draw pass 1 (lighting pass)
@@ -127,37 +143,92 @@ void GameScreen::draw() {
         graphics().dr_blitGbufferDepthToBb(parent->width(), parent->height());
 
     // Draw pass 2 (non-lit geometry)
+    graphics().shaderUseLight(false);
     m_world.draw(2);
 
     // Draw the pathfinding line
     if (m_player->doPathfind()) {
         m_terrain->draw(3);
 
-        glDisable(GL_DEPTH_TEST);
-        int length = 0;
         CS1972Engine::GeometricManager::NavPath *p = m_terrain->nav_getPathFrom(m_player->position()+glm::vec3(0.f, 1.4f, 0.f), m_player->pfPosition()+glm::vec3(0.f, 1.5f, 0.f));
-        for (CS1972Engine::GeometricManager::NavPath *p2 = p; p2; p2 = p2->next)
-            ++length;
-        GLfloat *v = new GLfloat[8*length];
-        for (int i = 0; p; ++i) {
-            v[8*i  ] = p->p.x;
-            v[8*i+1] = p->p.y;
-            v[8*i+2] = p->p.z;
-            p = p->next;
+        if (p) {
+            glDisable(GL_DEPTH_TEST);
+            int length = 0;
+            for (CS1972Engine::GeometricManager::NavPath *p2 = p; p2; p2 = p2->next)
+                ++length;
+            GLfloat *v = new GLfloat[8*length];
+            for (int i = 0; p; ++i) {
+                v[8*i  ] = p->p.x;
+                v[8*i+1] = p->p.y;
+                v[8*i+2] = p->p.z;
+                p = p->next;
+            }
+            glLineWidth(8.f);
+            graphics().shaderUseLight(false);
+            graphics().shaderUseFog(false);
+            graphics().shaderColor(glm::vec4(1.f, 0.f, 1.f, 1.f));
+            graphics().shaderUseTexture(false);
+            graphics().shaderMTransform(glm::mat4(1.f));
+            CS1972Engine::Primitive(length, 8*length*sizeof(GLfloat), v).drawArray(GL_LINE_STRIP, 0, length);
+            delete v;
+            delete p;
+            glEnable(GL_DEPTH_TEST);
         }
-        glLineWidth(8.f);
-        graphics().shaderUseLight(false);
-        graphics().shaderUseFog(false);
-        graphics().shaderColor(glm::vec4(1.f, 0.f, 1.f, 1.f));
-        graphics().shaderUseTexture(false);
-        graphics().shaderMTransform(glm::mat4(1.f));
-        CS1972Engine::Primitive(length, 8*length*sizeof(GLfloat), v).drawArray(GL_LINE_STRIP, 0, length);
-        delete v;
-        delete p;
-        glEnable(GL_DEPTH_TEST);
     }
 
     graphics().useShader(0);
+
+    // Draw UI
+    {
+        glDisable(GL_DEPTH_TEST);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        float W = parent->width();
+        float H = parent->height();
+        float hW = 0.5f*W;
+        float hH = 0.5f*H;
+        graphics().uis_useShader();
+        graphics().uis_orthoTransform(0.f, parent->width(), parent->height(), 0.f);
+
+        // Draw pass 4 - orthographic components
+        m_world.draw(4);
+
+        // Draw health
+        graphics().shaderUseTexture(false);
+        graphics().shaderColor(glm::vec4(1.f, 0.f, 0.f, 1.f));
+        for (int i = m_player->health(); i > 0; --i) {
+            graphics().uis_quad(40.f*i-20.f, 40.f*i+10.f, H-50.f, H-20.f);
+        }
+
+        // Draw recticle
+        graphics().shaderUseTexture(false);
+        graphics().shaderColor(glm::vec4(1.f));
+        glm::mat4 m(1.f);
+        m = glm::translate(m, glm::vec3(hW-5.f, hH-5.f, 0.f));
+        m = glm::scale(m, glm::vec3(10.f));
+        graphics().shaderMTransform(m);
+        graphics().getPrimitive("uis_triangle")->drawArray(GL_LINE_LOOP, 0, 3);
+
+        // Win/loss graphics
+        if (m_gameOver == 1) {
+            graphics().uis_color(glm::vec4(1.f));
+            graphics().shaderUseTexture(true);
+            graphics().shaderBindTexture("win");
+            graphics().uis_quad(hW-400.f, hW+400.f, hH-100.f, hH+100.f);
+        } else if (m_gameOver == 2) {
+            graphics().shaderUseTexture(false);
+            graphics().uis_color(glm::vec4(0.5f, 0.f, 0.f, 0.5f));
+            graphics().uis_quad(0.f, W, 0.f, H);
+
+            graphics().uis_color(glm::vec4(1.f));
+            graphics().shaderUseTexture(true);
+            graphics().shaderBindTexture("lose");
+            graphics().uis_quad(hW-400.f, hW+400.f, hH-100.f, hH+100.f);
+        }
+
+        graphics().useShader(0);
+    }
 }
 
 void GameScreen::mousePressEvent(QMouseEvent *event) {
@@ -166,6 +237,9 @@ void GameScreen::mousePressEvent(QMouseEvent *event) {
 }
 
 void GameScreen::mouseMoveEvent(QMouseEvent *event) {
+    if (m_gameOver)
+        return;
+
     int dx = event->x() - parent->width() / 2;
     int dy = event->y() - parent->height() / 2;
     graphics().camera->yaw(graphics().camera->yaw() + (float)(dx)/500.f);
@@ -264,9 +338,11 @@ void GameScreen::keyPressEvent(QKeyEvent *event) {
         break;
 
     case Qt::Key_Return:
-        parent->popScreen();
-        parent->pushScreen(new MainMenuScreen(parent));
-        delete this;
+        if (m_gameOver) {
+            parent->popScreen();
+            parent->pushScreen(new MainMenuScreen(parent));
+            delete this;
+        }
         break;
     default:
         break;

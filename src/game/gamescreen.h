@@ -11,8 +11,8 @@ class GeometricManager;
 
 namespace Platformer {
 
+class EnemyBossEntity;
 class PlayerEntity;
-class PlayerShotEntity;
 
 class GameScreen : public CS1972Engine::Screen {
 public:
@@ -23,7 +23,9 @@ private:
     CS1972Engine::World m_world;
     CS1972Engine::GeometricManager *m_terrain;
 
+    int m_gameOver = 0;
     PlayerEntity *m_player;
+    EnemyBossEntity *m_boss;
 
     bool m_tpcNoclip = true;
     bool m_keysHeld[8] = {false, false, false, false, false, false, false, false};

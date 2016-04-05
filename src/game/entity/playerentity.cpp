@@ -53,8 +53,19 @@ void PlayerEntity::walk(float, glm::vec3 walk, bool dashing, bool jumping) {
 bool PlayerEntity::shoot(glm::vec3 dir) {
     if (m_shotCd <= 0.f) {
         m_shotCd = SHOT_CD;
-        PlayerShotEntity *shot = new PlayerShotEntity(m_position + glm::vec3(0.f, 1.5f, 0.f), glm::normalize(dir)*SHOT_SPEED);
+        PlayerShotEntity *shot = new PlayerShotEntity(m_position + glm::vec3(0.f, 1.5f, 0.f) + graphics().camera->lookVector(), glm::normalize(dir)*SHOT_SPEED);
         parent()->addEntity(shot);
+        return true;
+    }
+    return false;
+}
+
+bool PlayerEntity::takeDamage(float damage) {
+    if (m_iframe <= 0.f) {
+        m_health -= damage;
+        if (m_health <= 0.f)
+            m_health = 0.f;
+        m_iframe = IFRAMES;
         return true;
     }
     return false;
@@ -63,6 +74,11 @@ bool PlayerEntity::shoot(glm::vec3 dir) {
 void PlayerEntity::tick(float seconds) {
     if (m_shotCd > 0.f)
         m_shotCd -= seconds;
+
+    m_iframe -= seconds;
+    if (m_iframe < 0.f)
+        m_iframe = 0.f;
+
     tickPhysicsDiscrete(seconds);
     m_standing = false;
 }
@@ -108,5 +124,17 @@ void PlayerEntity::collideTerrain(const glm::vec3 &tv, const glm::vec3 &normal) 
 }
 
 void PlayerEntity::collide(glm::vec3 mtv, const PlatformerEntity *other) {
-    m_position -= mtv;
+    if (other->type() == Type::ENEMY || other->type() == Type::ENEMY_ATTACK) {
+        if (takeDamage(1.f)) {
+            // Launched when hit by enemy
+            m_velocity = glm::vec3(mtv.x, 0.f, mtv.z);
+            if (m_velocity == glm::vec3(0.f)) {
+                float dir = 2.f*glm::pi<float>() * (float)rand2() / RAND2_MAX;
+                m_velocity = glm::vec3(glm::cos(dir), 0.f, glm::sin(dir));
+            }
+            m_velocity = 20.f*glm::normalize(m_velocity);
+            m_velocity.y = 5.f;
+        }
+    } else
+        m_position -= mtv;
 }

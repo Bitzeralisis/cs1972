@@ -80,6 +80,11 @@ glm::mat4 Camera::perspectiveMatrix() const {
     return glm::perspective(m_fovy, m_aspect, m_near, m_far);
 }
 
+glm::vec3 Camera::orthoProject(glm::vec3 pos) const {
+    glm::vec4 retval = perspectiveMatrix() * viewMatrix() * glm::vec4(pos.x, pos.y, pos.z, 1.f);
+    return glm::vec3(retval.x, retval.y, retval.z) / retval.w;
+}
+
 bool Camera::frustumCullAABB(const csm::aabb& aabb) const {
     glm::mat4 frust = perspectiveMatrix() * viewMatrix();
     glm::vec4 rows[4] = {

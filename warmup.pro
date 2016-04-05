@@ -36,7 +36,9 @@ SOURCES += \
     src/game/mainmenuscreen.cpp \
     src/engine/graphics_dr.cpp \
     src/game/entity/playershotentity.cpp \
-    src/game/entity/enemyentity.cpp
+    src/game/entity/enemyentity.cpp \
+    src/game/entity/enemybossentity.cpp \
+    src/game/entity/enemyshotentity.cpp
 
 HEADERS += \
     libs/glew-1.10.0/include/GL/glew.h \
@@ -71,7 +73,9 @@ HEADERS += \
     src/game/mainmenuscreen.h \
     src/game/entity/platformerentity.h \
     src/game/entity/playershotentity.h \
-    src/game/entity/enemyentity.h
+    src/game/entity/enemyentity.h \
+    src/game/entity/enemybossentity.h \
+    src/game/entity/enemyshotentity.h
 
 
 FORMS += src/mainwindow.ui
@@ -87,7 +91,9 @@ OTHER_FILES += \
     res/obj/level_hard.obj \
     res/obj/level_island.obj \
     res/obj/level_island_navmesh.obj \
-    res/images/mainmenu.png
+    res/images/mainmenu.png \
+    res/images/win.png \
+    res/images/lose.png
 
 DISTFILES += \
     res/shaders/shader.vert \

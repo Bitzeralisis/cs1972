@@ -122,7 +122,7 @@ GeometricManager::NavPath *GeometricManager::nav_getPathFrom(glm::vec3 p0, glm::
     if (funnel == 0)
         return 0;
 
-    NavPath *retval = new NavPath(funnel->portal.p0);
+    NavPath *retval = new NavPath(glm::vec3(0.f));
     NavPath *path = retval;
 
     int apexSide = 0;
@@ -187,6 +187,12 @@ GeometricManager::NavPath *GeometricManager::nav_getPathFrom(glm::vec3 p0, glm::
             rightF = tryF;
         }
     }
+
+    // The first item in the path is a dummy head pointer, so get rid of it
+    NavPath *head = retval;
+    retval = retval->next;
+    head->next = 0;
+    delete head;
 
     return retval;
 }

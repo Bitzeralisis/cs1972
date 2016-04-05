@@ -27,13 +27,13 @@ void PlayerShotEntity::draw(int pass) {
 
     case 2:
         graphics().shaderUseLight(false);
-        graphics().shaderColor(glm::vec4(1.f, 0.f, 1.f, 1.f));
+        graphics().shaderColor(glm::vec4(1.5f, 0.f, 1.5f, 1.f));
         glm::mat4 m(1.f);
         m = glm::translate(m, m_position);
-        m = glm::scale(m, glm::vec3(0.25f));
+        m = glm::rotate(m, 4.f*m_life, glm::vec3(1.f));
+        m = glm::scale(m, glm::vec3(0.4f));
         graphics().shaderMTransform(m);
-        graphics().drawSphere();
-        graphics().shaderUseLight(true);
+        graphics().drawBox();
         break;
     }
 }
@@ -42,4 +42,7 @@ void PlayerShotEntity::collideTerrain(const glm::vec3&, const glm::vec3&) {
     parent()->deleteEntity(this);
 }
 
-void PlayerShotEntity::collide(glm::vec3 mtv, const PlatformerEntity *other) { }
+void PlayerShotEntity::collide(glm::vec3, const PlatformerEntity *other) {
+    if (other->type() == Type::ENEMY)
+        parent()->deleteEntity(this);
+}

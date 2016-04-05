@@ -49,6 +49,11 @@ private:
     Primitive *m_pSphere;
     Primitive *m_uiQuad;
 
+    float m_uis_left;
+    float m_uis_right;
+    float m_uis_bottom;
+    float m_uis_top;
+
 public:
     Camera *camera;
 
@@ -87,8 +92,6 @@ public:
     void dr_unbindGbuffer();
     void dr_useGbufferShader();
     void dr_blitGbufferDepthToBb(int width, int height);
-    VALUE_ACCESSOR(GLuint,gShader)
-    VALUE_ACCESSOR(GLuint,dShader)
     void dr_useDeferredShader();
     void dr_lightAmbient(glm::vec3 color);
     void dr_lightDirectional(glm::vec3 dir, glm::vec3 color);
@@ -102,10 +105,11 @@ public:
     void drawSphere();
 
     // Ui shader helpers
-    void useUiShader();
-    void uisOrthoTransform(float left, float right, float bottom, float top);
-    void uisColor(glm::vec4 color);
-    void uisQuad(float left, float right, float bottom, float top);
+    void uis_useShader();
+    void uis_orthoTransform(float left, float right, float bottom, float top);
+    void uis_color(glm::vec4 color);
+    void uis_quad(float left, float right, float bottom, float top);
+    glm::vec3 uis_cameraSpaceToUisSpace(glm::vec3 pos);
 };
 
 }

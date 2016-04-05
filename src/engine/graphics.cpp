@@ -209,24 +209,35 @@ void Graphics::drawSphere() {
     m_pSphere->drawArray();
 }
 
-void Graphics::useUiShader() {
+void Graphics::uis_useShader() {
     useShader(m_uiShader);
 }
 
-void Graphics::uisOrthoTransform(float left, float right, float bottom, float top) {
+void Graphics::uis_orthoTransform(float left, float right, float bottom, float top) {
+    m_uis_left = left;
+    m_uis_right = right;
+    m_uis_bottom = bottom;
+    m_uis_top = top;
     glm::mat4 m = glm::ortho(left, right, bottom, top, -1.f, 1.f);
     glUniformMatrix4fv(glGetUniformLocation(m_activeShader, "p"), 1, GL_FALSE, glm::value_ptr(m));
 }
 
-void Graphics::uisColor(glm::vec4 color) {
+void Graphics::uis_color(glm::vec4 color) {
     glUniform4fv(glGetUniformLocation(m_activeShader, "color"), 1, glm::value_ptr(color));
 }
 
-void Graphics::uisQuad(float left, float right, float bottom, float top) {
+void Graphics::uis_quad(float left, float right, float bottom, float top) {
     glm::mat4 m(1.f);
     m = glm::translate(m, glm::vec3(left, bottom, 0.f));
     m = glm::scale(m, glm::vec3(right-left, top-bottom, 1.f));
 
     shaderMTransform(m);
     m_uiQuad->drawArray();
+}
+
+glm::vec3 Graphics::uis_cameraSpaceToUisSpace(glm::vec3 pos) {
+    glm::vec3 retval = camera->orthoProject(pos) * 0.5f + glm::vec3(0.5f);
+    retval *= glm::vec3(m_uis_right-m_uis_left, m_uis_top-m_uis_bottom, 1.f);
+    retval += glm::vec3(m_uis_left, m_uis_bottom, 0.f);
+    return retval;
 }

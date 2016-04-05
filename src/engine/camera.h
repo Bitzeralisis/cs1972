@@ -54,6 +54,7 @@ public:
     glm::mat4 viewMatrix() const;
     glm::mat4 perspectiveMatrix() const;
 
+    glm::vec3 orthoProject(glm::vec3 pos) const;
     bool frustumCullAABB(const csm::aabb& aabb) const;
 };
 

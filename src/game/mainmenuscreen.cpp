@@ -14,13 +14,13 @@ MainMenuScreen::~MainMenuScreen() { }
 void MainMenuScreen::tick(float) { }
 
 void MainMenuScreen::draw() {
-    graphics().useUiShader();
-    graphics().uisOrthoTransform(0.f, parent->width(), parent->height(), 0.f);
+    graphics().uis_useShader();
+    graphics().uis_orthoTransform(0.f, parent->width(), parent->height(), 0.f);
 
-    graphics().uisColor(glm::vec4(1.f));
+    graphics().uis_color(glm::vec4(1.f));
     graphics().shaderUseTexture(true);
     graphics().shaderBindTexture("mainmenu");
-    graphics().uisQuad(0.f, 256.f, parent->height()-64.f, parent->height());
+    graphics().uis_quad(0.f, 256.f, parent->height()-64.f, parent->height());
 
     graphics().shaderUnbindTexture();
     graphics().useShader(0);

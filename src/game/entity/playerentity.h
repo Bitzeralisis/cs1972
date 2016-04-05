@@ -18,14 +18,20 @@ public:
     const float JUMP_VELOCITY = 6.f;
     const float DASH_JUMP_VELOCITY = 12.f;
 
-    const float SHOT_SPEED = 20.f;
-    const float SHOT_CD = 0.25f;
+    const float MAX_HEALTH = 3.f;
+    const float IFRAMES = 0.5f;
+
+    const float SHOT_SPEED = 30.f;
+    const float SHOT_CD = 0.3f;
+    const float SHOT_DAMAGE = 1.f;
 
 private:
     float m_yaw = 0.f;
     bool m_standing = false;
     int m_dashEffect = 0;
 
+    float m_health = MAX_HEALTH;
+    float m_iframe = 0.f;
     float m_shotCd = 0.f;
 
     bool m_doPathfind = false;
@@ -34,20 +40,21 @@ private:
     bool m_rampBounceHack = true; // Prevent bouncing off (gradual) ramps
 
 public:
-    void walk(float seconds, glm::vec3 walk, bool dashing, bool jumping);
-    bool shoot(glm::vec3 dir);
-
-public:
     VALACC_MUT(glm::vec3,position)
     VALACC_MUT(glm::vec3,velocity)
 
     VALACC_MUT(float,yaw)
     VALUE_ACCESSOR(int,dashEffect)
 
+    VALUE_ACCESSOR(float,health)
+
     VALACC_MUT(bool,doPathfind)
     VALACC_MUT(glm::vec3,pfPosition)
-
     VALACC_MUT(bool,rampBounceHack)
+
+    void walk(float seconds, glm::vec3 walk, bool dashing, bool jumping);
+    bool shoot(glm::vec3 dir);
+    bool takeDamage(float damage);
 
     virtual void tick(float seconds) override;
     virtual void draw(int pass) override;

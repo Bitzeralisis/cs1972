@@ -4,33 +4,41 @@
 
 namespace Platformer {
 
-class EnemyBossEntity;
 class PlayerEntity;
 
-class EnemyEntity : public PlatformerEntity {
+class EnemyBossEntity : public PlatformerEntity {
 public:
-    EnemyEntity(glm::vec3 pos, EnemyBossEntity *master, PlayerEntity *target);
-    virtual ~EnemyEntity() { }
+    EnemyBossEntity(PlayerEntity *target);
+    virtual ~EnemyBossEntity() { }
 
 public:
-    const float BASE_DOWNWARD_VELOCITY = -3.f;
-    const float WALK_VELOCITY = 6.f;
-    const float JUMP_VELOCITY = 6.f;
+    const float MAX_HEALTH = 10.f;
 
-    const float MAX_HEALTH = 1.f;
+    const float SHOT_FREQ = 2.f;
+    const float SHOT_SPEED = 15.f;
+    const float SHOT_CD = 0.25f;
+    const int SHOT_COUNT = 3;
+
+    const float SUMMON_FREQ = 5.f;
+    const int MAX_MINIONS = 4;
 
 private:
     float m_health = MAX_HEALTH;
 
-    EnemyBossEntity *m_master;
+    int m_currentAttack = 0;
+    float m_nextAttack = 10.f;
+
+    int m_shotCount = 0;
+    float m_shotCd = 0.f;
+
+    int m_minionCount = 0;
+
     PlayerEntity *m_target;
-    bool m_standing = false;
+    float m_time = 0.f;
 
 public:
-    void walk(float seconds, glm::vec3 walk, bool jumping);
-
-public:
-    VALACC_MUT(glm::vec3,velocity)
+    VALUE_ACCESSOR(float,health)
+    inline void loseMinion() { --m_minionCount; }
 
     virtual void tick(float seconds) override;
     virtual void draw(int pass) override;
