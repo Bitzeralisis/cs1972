@@ -202,6 +202,7 @@ void GameScreen::draw() {
         }
 
         // Draw recticle
+        glLineWidth(1.f);
         graphics().shaderUseTexture(false);
         graphics().shaderColor(glm::vec4(1.f));
         glm::mat4 m(1.f);
