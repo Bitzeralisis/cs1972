@@ -48,12 +48,10 @@ void main() {
         float specIntensity = pow(max(0.0, dot(eyeDirection, lightReflection)), 100);
 
         brightness *= mix(diffuseIntensity, specIntensity, 0.2f);
-        fragColor = vec4(lightColor, 1.f) * base_color * brightness;
+        fragColor = vec4(lightColor * base_color.xyz * brightness, 1.f);
     } else {
-        fragColor = vec4(lightColor, 1.f) * base_color;
+        fragColor = vec4(lightColor * base_color.xyz, 1.f);
     }
-
-    fragColor.a = 1.f;
 
     // Fog
     /*if (useFog > 0) {

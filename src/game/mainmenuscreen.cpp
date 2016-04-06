@@ -20,7 +20,7 @@ void MainMenuScreen::draw() {
     graphics().uis_color(glm::vec4(1.f));
     graphics().shaderUseTexture(true);
     graphics().shaderBindTexture("mainmenu");
-    graphics().uis_quad(0.f, 256.f, parent->height()-64.f, parent->height());
+    graphics().uis_quad(parent->width()/2 - 311.f, parent->width()/2 + 312.f, parent->height()/2 - 201.f, parent->height()/2 + 201.f);
 
     graphics().shaderUnbindTexture();
     graphics().useShader(0);
@@ -33,12 +33,13 @@ void MainMenuScreen::wheelEvent(QWheelEvent *) { }
 
 void MainMenuScreen::keyPressEvent(QKeyEvent *event) {
     switch (event->key()) {
-    case Qt::Key_1:
+    //case Qt::Key_1:
+    case Qt::Key_Return:
         parent->popScreen();
         parent->pushScreen(new GameScreen(parent, ":/obj/level_easy.obj", ":/obj/level_easy_navmesh.obj"));
         delete this;
         break;
-    case Qt::Key_2:
+    /*case Qt::Key_2:
         //parent->popScreen();
         //parent->pushScreen(new GameScreen(parent, ":/obj/level_hard.obj"));
         //delete this;
@@ -47,7 +48,7 @@ void MainMenuScreen::keyPressEvent(QKeyEvent *event) {
         parent->popScreen();
         parent->pushScreen(new GameScreen(parent, ":/obj/level_island.obj", ":/obj/level_island_navmesh.obj"));
         delete this;
-        break;
+        break;*/
     default:
         break;
     }

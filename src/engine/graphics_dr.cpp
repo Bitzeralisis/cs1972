@@ -14,6 +14,7 @@ void Graphics::dr_init(int width, int height) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, dr_gPos, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     glGenTextures(1, &dr_gNorm);
     glBindTexture(GL_TEXTURE_2D, dr_gNorm);
@@ -21,13 +22,15 @@ void Graphics::dr_init(int width, int height) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, dr_gNorm, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     glGenTextures(1, &dr_gColor);
     glBindTexture(GL_TEXTURE_2D, dr_gColor);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, dr_gColor, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     GLuint attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
     glDrawBuffers(3, attachments);
@@ -36,6 +39,7 @@ void Graphics::dr_init(int width, int height) {
     glBindRenderbuffer(GL_RENDERBUFFER, dr_gDepth);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, dr_gDepth);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
     /*GLenum status;
     status = glCheckFramebufferStatus(GL_FRAMEBUFFER);

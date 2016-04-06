@@ -38,7 +38,8 @@ SOURCES += \
     src/game/entity/playershotentity.cpp \
     src/game/entity/enemyentity.cpp \
     src/game/entity/enemybossentity.cpp \
-    src/game/entity/enemyshotentity.cpp
+    src/game/entity/enemyshotentity.cpp \
+    src/engine/graphics_bloom.cpp
 
 HEADERS += \
     libs/glew-1.10.0/include/GL/glew.h \

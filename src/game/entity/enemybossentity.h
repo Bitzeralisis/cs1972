@@ -12,7 +12,7 @@ public:
     virtual ~EnemyBossEntity() { }
 
 public:
-    const float MAX_HEALTH = 10.f;
+    const float MAX_HEALTH = 40.f;
 
     const float SHOT_FREQ = 2.f;
     const float SHOT_SPEED = 15.f;
