@@ -1,10 +1,11 @@
                           cs.brown.edu/courses/cs1972
-                                  platformer2
+                                  platformer4
                                     by ajlin
-                           due: 11:59 PM, 04/15/2016
+                           due: 11:59 PM, 04/05/2016
 
 
                                  GRASSDASH III
+                         demo: Robocylinder Boss Battle
 
 1) ANNOTATED RUBRIC. ___________________________________________________________
 
@@ -13,56 +14,30 @@ COMPLETE/INCOMPLETE
 Retries used: NONE (2 extra retries left)
 
 [ ] Completed a design check
-[ ] Participated in playtesting
-
-Common Engine Requirements
-========================================
-[ ] Able to load OBJ models using the support code
-[ ] Able to render OBJ models using the support code
-[ ] Stores only one copy of any single model (never load the same model twice)
-
-    GeometricManager takes in an OBJ, from which it creates a Primitive that it
-    uses to render.
-
-Geometric Engine Requirements
-========================================
-[ ] Analytic collision response
-    [ ] Collision response slides for at least N iterations of the sweep test in
-        the plane horizontal to collision (N = 4 is a good value)
-
-        Please see engine/geometric/geometricmanager.*, and
-        GeometricManager::collideEntity.
-
-    [ ] Collision routines return a struct containing the contact point and
-        normal
-
-        Please see csm/csm_collide.*. They already return the intersection point
-        and normal since platformer1, into two glm::vec3&s.
-
-    [ ] At least one hack from the lecture slides is implemented and documented
-        in code
-
-        I have implemented three hacks: ramp sliding, ramp bouncing, and ramp
-        deflection. These can be toggled with the [1] [2] [3] keys, and are all
-        on by default. For sliding and deflection, please see
-        engine/geometric/geometricmanager.*.  For bouncing, please see
-        game/entity/playerentity.*.
 
 Game Requirements
 ========================================
-[ ] Collision debugger support code is not present
-[ ] Movement and view controls must be the same as warmup and minecraft
-    (including gravity and jumping)
-[ ] The camera must be able to use a 3rd-person view
+[ ] The game must have at least one type of enemy that uses path-finding over a
+    navigation mesh
 
-    Press F1 to toggle.
+    The red ellipsoids pathfind, but resort to running in a straight line and
+    jumping if they cannot find a path.
 
-[ ] The player must be drawn as an ellipsoid
-[ ] The game must have a menu screen that allows the player to choose between
-    different levels (different OBJ models)
-[ ] The player must be able to return to the menu screen without restarting the program
+[ ] This enemy must interact with the player in some way (e.g. push the player
+    off ledges, shoot at the player, damage the player directly)
 
-    Press Enter to return to the main menu.
+    They deal damage when they touch the player.
+
+[ ] The game must have a non-arbitrary and reasonably achievable win or loss
+    condition
+
+    Defeat the boss to win; lose all health to die.
+
+[ ] The game must be resettable upon win or loss without restarting the program
+[ ] The game can never enter an unwinnable or unloseable state
+[ ] The game must use orthographic projection to display some form of game UI
+
+    The boss's health bar is displayed as an orthographic circle around it.
 
 Global requirements
 ========================================
@@ -79,14 +54,13 @@ Global requirements
 [ ] Runs on department machines
 [ ] Does not crash
 [ ] Works at 800x600 and fullscreen resolutions
-[ ] Runs at 30+ UPS and never dips below 20 UPS unless indicated in the specific
-    handout
+[ ] Runs at 30+ UPS and never dips below 20 UPS unless indicated in the
+    specific handout
 
 
 2) KNOWN BUGS. _________________________________________________________________
 
-    The player can still clip through walls sometimes, especially when running
-    into corners made of a lot of triangles, and against acute angles.
+    None known.
 
 
 3) TIME SPENT. _________________________________________________________________

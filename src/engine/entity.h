@@ -46,7 +46,7 @@ public:
     VALUE_ACCESSOR(bool,collidesTerrain)
 
     virtual void tick(float seconds) = 0;
-    virtual void draw() = 0;
+    virtual void draw(int pass) = 0;
     virtual glm::vec2 getCylinder() const = 0;
     virtual csm::aabb getAabb() const = 0;
     virtual csm::ellipsoid getEllipsoid() const = 0;

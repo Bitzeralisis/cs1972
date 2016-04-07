@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/images">
         <file>mainmenu.png</file>
+        <file>lose.png</file>
+        <file>win.png</file>
     </qresource>
 </RCC>

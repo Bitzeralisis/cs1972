@@ -4,5 +4,9 @@
         <file>2d.vert</file>
         <file>shader.vert</file>
         <file>shader.frag</file>
+        <file>gbuffer.frag</file>
+        <file>gbuffer.vert</file>
+        <file>deferred.vert</file>
+        <file>deferred.frag</file>
     </qresource>
 </RCC>
