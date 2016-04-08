@@ -1,5 +1,8 @@
 #include "graphics.h"
 #include "primitive.h"
+#include "graphics/deferredmodule.h"
+#include "graphics/shadermodule.h"
+#include "graphics/uishadermodule.h"
 #include "../util/CommonIncludes.h"
 #include "../util/NewCylinderData.h"
 #include "../util/obj.h"
@@ -11,9 +14,6 @@
 using namespace CS1972Engine;
 
 Graphics::~Graphics() {
-    glDeleteProgram(m_defaultShader);
-    glDeleteProgram(m_uiShader);
-
     for (std::map<std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); ++it)
         glDeleteTextures(1, &(it->second));
 
@@ -25,16 +25,15 @@ Graphics::~Graphics() {
     delete m_pCylinder;
     delete m_pSphere;
     delete m_uiQuad;
+    delete m_fsQuad;
 
-    delete camera;
+    delete m_camera;
 }
 
 void Graphics::initializeGL() {
-    // Load default shader
-    m_defaultShader = ResourceLoader::loadShaders(":/shaders/shader.vert", ":/shaders/shader.frag");
-    m_uiShader = ResourceLoader::loadShaders(":/shaders/2d.vert", ":/shaders/2d.frag");
-    m_gShader = ResourceLoader::loadShaders(":/shaders/gbuffer.vert", ":/shaders/gbuffer.frag");
-    m_dShader = ResourceLoader::loadShaders(":/shaders/deferred.vert", ":/shaders/deferred.frag");
+    m_shader = new ShaderModule(this);
+    m_deferred = new DeferredModule(this);
+    m_uishader = new UiShaderModule(this);
 
     // Make some primitives or something
     int quadNumVertices = 6;
@@ -108,6 +107,16 @@ void Graphics::initializeGL() {
         1.f,1.f,0.f, 0.f,0.f,-1.f, 1.f,0.f
     };
     m_uiQuad = new Primitive(quadNumVertices, quadDataSize, uiQuadData);
+
+    GLfloat fsQuadData[48] = {
+        -1.f,-1.f,0.f, 0.f,0.f,-1.f, 0.f,1.f,
+         1.f,-1.f,0.f, 0.f,0.f,-1.f, 1.f,1.f,
+        -1.f, 1.f,0.f, 0.f,0.f,-1.f, 0.f,0.f,
+        -1.f, 1.f,0.f, 0.f,0.f,-1.f, 0.f,0.f,
+         1.f,-1.f,0.f, 0.f,0.f,-1.f, 1.f,1.f,
+         1.f, 1.f,0.f, 0.f,0.f,-1.f, 1.f,0.f
+    };
+    m_fsQuad = new Primitive(quadNumVertices, quadDataSize, fsQuadData);
 }
 
 GLuint Graphics::loadTextureFromQRC(const char *path) {
@@ -132,112 +141,4 @@ Primitive *Graphics::loadPrimitiveFromOBJ(OBJ *obj) {
 void Graphics::useShader(GLuint shader) {
     m_activeShader = shader;
     glUseProgram(m_activeShader);
-}
-
-void Graphics::useDefaultShader() {
-    useShader(m_defaultShader);
-}
-
-void Graphics::shaderPvTransformFromCamera() {
-    glm::mat4 p = camera->perspectiveMatrix();
-    glm::mat4 v = camera->viewMatrix();
-    glUniformMatrix4fv(glGetUniformLocation(m_activeShader, "p"), 1, GL_FALSE, glm::value_ptr(p));
-    glUniformMatrix4fv(glGetUniformLocation(m_activeShader, "v"), 1, GL_FALSE, glm::value_ptr(v));
-}
-
-void Graphics::shaderMTransform(glm::mat4 m) {
-    glUniformMatrix4fv(glGetUniformLocation(m_activeShader, "m"), 1, GL_FALSE, glm::value_ptr(m));
-}
-
-void Graphics::shaderColor(glm::vec4 color) {
-    glUniform4fv(glGetUniformLocation(m_activeShader, "color"), 1, glm::value_ptr(color));
-}
-
-void Graphics::shaderUseTexture(bool use) {
-    glUniform1i(glGetUniformLocation(m_activeShader, "useTexture"), use);
-}
-
-void Graphics::shaderBindTexture(GLuint tex) {
-    glUniform1i(glGetUniformLocation(m_activeShader, "tex"), GL_TEXTURE0);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, tex);
-}
-
-void Graphics::shaderBindTexture(const char *name) {
-    shaderBindTexture(getTexture(name));
-}
-
-void Graphics::shaderUnbindTexture() {
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-void Graphics::shaderUseFog(bool use) {
-    glUniform1i(glGetUniformLocation(m_activeShader, "useFog"), use);
-}
-
-void Graphics::shaderUseFog(bool use, float fogNear, float fogFar, glm::vec3 color) {
-    glUniform1i(glGetUniformLocation(m_activeShader, "useFog"), use);
-    glUniform1f(glGetUniformLocation(m_activeShader, "fogNear"), fogNear);
-    glUniform1f(glGetUniformLocation(m_activeShader, "fogFar"), fogFar);
-    glUniform3fv(glGetUniformLocation(m_activeShader, "fogColor"), 1, glm::value_ptr(color));
-}
-
-void Graphics::shaderUseLight(bool use) {
-    glUniform1i(glGetUniformLocation(m_activeShader, "useLight"), use);
-}
-
-void Graphics::shaderUseLight(bool use, int type, glm::vec3 pos) {
-    glUniform1i(glGetUniformLocation(m_activeShader, "useLight"), use);
-    glUniform1i(glGetUniformLocation(m_activeShader, "lightType"), type);
-    glUniform3fv(glGetUniformLocation(m_activeShader, "lightPosition"), 1, glm::value_ptr(pos));
-}
-
-void Graphics::drawQuad() {
-    m_pQuad->drawArray();
-}
-
-void Graphics::drawBox() {
-    m_pBox->drawArray();
-}
-
-void Graphics::drawCylinder() {
-    m_pCylinder->drawArray();
-}
-
-void Graphics::drawSphere() {
-    m_pSphere->drawArray();
-}
-
-void Graphics::uis_useShader() {
-    useShader(m_uiShader);
-}
-
-void Graphics::uis_orthoTransform(float left, float right, float bottom, float top) {
-    m_uis_left = left;
-    m_uis_right = right;
-    m_uis_bottom = bottom;
-    m_uis_top = top;
-    glm::mat4 m = glm::ortho(left, right, bottom, top, -1.f, 1.f);
-    glUniformMatrix4fv(glGetUniformLocation(m_activeShader, "p"), 1, GL_FALSE, glm::value_ptr(m));
-}
-
-void Graphics::uis_color(glm::vec4 color) {
-    glUniform4fv(glGetUniformLocation(m_activeShader, "color"), 1, glm::value_ptr(color));
-}
-
-void Graphics::uis_quad(float left, float right, float bottom, float top) {
-    glm::mat4 m(1.f);
-    m = glm::translate(m, glm::vec3(left, bottom, 0.f));
-    m = glm::scale(m, glm::vec3(right-left, top-bottom, 1.f));
-
-    shaderMTransform(m);
-    m_uiQuad->drawArray();
-}
-
-glm::vec3 Graphics::uis_cameraSpaceToUisSpace(glm::vec3 pos) {
-    glm::vec3 retval = camera->orthoProject(pos) * 0.5f + glm::vec3(0.5f);
-    retval *= glm::vec3(m_uis_right-m_uis_left, m_uis_top-m_uis_bottom, 1.f);
-    retval += glm::vec3(m_uis_left, m_uis_bottom, 0.f);
-    return retval;
 }

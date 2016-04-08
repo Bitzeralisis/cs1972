@@ -1,11 +1,10 @@
                           cs.brown.edu/courses/cs1972
-                                  platformer4
+                                     final1
                                     by ajlin
-                           due: 11:59 PM, 04/05/2016
+                           due: 11:59 PM, 04/19/2016
 
 
-                                 GRASSDASH III
-                         demo: Robocylinder Boss Battle
+                                Children of Gaia
 
 1) ANNOTATED RUBRIC. ___________________________________________________________
 
@@ -13,31 +12,18 @@ COMPLETE/INCOMPLETE
 
 Retries used: NONE (2 extra retries left)
 
-[ ] Completed a design check
+Engine Requirements
+========================================
+[ ] Supports playback of short sound clips and long music files
+[ ] Bloom lighting
+[ ] Particle systems that are updated/drawn on the GPU
 
 Game Requirements
 ========================================
-[ ] The game must have at least one type of enemy that uses path-finding over a
-    navigation mesh
-
-    The red ellipsoids pathfind, but resort to running in a straight line and
-    jumping if they cannot find a path.
-
-[ ] This enemy must interact with the player in some way (e.g. push the player
-    off ledges, shoot at the player, damage the player directly)
-
-    They deal damage when they touch the player.
-
-[ ] The game must have a non-arbitrary and reasonably achievable win or loss
-    condition
-
-    Defeat the boss to win; lose all health to die.
-
-[ ] The game must be resettable upon win or loss without restarting the program
-[ ] The game can never enter an unwinnable or unloseable state
-[ ] The game must use orthographic projection to display some form of game UI
-
-    The boss's health bar is displayed as an orthographic circle around it.
+[ ] Has at least 2 distinct sound effects that can be triggered on command
+[ ] Has some form of background music
+[ ] Demonstrates bloom lighting with at least one light source
+[ ] Demonstrates usage of at least 1000 particles simultaneously
 
 Global requirements
 ========================================
@@ -65,5 +51,5 @@ Global requirements
 
 3) TIME SPENT. _________________________________________________________________
 
-    10 hours.
+    hours.
 

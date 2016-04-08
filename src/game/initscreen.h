@@ -2,12 +2,15 @@
 
 #include "../engine/screen.h"
 
-namespace Platformer {
+namespace COG {
 
-class MainMenuScreen : public CS1972Engine::Screen {
+class InitScreen : public CS1972Engine::Screen {
 public:
-    explicit MainMenuScreen(CS1972Engine::Game *parent);
-    virtual ~MainMenuScreen();
+    InitScreen(CS1972Engine::Game *parent);
+    virtual ~InitScreen();
+
+private:
+    float m_time = 0.f;
 
 public:
     virtual void tick(float seconds) override;

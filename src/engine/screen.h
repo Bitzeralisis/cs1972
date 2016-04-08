@@ -17,8 +17,8 @@ class Graphics;
  */
 class Screen {
 public:
-    explicit Screen(Game *game): parent(game) {}
-    virtual ~Screen() {}
+    explicit Screen(Game *game): parent(game) { }
+    virtual ~Screen() { }
 
 protected:
     inline REFERENCE_ACCESSOR_DEEP(Graphics,graphics,parent->g)

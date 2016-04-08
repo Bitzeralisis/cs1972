@@ -67,7 +67,7 @@ public:
     VALUE_ACCESSOR(const Primitive *,pQuad)
     VALUE_ACCESSOR(const Primitive *,pBox)
     VALUE_ACCESSOR(const Primitive *,pCylinder)
-    VALUE_ACCESSOR(const Primitive *,pSphere)
+    VALUE_ACCESSOR(const Primitive *,pShpere)
     VALUE_ACCESSOR(const Primitive *,uiQuad)
     VALUE_ACCESSOR(const Primitive *,fsQuad)
 
@@ -77,6 +77,15 @@ public:
     VALUE_ACCESSOR(ShaderModule *,shader)
     VALUE_ACCESSOR(DeferredModule *,deferred)
     VALUE_ACCESSOR(UiShaderModule *,uishader)
+
+    // Ui shader helpers
+    /*
+    void uis_useShader();
+    void uis_orthoTransform(float left, float right, float bottom, float top);
+    void uis_color(glm::vec4 color);
+    void uis_quad(float left, float right, float bottom, float top);
+    glm::vec3 uis_cameraSpaceToUisSpace(glm::vec3 pos);
+    */
 };
 
 }

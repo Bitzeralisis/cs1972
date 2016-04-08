@@ -2,12 +2,14 @@
 
 out vec4 fragColor;
 
-in vec2 texc;
 in vec3 eye_worldSpace;
+in mat4 invPV;
 
-uniform sampler2D gPosition;
+uniform vec2 screenSize;
+
 uniform sampler2D gNormal;
 uniform sampler2D gColor;
+uniform sampler2D gDepth;
 
 /*uniform int useFog = 0;
 uniform vec3 fogColor;
@@ -21,9 +23,15 @@ uniform vec3 lightColor = vec3(1.f, 1.f, 1.f);
 uniform vec3 lightAtten = vec3(1.f, 0.f, 0.f);
 
 void main() {
-    vec4 base_color = texture2D(gColor, texc);
-    vec3 position_worldSpace = texture2D(gPosition, texc).xyz;
+    vec2 texc = gl_FragCoord.xy / screenSize;
+
     vec3 normal_worldSpace = texture2D(gNormal, texc).xyz;
+    vec4 base_color = texture2D(gColor, texc);
+    float depth_clamp = texture2D(gDepth, texc).x * 2.f - 1.f;
+
+    vec2 worldc = texc * 2.f - vec2(1.f);
+    vec4 posn = invPV * vec4(worldc.xy, depth_clamp, 1.f);
+    vec3 position_worldSpace = posn.xyz / posn.w;
 
     if (useLight > 0) {
         vec3 vertexToLight = vec3(0.f);

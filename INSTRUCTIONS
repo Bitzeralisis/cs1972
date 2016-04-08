@@ -1,67 +1,14 @@
                           cs.brown.edu/courses/cs1972
-                                  platformer4
+                                     final1
                                     by ajlin
-                           due: 11:59 PM, 04/05/2016
+                           due: 11:59 PM, 04/19/2016
 
 
-                                 GRASSDASH III
-                         demo: Robocylinder Boss Battle
+                                Children of Gaia
 
-1) OBJECTIVE. __________________________________________________________________
-
-    Defeat Robocylinder by shooting at it until its health is depleted.
-
-    Your health is displayed as red cubes in the lower-left corner.
+1) CONTROLS. ___________________________________________________________________
 
 
-2) CONTROLS. ___________________________________________________________________
 
-    MAIN MENU
+2) ALEX'S IDOL CORNER. _________________________________________________________
 
-        enter > begin game
-
-
-    GAME
-
-        mouse > look
-        click > shoot
-        WASD  > move
-        space > jump
-        shift > dash
-
-
-    HACKS AND DEBUG TOOLS
-
-        F1    > toggle 1st/3rd person camera (default 1st person)
-        F2    > toggle fancy/simple lighting (default fancy)
-
-        1     > toggle ramp sliding prevention hack (default on)
-        2     > toggle ramp bouncing prevention hack (default on)
-        3     > toggle ramp deflection hack (default on)
-        9     > toggle no-clipping 3rd person camera (default on)
-        0     > reset player position
-
-        R     > toggle pathfinding on/off
-        F     > raycast a new pathfinding destination, and toggle pathfinding on
-
-
-3) STORY. ______________________________________________________________________
-
-    After travelling through many worlds and honing hir chaos powers, the
-    GRASSDASHER has reached the helm of ROBOCYLINDER's DIMENSIONAL SPACESHIP.
-    With the existence of the multiverse at stake, the GRASSDASHER must defeat
-    ROBOCYLINDER and take back the CHAOS CRYSTALS before it is too late.
-
-    PROF. POACEAE's TIP:
-
-        "Hey GRASSDASHER! Watch out for ROBOCYLINDER's DOOM-MINIONS! They pack
-         quite the punch, but they're also very fragile! ROBOCYLINDER's powers
-         are limited, and it can only command a small number of them at once.
-         Try trapping them somewhere while you fight ROBOCYLINDER!"
-
-
-4) ALEX'S IDOL CORNER. _________________________________________________________
-
-    Aikatsu Stars, the reboot of the Aikatsu series, starts coming out in two
-    days. I highly recommend the Aikatsu series to anyone who wants a fresh
-    take on 2D idols. Please look forward to it!

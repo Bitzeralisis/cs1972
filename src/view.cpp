@@ -3,7 +3,7 @@
 #include <QApplication>
 #include <QKeyEvent>
 
-#include "game/platformergame.h"
+#include "game/coggame.h"
 
 View::View(QWidget *parent) : QGLWidget(parent)
 {
@@ -24,7 +24,7 @@ View::View(QWidget *parent) : QGLWidget(parent)
     }
     frameIndex = 0;
 
-    game = new Platformer::PlatformerGame();
+    game = new COG::COGGame();
 }
 
 View::~View()

@@ -24,22 +24,15 @@ SOURCES += \
     src/engine/primitive.cpp \
     src/engine/world.cpp \
     src/engine/entity.cpp \
-    src/engine/voxel/chunk.cpp \
-    src/engine/voxel/voxelmanager.cpp \
     src/util/commonincludes.cpp \
     src/csm/csm_collide.cpp \
     src/util/obj.cpp \
-    src/game/platformergame.cpp \
-    src/game/gamescreen.cpp \
-    src/engine/geometric/geometricmanager.cpp \
-    src/game/entity/playerentity.cpp \
-    src/game/mainmenuscreen.cpp \
-    src/engine/graphics_dr.cpp \
-    src/game/entity/playershotentity.cpp \
-    src/game/entity/enemyentity.cpp \
-    src/game/entity/enemybossentity.cpp \
-    src/game/entity/enemyshotentity.cpp \
-    src/engine/graphics_bloom.cpp
+    src/engine/graphics_bloom.cpp \
+    src/engine/graphics/shadermodule.cpp \
+    src/engine/graphics/deferredmodule.cpp \
+    src/game/initscreen.cpp \
+    src/csm/csm.cpp \
+    src/engine/graphics/uishadermodule.cpp
 
 HEADERS += \
     libs/glew-1.10.0/include/GL/glew.h \
@@ -55,28 +48,18 @@ HEADERS += \
     src/engine/primitive.h \
     src/engine/world.h \
     src/engine/entity.h \
-    src/engine/voxel/chunk.h \
-    src/engine/voxel/block.h \
-    src/engine/voxel/chunkgenerator.h \
-    src/engine/voxel/chunkdef.h \
     src/engine/terrainmanager.h \
-    src/engine/voxel/voxelmanager.h \
     src/csm/csm.h \
     src/csm/csm_collide.h \
     src/csm/csm_primitive.h \
     src/util/NewCylinderData.h \
     src/util/obj.h \
     src/util/SphereData.h \
-    src/game/platformergame.h \
-    src/game/gamescreen.h \
-    src/engine/geometric/geometricmanager.h \
-    src/game/entity/playerentity.h \
-    src/game/mainmenuscreen.h \
-    src/game/entity/platformerentity.h \
-    src/game/entity/playershotentity.h \
-    src/game/entity/enemyentity.h \
-    src/game/entity/enemybossentity.h \
-    src/game/entity/enemyshotentity.h
+    src/game/coggame.h \
+    src/engine/graphics/shadermodule.h \
+    src/engine/graphics/deferredmodule.h \
+    src/game/initscreen.h \
+    src/engine/graphics/uishadermodule.h
 
 
 FORMS += src/mainwindow.ui
@@ -87,14 +70,7 @@ RESOURCES += \
     res/obj/obj.qrc
 
 OTHER_FILES += \
-    res/obj/level_easy.obj \
-    res/obj/level_easy_navmesh.obj \
-    res/obj/level_hard.obj \
-    res/obj/level_island.obj \
-    res/obj/level_island_navmesh.obj \
-    res/images/mainmenu.png \
-    res/images/win.png \
-    res/images/lose.png
+
 
 DISTFILES += \
     res/shaders/shader.vert \
