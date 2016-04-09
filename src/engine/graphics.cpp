@@ -1,5 +1,6 @@
 #include "graphics.h"
 #include "primitive.h"
+#include "graphics/bloommodule.h"
 #include "graphics/deferredmodule.h"
 #include "graphics/shadermodule.h"
 #include "graphics/uishadermodule.h"
@@ -12,6 +13,14 @@
 #include <QImage>
 
 using namespace CS1972Engine;
+
+Graphics::Graphics()
+    : m_camera(new Camera())
+{ }
+
+Graphics::Graphics(Camera *camera)
+    : m_camera(camera)
+{ }
 
 Graphics::~Graphics() {
     for (std::map<std::string, GLuint>::iterator it = m_textures.begin(); it != m_textures.end(); ++it)
@@ -28,11 +37,17 @@ Graphics::~Graphics() {
     delete m_fsQuad;
 
     delete m_camera;
+
+    delete m_shader;
+    delete m_deferred;
+    delete m_bloom;
+    delete m_uishader;
 }
 
 void Graphics::initializeGL() {
     m_shader = new ShaderModule(this);
     m_deferred = new DeferredModule(this);
+    m_bloom = new BloomModule(this);
     m_uishader = new UiShaderModule(this);
 
     // Make some primitives or something

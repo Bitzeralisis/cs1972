@@ -109,6 +109,7 @@ void DeferredModule::bindGlowTexture(GLuint tex) {
     glUniform1i(glGetUniformLocation(m_parent->activeShader(), "glowTex"), GL_TEXTURE1);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, tex);
+    glActiveTexture(GL_TEXTURE0);
 }
 
 void DeferredModule::bindGlowTexture(const char *name) {
@@ -118,6 +119,7 @@ void DeferredModule::bindGlowTexture(const char *name) {
 void DeferredModule::unbindGlowTexture() {
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, 0);
+    glActiveTexture(GL_TEXTURE0);
 }
 
 void DeferredModule::blitGbufferDepthToBb(int width, int height) {
@@ -136,6 +138,7 @@ void DeferredModule::useDeferredShader() {
     glBindTexture(GL_TEXTURE_2D, m_colorTex);
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, m_depthTex);
+    glActiveTexture(GL_TEXTURE0);
 }
 
 void DeferredModule::lightAmbient(glm::vec3 color) {

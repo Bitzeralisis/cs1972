@@ -38,7 +38,7 @@ void ShaderModule::useTexture(bool use) {
 }
 
 void ShaderModule::bindTexture(GLuint tex) {
-    glUniform1i(glGetUniformLocation(m_parent->activeShader(), "tex"), GL_TEXTURE0);
+    glUniform1i(glGetUniformLocation(m_parent->activeShader(), "tex"), 0);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, tex);
 }

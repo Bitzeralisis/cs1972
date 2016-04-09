@@ -10,7 +10,7 @@ in vec2 texc;
 
 void main() {
     if (useTexture > 0) {
-        fragColor = color * clamp(texture2D(tex,texc), 0.f, 1.f);
+        fragColor = color * texture2D(tex,texc);
     } else {
         fragColor = color;
     }

@@ -8,5 +8,8 @@
         <file>gbuffer.vert</file>
         <file>deferred.vert</file>
         <file>deferred.frag</file>
+        <file>bloombright.frag</file>
+        <file>bloomblur.frag</file>
+        <file>passthrough.vert</file>
     </qresource>
 </RCC>

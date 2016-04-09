@@ -32,7 +32,8 @@ SOURCES += \
     src/engine/graphics/deferredmodule.cpp \
     src/game/initscreen.cpp \
     src/csm/csm.cpp \
-    src/engine/graphics/uishadermodule.cpp
+    src/engine/graphics/uishadermodule.cpp \
+    src/engine/graphics/bloommodule.cpp
 
 HEADERS += \
     libs/glew-1.10.0/include/GL/glew.h \
@@ -59,7 +60,8 @@ HEADERS += \
     src/engine/graphics/shadermodule.h \
     src/engine/graphics/deferredmodule.h \
     src/game/initscreen.h \
-    src/engine/graphics/uishadermodule.h
+    src/engine/graphics/uishadermodule.h \
+    src/engine/graphics/bloommodule.h
 
 
 FORMS += src/mainwindow.ui
@@ -80,4 +82,7 @@ DISTFILES += \
     res/shaders/gbuffer.vert \
     res/shaders/gbuffer.frag \
     res/shaders/deferred.vert \
-    res/shaders/deferred.frag
+    res/shaders/deferred.frag \
+    res/shaders/passthrough.vert \
+    res/shaders/bloombright.frag \
+    res/shaders/bloomblur.frag

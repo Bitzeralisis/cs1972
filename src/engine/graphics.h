@@ -16,6 +16,7 @@ class QFont;
 
 namespace CS1972Engine {
 
+class BloomModule;
 class DeferredModule;
 class Primitive;
 class ShaderModule;
@@ -27,8 +28,8 @@ class UiShaderModule;
  */
 class Graphics {
 public:
-    Graphics() : m_camera(new Camera()) { }
-    explicit Graphics(Camera *cam) : m_camera(cam) { }
+    Graphics();
+    explicit Graphics(Camera *camera);
     virtual ~Graphics();
 
 private:
@@ -50,6 +51,7 @@ private:
 
     ShaderModule *m_shader;
     DeferredModule *m_deferred;
+    BloomModule *m_bloom;
     UiShaderModule *m_uishader;
 
 public:
@@ -76,6 +78,7 @@ public:
     VALUE_ACCESSOR(GLuint,activeShader)
     VALUE_ACCESSOR(ShaderModule *,shader)
     VALUE_ACCESSOR(DeferredModule *,deferred)
+    VALUE_ACCESSOR(BloomModule *,bloom)
     VALUE_ACCESSOR(UiShaderModule *,uishader)
 };
 

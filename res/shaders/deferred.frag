@@ -60,10 +60,4 @@ void main() {
     } else {
         fragColor = vec4(lightColor * base_color.xyz, 1.f);
     }
-
-    // Fog
-    /*if (useFog > 0) {
-        float fog = min(max(0.f, (length(position_worldSpace-eye_worldSpace)-fogNear)/(fogFar-fogNear)), 1.f);
-        fragColor = vec4(fog*fogColor + (1.f-fog)*fragColor.xyz, fragColor.w);
-    }*/
 }
