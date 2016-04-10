@@ -10,7 +10,7 @@ class Graphics;
 class BloomModule {
 public:
     explicit BloomModule(Graphics *parent);
-    virtual ~BloomModule();
+    ~BloomModule();
 
 private:
     Graphics *m_parent;

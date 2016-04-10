@@ -7,6 +7,7 @@ namespace CS1972Engine {
 class Primitive {
 public:
     Primitive(int vertices, int size, GLfloat *data);
+    Primitive(int vertices, int size, void *data, int type);
     virtual ~Primitive();
 
 private:

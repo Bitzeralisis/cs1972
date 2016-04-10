@@ -18,6 +18,7 @@ namespace CS1972Engine {
 
 class BloomModule;
 class DeferredModule;
+class ParticleModule;
 class Primitive;
 class ShaderModule;
 class UiShaderModule;
@@ -53,6 +54,7 @@ private:
     DeferredModule *m_deferred;
     BloomModule *m_bloom;
     UiShaderModule *m_uishader;
+    ParticleModule *m_particle;
 
 public:
     void initializeGL();
@@ -61,6 +63,7 @@ public:
 
     // Texture, OBJ, Primitive maps
     GLuint loadTextureFromQRC(const char *path);
+    GLuint loadTextureFromQRC(const char *path, GLint minmag);
     Primitive *loadPrimitiveFromOBJ(OBJ *obj);
     MAP_OPS(GLuint,Texture,texture)
     MAP_OPS(OBJ *,Obj,obj)
@@ -80,6 +83,7 @@ public:
     VALUE_ACCESSOR(DeferredModule *,deferred)
     VALUE_ACCESSOR(BloomModule *,bloom)
     VALUE_ACCESSOR(UiShaderModule *,uishader)
+    VALUE_ACCESSOR(ParticleModule *,particle)
 };
 
 }

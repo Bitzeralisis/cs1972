@@ -69,6 +69,10 @@ void DeferredModule::initGbuffer(int width, int height) {
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+    m_parent->useShader(m_gShader);
+    glUniform1i(glGetUniformLocation(m_parent->activeShader(), "glowTex"), 1);
+    m_parent->useShader(0);
+
     m_parent->useShader(m_dShader);
     glUniform1i(glGetUniformLocation(m_dShader, "gNormal"), 0);
     glUniform1i(glGetUniformLocation(m_dShader, "gColor"), 1);
@@ -106,7 +110,6 @@ void DeferredModule::useGlowTexture(bool use) {
 }
 
 void DeferredModule::bindGlowTexture(GLuint tex) {
-    glUniform1i(glGetUniformLocation(m_parent->activeShader(), "glowTex"), GL_TEXTURE1);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, tex);
     glActiveTexture(GL_TEXTURE0);

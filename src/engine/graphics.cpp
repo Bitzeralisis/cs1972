@@ -2,6 +2,7 @@
 #include "primitive.h"
 #include "graphics/bloommodule.h"
 #include "graphics/deferredmodule.h"
+#include "graphics/particlemodule.h"
 #include "graphics/shadermodule.h"
 #include "graphics/uishadermodule.h"
 #include "../util/CommonIncludes.h"
@@ -42,6 +43,7 @@ Graphics::~Graphics() {
     delete m_deferred;
     delete m_bloom;
     delete m_uishader;
+    delete m_particle;
 }
 
 void Graphics::initializeGL() {
@@ -49,6 +51,7 @@ void Graphics::initializeGL() {
     m_deferred = new DeferredModule(this);
     m_bloom = new BloomModule(this);
     m_uishader = new UiShaderModule(this);
+    m_particle = new ParticleModule(this);
 
     // Make some primitives or something
     int quadNumVertices = 6;
@@ -135,14 +138,18 @@ void Graphics::initializeGL() {
 }
 
 GLuint Graphics::loadTextureFromQRC(const char *path) {
+    return loadTextureFromQRC(path, GL_NEAREST);
+}
+
+GLuint Graphics::loadTextureFromQRC(const char *path, GLint minmag) {
     QImage img(path);
     img = QGLWidget::convertToGLFormat(img);
 
     GLuint tex;
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, minmag);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minmag);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.width(), img.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, img.bits());
     glBindTexture(GL_TEXTURE_2D, 0);
 

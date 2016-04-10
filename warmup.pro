@@ -33,7 +33,8 @@ SOURCES += \
     src/game/initscreen.cpp \
     src/csm/csm.cpp \
     src/engine/graphics/uishadermodule.cpp \
-    src/engine/graphics/bloommodule.cpp
+    src/engine/graphics/bloommodule.cpp \
+    src/engine/graphics/particlemodule.cpp
 
 HEADERS += \
     libs/glew-1.10.0/include/GL/glew.h \
@@ -61,7 +62,8 @@ HEADERS += \
     src/engine/graphics/deferredmodule.h \
     src/game/initscreen.h \
     src/engine/graphics/uishadermodule.h \
-    src/engine/graphics/bloommodule.h
+    src/engine/graphics/bloommodule.h \
+    src/engine/graphics/particlemodule.h
 
 
 FORMS += src/mainwindow.ui
@@ -72,6 +74,7 @@ RESOURCES += \
     res/obj/obj.qrc
 
 OTHER_FILES += \
+    res/images/cube.png
 
 
 DISTFILES += \
@@ -85,4 +88,7 @@ DISTFILES += \
     res/shaders/deferred.frag \
     res/shaders/passthrough.vert \
     res/shaders/bloombright.frag \
-    res/shaders/bloomblur.frag
+    res/shaders/bloomblur.frag \
+    res/shaders/particlephysics.frag \
+    res/shaders/particle.vert \
+    res/shaders/particle.frag

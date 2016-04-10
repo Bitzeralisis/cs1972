@@ -11,5 +11,8 @@
         <file>bloombright.frag</file>
         <file>bloomblur.frag</file>
         <file>passthrough.vert</file>
+        <file>particlephysics.frag</file>
+        <file>particle.frag</file>
+        <file>particle.vert</file>
     </qresource>
 </RCC>

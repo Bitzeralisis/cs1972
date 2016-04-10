@@ -2,7 +2,11 @@
 
 using namespace CS1972Engine;
 
-Primitive::Primitive(int vertices, int size, GLfloat *data) {
+Primitive::Primitive(int vertices, int size, GLfloat *data)
+    : Primitive(vertices, size, data, 0)
+{ }
+
+Primitive::Primitive(int vertices, int size, void *data, int type) {
     glGenBuffers(1, &m_vbo);
     glGenVertexArrays(1, &m_vao);
     glBindVertexArray(m_vao);
@@ -11,15 +15,21 @@ Primitive::Primitive(int vertices, int size, GLfloat *data) {
     m_vertices = vertices;
     glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 
-    // Vertices
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, 0);
-    // Normals
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(GLfloat)*8, (void*)(sizeof(GLfloat)*3));
-    // Texture coordinates
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (void*)(sizeof(GLfloat)*6));
+    switch (type) {
+    case 0: // 3 vertices, 3 normals, 2 texture coordinates
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, 0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(GLfloat)*8, (void*)(sizeof(GLfloat)*3));
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*8, (void*)(sizeof(GLfloat)*6));
+        break;
+
+    case 1: // 2 texture coordinates (for particles)
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*2, 0);
+        break;
+    }
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);

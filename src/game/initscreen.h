@@ -10,6 +10,7 @@ public:
     virtual ~InitScreen();
 
 private:
+    float m_timestep;
     float m_time = 0.f;
 
 public:

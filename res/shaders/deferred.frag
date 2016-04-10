@@ -44,7 +44,7 @@ void main() {
             // Point light
             vertexToLight = normalize(lightPosition - position_worldSpace);
             float dist = distance(lightPosition, position_worldSpace);
-            brightness = min(1.f / dot(lightAtten, vec3(1.f, dist, dist*dist)), 1.f);
+            brightness = 1.f / dot(lightAtten, vec3(1.f, dist, dist*dist));
         }
 
         // Diffuse lighting
@@ -56,8 +56,8 @@ void main() {
         float specIntensity = pow(max(0.0, dot(eyeDirection, lightReflection)), 100);
 
         brightness *= mix(diffuseIntensity, specIntensity, 0.2f);
-        fragColor = vec4(lightColor * base_color.xyz * brightness, 1.f);
+        fragColor = vec4(lightColor * base_color.rgb * brightness, 1.f);
     } else {
-        fragColor = vec4(lightColor * base_color.xyz, 1.f);
+        fragColor = vec4(lightColor * base_color.rgb, 1.f);
     }
 }
