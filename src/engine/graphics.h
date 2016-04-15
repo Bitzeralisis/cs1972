@@ -31,7 +31,7 @@ class Graphics {
 public:
     Graphics();
     explicit Graphics(Camera *camera);
-    virtual ~Graphics();
+    ~Graphics();
 
 private:
     GLuint m_activeShader;
@@ -77,6 +77,9 @@ public:
     VALUE_ACCESSOR(const Primitive *,fsQuad)
 
     // Shader modules
+    static GLuint loadShaderFromQRC(const char *path, GLuint type);
+    static GLuint createProgram(GLuint vertex, GLuint fragment);
+    static GLuint createProgram(GLuint vertex, GLuint geometry, GLuint fragment);
     void useShader(GLuint shader);
     VALUE_ACCESSOR(GLuint,activeShader)
     VALUE_ACCESSOR(ShaderModule *,shader)

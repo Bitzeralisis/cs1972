@@ -1,6 +1,13 @@
 #pragma once
 
-#include "../engine/screen.h"
+#include "engine/screen.h"
+
+namespace CS1972Engine {
+
+class Sound;
+class World;
+
+}
 
 namespace COG {
 
@@ -10,8 +17,19 @@ public:
     virtual ~InitScreen();
 
 private:
+    CS1972Engine::World *m_world;
+
+    bool m_firstTick = true;
     float m_timestep;
     float m_time = 0.f;
+
+    float m_prevHat = -1.f;
+
+    CS1972Engine::Sound *m_bgm;
+    CS1972Engine::Sound *m_sfx1;
+    CS1972Engine::Sound *m_sfx2;
+
+    bool m_mouseHeld[3] = { false, false, false };
 
 public:
     virtual void tick(float seconds) override;

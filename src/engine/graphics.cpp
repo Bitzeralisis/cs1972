@@ -10,8 +10,10 @@
 #include "../util/obj.h"
 #include "../util/ResourceLoader.h"
 #include "../util/SphereData.h"
+#include <QFile>
 #include <QGLWidget>
 #include <QImage>
+#include <QTextStream>
 
 using namespace CS1972Engine;
 
@@ -127,12 +129,12 @@ void Graphics::initializeGL() {
     m_uiQuad = new Primitive(quadNumVertices, quadDataSize, uiQuadData);
 
     GLfloat fsQuadData[48] = {
-        -1.f,-1.f,0.f, 0.f,0.f,-1.f, 0.f,1.f,
-         1.f,-1.f,0.f, 0.f,0.f,-1.f, 1.f,1.f,
-        -1.f, 1.f,0.f, 0.f,0.f,-1.f, 0.f,0.f,
-        -1.f, 1.f,0.f, 0.f,0.f,-1.f, 0.f,0.f,
-         1.f,-1.f,0.f, 0.f,0.f,-1.f, 1.f,1.f,
-         1.f, 1.f,0.f, 0.f,0.f,-1.f, 1.f,0.f
+        -1.f,-1.f,0.f, 0.f,0.f,-1.f, 0.f,0.f,
+         1.f,-1.f,0.f, 0.f,0.f,-1.f, 1.f,0.f,
+        -1.f, 1.f,0.f, 0.f,0.f,-1.f, 0.f,1.f,
+        -1.f, 1.f,0.f, 0.f,0.f,-1.f, 0.f,1.f,
+         1.f,-1.f,0.f, 0.f,0.f,-1.f, 1.f,0.f,
+         1.f, 1.f,0.f, 0.f,0.f,-1.f, 1.f,1.f
     };
     m_fsQuad = new Primitive(quadNumVertices, quadDataSize, fsQuadData);
 }
@@ -158,6 +160,66 @@ GLuint Graphics::loadTextureFromQRC(const char *path, GLint minmag) {
 
 Primitive *Graphics::loadPrimitiveFromOBJ(OBJ *obj) {
     return new Primitive(obj->vertexCount, obj->vertexCount*8*sizeof(GLfloat), obj->vboData.data());
+}
+
+GLuint Graphics::loadShaderFromQRC(const char *path, GLuint type) {
+    GLuint shader = glCreateShader(type);
+
+    // Read shader code from file
+    std::string code;
+    QFile file(path);
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)){
+        QTextStream stream(&file);
+        code = stream.readAll().toStdString();
+    }
+
+    // Compile shader
+    char const *cstrCode = code.c_str();
+    glShaderSource(shader, 1, &cstrCode ,NULL);
+    glCompileShader(shader);
+
+    // Check for errors
+    GLint success = GL_FALSE;
+    int logLength;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+    glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
+    if (!success && logLength > 0) {
+        std::vector<char> errorMessage(logLength);
+        glGetShaderInfoLog(shader, logLength, NULL, &errorMessage[0]);
+        fprintf(stderr, "Error compiling shader: %s\n%s\n", path, &errorMessage[0]);
+    }
+
+    return shader;
+}
+
+GLuint Graphics::createProgram(GLuint vertex, GLuint fragment) {
+    return 0;
+}
+
+GLuint Graphics::createProgram(GLuint vertex, GLuint geometry, GLuint fragment) {
+    GLuint program = glCreateProgram();
+
+    glAttachShader(program, vertex);
+    glAttachShader(program, geometry);
+    glAttachShader(program, fragment);
+    glLinkProgram(program);
+
+    // Check for errors
+    GLint success = GL_FALSE;
+    int logLength;
+    glGetProgramiv(program, GL_LINK_STATUS, &success);
+    glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
+    if (!success && logLength > 0) {
+        std::vector<char> errorMessage(logLength);
+        glGetProgramInfoLog(program, logLength, NULL, &errorMessage[0]);
+        fprintf(stderr, "Error linking shader: %s\n", &errorMessage[0]);
+    }
+
+    glDeleteShader(vertex);
+    glDeleteShader(geometry);
+    glDeleteShader(fragment);
+
+    return program;
 }
 
 void Graphics::useShader(GLuint shader) {

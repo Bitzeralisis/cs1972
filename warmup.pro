@@ -5,7 +5,9 @@ TEMPLATE = app
 
 win32 {
     DEFINES += GLEW_STATIC
-    LIBS += -lopengl32
+    LIBS += -lopengl32 -L$$PWD/libs/fmod-win32/lib -lfmod
+    INCLUDEPATH += libs/fmod-win32/inc
+    DEPENDPATH += libs/fmod-win32/inc
 }
 QMAKE_CXXFLAGS += -lpthread -std=c++11
 
@@ -27,14 +29,16 @@ SOURCES += \
     src/util/commonincludes.cpp \
     src/csm/csm_collide.cpp \
     src/util/obj.cpp \
-    src/engine/graphics_bloom.cpp \
     src/engine/graphics/shadermodule.cpp \
     src/engine/graphics/deferredmodule.cpp \
     src/game/initscreen.cpp \
     src/csm/csm.cpp \
     src/engine/graphics/uishadermodule.cpp \
     src/engine/graphics/bloommodule.cpp \
-    src/engine/graphics/particlemodule.cpp
+    src/engine/graphics/particlemodule.cpp \
+    src/engine/audio.cpp \
+    src/engine/sound.cpp \
+    src/game/entity/lightentity.cpp
 
 HEADERS += \
     libs/glew-1.10.0/include/GL/glew.h \
@@ -63,7 +67,10 @@ HEADERS += \
     src/game/initscreen.h \
     src/engine/graphics/uishadermodule.h \
     src/engine/graphics/bloommodule.h \
-    src/engine/graphics/particlemodule.h
+    src/engine/graphics/particlemodule.h \
+    src/engine/audio.h \
+    src/engine/sound.h \
+    src/game/entity/lightentity.h
 
 
 FORMS += src/mainwindow.ui
@@ -74,8 +81,10 @@ RESOURCES += \
     res/obj/obj.qrc
 
 OTHER_FILES += \
-    res/images/cube.png
-
+    res/images/cube.png \
+    res/images/particle1.png \
+    res/images/particle2.png \
+    res/images/particle3.png
 
 DISTFILES += \
     res/shaders/shader.vert \
@@ -91,4 +100,5 @@ DISTFILES += \
     res/shaders/bloomblur.frag \
     res/shaders/particlephysics.frag \
     res/shaders/particle.vert \
+    res/shaders/particle.geom \
     res/shaders/particle.frag

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "graphics.h"
+#include "audio.h"
 #include <deque>
 
 class QKeyEvent;
@@ -28,13 +29,14 @@ private:
 
 public:
     Graphics g;
+    Audio a;
 
 public:
     int width() { return m_width; }
     int height() { return m_height; }
 
     // Screen stack management
-    void pushScreen(Screen *s);
+    void pushScreen(Screen *a);
     Screen* popScreen();
 
 public:

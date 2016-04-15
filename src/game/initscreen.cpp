@@ -1,10 +1,13 @@
 #include "initscreen.h"
-#include "../engine/primitive.h"
-#include "../engine/graphics/bloommodule.h"
-#include "../engine/graphics/deferredmodule.h"
-#include "../engine/graphics/particlemodule.h"
-#include "../engine/graphics/shadermodule.h"
-#include "../engine/graphics/uishadermodule.h"
+#include "entity/lightentity.h"
+#include "engine/primitive.h"
+#include "engine/sound.h"
+#include "engine/world.h"
+#include "engine/graphics/bloommodule.h"
+#include "engine/graphics/deferredmodule.h"
+#include "engine/graphics/particlemodule.h"
+#include "engine/graphics/shadermodule.h"
+#include "engine/graphics/uishadermodule.h"
 #include <QKeyEvent>
 
 using namespace COG;
@@ -15,45 +18,88 @@ int PARTS_H = 256;
 InitScreen::InitScreen(CS1972Engine::Game *parent)
     : Screen(parent)
 {
-    graphics().putTexture("cube", graphics().loadTextureFromQRC(":/images/cube.png"));
+    if (!graphics().hasTexture("cube"))
+        graphics().putTexture("cube", graphics().loadTextureFromQRC(":/images/cube.png"));
+    if (!graphics().hasTexture("particle"))
+        graphics().putTexture("particle", graphics().loadTextureFromQRC(":/images/particle1.png", GL_LINEAR));
 
     graphics().deferred()->initGbuffer(parent->width(), parent->height());
     graphics().bloom()->initBuffers(parent->width(), parent->height());
     graphics().particle()->init(PARTS_W, PARTS_H);
 
-    // Generate some particles
-    GLfloat *pos = new GLfloat[4*PARTS_W*PARTS_H];
-    for (int i = 0; i < PARTS_W*PARTS_H; ++i) {
-        pos[4*i+0] = 50.f * (float) rand() / RAND_MAX + 50.f;
-        pos[4*i+1] = 18.f * (float) rand() / RAND_MAX - 9.f;
-        pos[4*i+2] = 18.f * (float) rand() / RAND_MAX - 9.f;
-        pos[4*i+3] = 3.f;
-    }
-    glBindTexture(GL_TEXTURE_2D, graphics().particle()->posLifeTex());
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, PARTS_W, PARTS_H, 0, GL_RGBA, GL_FLOAT, pos);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    delete pos;
+    m_world = new CS1972Engine::World(parent);
 
-    GLfloat *vel = new GLfloat[3*PARTS_W*PARTS_H];
-    for (int i = 0; i < PARTS_W*PARTS_H; ++i) {
-        vel[3*i+0] = -2.f;//-0.1f * (float) rand() / RAND_MAX - 0.4f;
-        vel[3*i+1] = 0.8f * (float) rand() / RAND_MAX - 0.4f;
-        vel[3*i+2] = 0.8f * (float) rand() / RAND_MAX - 0.4f;
-    }
-    glBindTexture(GL_TEXTURE_2D, graphics().particle()->velTex());
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, PARTS_W, PARTS_H, 0, GL_RGB, GL_FLOAT, vel);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    delete vel;
+    m_sfx1 = audio().createSoundSample("../cs1972/res/sound/handclap.aif");
+    m_sfx2 = audio().createSoundSample("../cs1972/res/sound/808hh08.aif");
+
+    m_bgm = audio().createSoundStream("../cs1972/res/sound/1.mp3");
+    m_bgm->setMusicParams(150.f, 0.052245f);
+    m_bgm->setLoop(true);
+    m_bgm->setLoopBeats(32.f, 96.f);
 }
 
 InitScreen::~InitScreen() {
     graphics().deferred()->cleanupGbuffer();
     graphics().bloom()->cleanupBuffers();
     graphics().particle()->cleanup();
+
+    m_world->deleteEntitiesOnDeconstruct(true);
+
+    delete m_bgm;
+    delete m_sfx1;
+    delete m_sfx2;
 }
 
 void InitScreen::tick(float seconds) {
-    m_timestep = seconds;
+    float beat = audio().getBeat();
+
+    // Sometimes the very first tick will be like 10000 seconds due to all that time being used initializing
+    // Always bound the first tick to at most 0.017f
+    if (m_firstTick) {
+        m_firstTick = false;
+        if (seconds > 0.017f)
+            seconds = 0.017f;
+        audio().queueBgmOnBeat(m_bgm, 0.f);
+    }
+
+    // Shoot
+    if (m_mouseHeld[0]) {
+        if (m_prevHat < beat) {
+            m_prevHat = glm::ceil(beat*4.f)/4.f;
+
+            audio().queueSoundOnBeat(m_sfx2, m_prevHat);
+
+            // Generate some particles
+            for (int i = 0; i < 1; ++i) {
+                float xPos = 8.f * (float) rand() / RAND_MAX - 4.f + 10.f;
+                float yPos = 8.f * (float) rand() / RAND_MAX - 4.f;
+                float zPos = 8.f * (float) rand() / RAND_MAX - 4.f;
+                int numParts = 500.f * (float) rand() / RAND_MAX + 1500.f;
+                GLfloat *pos = new GLfloat[4*numParts];
+                GLfloat *vel = new GLfloat[3*numParts];
+                for (int i = 0; i < numParts; ++i) {
+                    pos[4*i+0] = 1.f * (float) rand() / RAND_MAX - 0.5f + xPos;
+                    pos[4*i+1] = 1.f * (float) rand() / RAND_MAX - 0.5f + yPos;
+                    pos[4*i+2] = 1.f * (float) rand() / RAND_MAX - 0.5f + zPos;
+                    pos[4*i+3] = 1.f * (float) rand() / RAND_MAX + 1.f;
+                }
+                for (int i = 0; i < numParts; ++i) {
+                    vel[3*i+0] = 0.8f * (float) rand() / RAND_MAX - 0.4f - 2.f;
+                    vel[3*i+1] = 0.8f * (float) rand() / RAND_MAX - 0.4f;
+                    vel[3*i+2] = 0.8f * (float) rand() / RAND_MAX - 0.4f;
+                }
+                graphics().particle()->putParticles(numParts, pos, vel);
+                delete pos;
+                delete vel;
+
+                m_world->addEntity(new LightEntity(glm::vec3(xPos, yPos, zPos), glm::vec3(-2.f, 0.f, 0.f)));
+            }
+        }
+    }
+
+    m_world->tick(seconds);
+
+    m_timestep += seconds;
     m_time += seconds;
 }
 
@@ -98,7 +144,7 @@ void InitScreen::draw() {
                 } else {
                     graphics().shader()->color(glm::vec4(1.f));
                     graphics().deferred()->useGlowTexture(true);
-                    graphics().deferred()->glowColor(glm::vec4(0.2f));
+                    graphics().deferred()->glowColor(glm::vec4(-0.05f));
                 }
                 graphics().shader()->mTransform(glm::translate(glm::mat4(1.f), glm::vec3(dx+6.f*i, 6.f*x+3.f, 6.f*y+3.f)));
                 graphics().pBox()->drawArray();
@@ -107,7 +153,10 @@ void InitScreen::draw() {
 
     if (particles == 0 || particles == 2) {
         // Draw particles to g-buffer
+        graphics().particle()->useParticleShader();
+        graphics().particle()->particleStyle("particle", 0.2f);
         graphics().particle()->drawParticles();
+        graphics().useShader(0);
     }
 
     // Stop drawing to g-buffer
@@ -136,6 +185,7 @@ void InitScreen::draw() {
         for (int i = -06; i < 12; i += 3) {
             graphics().deferred()->lightPoint(glm::vec3(dx+6.f*i, 6.f*x+3.f, 6.f*y+3.f), glm::vec3(2.3f, 0.f, 0.f), glm::vec3(1.f, 2.f/04.f, 1.f/016.f));
         }
+        m_world->draw(2);
         graphics().useShader(0);
     }
 
@@ -190,29 +240,69 @@ void InitScreen::draw() {
     }
 
     // Draw particle textures (debug)
-    glDisable(GL_BLEND);
     if (particles == 2) {
-        graphics().uishader()->color(glm::vec4(0.1f));
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        float W = graphics().particle()->width();
+        float H = graphics().particle()->height();
         graphics().uishader()->orthoTransform(0.f, parent->width(), parent->height(), 0.f);
+        graphics().uishader()->color(glm::vec4(0.1f, 0.1f, 0.1f, 1.f));
         graphics().shader()->bindTexture(graphics().particle()->posLifeTex());
-        graphics().uishader()->drawQuad(0.f, 256.f, 0.f, 256.f);
+        graphics().uishader()->drawQuad(0.f, W, 0.f, H);
+        graphics().uishader()->color(glm::vec4(1.f));
         graphics().shader()->bindTexture(graphics().particle()->velTex());
-        graphics().uishader()->drawQuad(256.f, 512.f, 0.f, 256.f);
-        graphics().shader()->bindTexture(graphics().particle()->resultTex());
-        graphics().uishader()->drawQuad(0.f, 256.f, 256.f, 512.f);
+        graphics().uishader()->drawQuad(W, 2.f*W, 0.f, H);
     }
+
+    glDisable(GL_BLEND);
     graphics().useShader(0);
 
     // Stop doing full-screen filters
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
+
+    m_timestep = 0.f;
 }
 
-void InitScreen::mousePressEvent(QMouseEvent *event) { }
+void InitScreen::mousePressEvent(QMouseEvent *event) {
+    switch (event->button()) {
+    case Qt::LeftButton:
+        m_mouseHeld[0] = true;
+        audio().playSound(m_sfx1);
+        break;
+
+    case Qt::MiddleButton:
+        m_mouseHeld[1] = true;
+        break;
+
+    case Qt::RightButton:
+        m_mouseHeld[2] = true;
+        break;
+
+    default:
+        break;
+    }
+}
 
 void InitScreen::mouseMoveEvent(QMouseEvent *event) { }
 
-void InitScreen::mouseReleaseEvent(QMouseEvent *event) { }
+void InitScreen::mouseReleaseEvent(QMouseEvent *event) {
+    switch (event->button()) {
+    case Qt::LeftButton:
+        m_mouseHeld[0] = false;
+        break;
+
+    case Qt::MiddleButton:
+        m_mouseHeld[1] = false;
+        break;
+
+    case Qt::RightButton:
+        m_mouseHeld[2] = false;
+        break;
+
+    default:
+        break;
+    }
+}
 
 void InitScreen::wheelEvent(QWheelEvent *event) { }
 
@@ -228,6 +318,9 @@ void InitScreen::keyPressEvent(QKeyEvent *event) {
 
     case Qt::Key_F3:
         particles = (particles+1) % 3;
+        break;
+
+    default:
         break;
     }
 }

@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/images">
         <file>cube.png</file>
+        <file>particle2.png</file>
+        <file>particle3.png</file>
+        <file>particle1.png</file>
     </qresource>
 </RCC>

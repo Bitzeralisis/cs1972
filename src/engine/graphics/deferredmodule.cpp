@@ -127,10 +127,8 @@ void DeferredModule::unbindGlowTexture() {
 
 void DeferredModule::blitGbufferDepthToBb(int width, int height) {
     glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fbo);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
     glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }
 
 void DeferredModule::useDeferredShader() {

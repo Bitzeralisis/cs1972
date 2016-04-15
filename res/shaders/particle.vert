@@ -3,15 +3,13 @@
 layout(location = 0) in vec2 texc;
 
 uniform mat4 v;
-uniform mat4 p;
 
 uniform sampler2D position_tex;
 
-out float dist;
+out float life;
 
 void main() {
-    vec3 pos = texture2D(position_tex, texc).rgb;
-    gl_Position = p * v * vec4(pos, 1.f);
-    dist = length(pos);
-    //gl_PointSize = 5.f;
+    vec4 poslife = texture2D(position_tex, texc).rgba;
+    gl_Position = v * vec4(poslife.xyz, 1.f);
+    life = poslife.w;
 }

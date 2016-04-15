@@ -20,6 +20,7 @@ private:
 
     GLuint m_width;
     GLuint m_height;
+    int m_currRow = 0;
 
     Primitive *m_indices;
     GLuint m_posLifeTex;
@@ -28,13 +29,18 @@ private:
     GLuint m_resultTex;
 
 public:
+    VALUE_ACCESSOR(GLuint,width)
+    VALUE_ACCESSOR(GLuint,height)
     VALUE_ACCESSOR(GLuint,posLifeTex)
     VALUE_ACCESSOR(GLuint,velTex)
     VALUE_ACCESSOR(GLuint,resultTex)
 
     void init(int width, int height);
     void cleanup();
+    void putParticles(int numParticles, GLfloat *posLife, GLfloat *vel);
     void updateParticles(float seconds);
+    void useParticleShader();
+    void particleStyle(const char *tex, float size);
     void drawParticles();
 };
 

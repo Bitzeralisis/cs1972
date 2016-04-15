@@ -113,7 +113,7 @@ void View::mouseMoveEvent(QMouseEvent *event)
     int deltaX = event->x() - width() / 2;
     int deltaY = event->y() - height() / 2;
     if (!deltaX && !deltaY) return;
-    QCursor::setPos(mapToGlobal(QPoint(width() / 2, height() / 2)));
+    //QCursor::setPos(mapToGlobal(QPoint(width() / 2, height() / 2)));
 
     game->mouseMoveEvent(event);
 }

@@ -14,5 +14,6 @@
         <file>particlephysics.frag</file>
         <file>particle.frag</file>
         <file>particle.vert</file>
+        <file>particle.geom</file>
     </qresource>
 </RCC>

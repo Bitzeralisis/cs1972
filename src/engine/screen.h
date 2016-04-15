@@ -22,6 +22,7 @@ public:
 
 protected:
     inline REFERENCE_ACCESSOR_DEEP(Graphics,graphics,parent->g)
+    inline REFERENCE_ACCESSOR_DEEP(Audio,audio,parent->a)
 
 public:
     Game *const parent;
