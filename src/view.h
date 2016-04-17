@@ -44,8 +44,6 @@ private:
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
 
-    CS1972Engine::Game *game;
-
 private slots:
     void tick();
 };

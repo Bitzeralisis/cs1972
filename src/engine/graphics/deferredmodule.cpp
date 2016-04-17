@@ -147,6 +147,7 @@ void DeferredModule::lightAmbient(glm::vec3 color) {
     glUniform3fv(glGetUniformLocation(m_parent->activeShader(), "lightColor"), 1, glm::value_ptr(color));
     glUniformMatrix4fv(glGetUniformLocation(m_parent->activeShader(), "pvm"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.f)));
     m_parent->fsQuad()->drawArray();
+    ++m_numFsLights;
 }
 
 void DeferredModule::lightDirectional(glm::vec3 dir, glm::vec3 color) {
@@ -156,6 +157,7 @@ void DeferredModule::lightDirectional(glm::vec3 dir, glm::vec3 color) {
     glUniform3fv(glGetUniformLocation(m_parent->activeShader(), "lightColor"), 1, glm::value_ptr(color));
     glUniformMatrix4fv(glGetUniformLocation(m_parent->activeShader(), "pvm"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.f)));
     m_parent->fsQuad()->drawArray();
+    ++m_numFsLights;
 }
 
 void DeferredModule::lightPoint(glm::vec3 pos, glm::vec3 color, glm::vec3 atten) {
@@ -166,7 +168,8 @@ void DeferredModule::lightPoint(glm::vec3 pos, glm::vec3 color, glm::vec3 atten)
     glUniform3fv(glGetUniformLocation(m_parent->activeShader(), "lightAtten"), 1, glm::value_ptr(atten));
     // Figure out what the maximum distance this light can affect is so we can draw it as a volume
     float dist, neg;
-    int inside = csm::solve_quadratic(atten.z, atten.y, atten.x - 512.f*glm::max(glm::max(color.r, color.g), color.b), dist, neg);
+    float cutoff = glm::min((m_cutoff == 0.f ? 512.f : 1.f/m_cutoff), 512.f);
+    int inside = csm::solve_quadratic(atten.z, atten.y, atten.x - cutoff*glm::max(glm::max(color.r, color.g), color.b), dist, neg);
     if (inside && dist*dist < glm::distance2(pos, m_parent->camera()->position())+1.f) {
         // Outside the volume - draw a sphere
         glm::mat4 pv = m_parent->camera()->perspectiveMatrix() * m_parent->camera()->viewMatrix();
@@ -175,9 +178,24 @@ void DeferredModule::lightPoint(glm::vec3 pos, glm::vec3 color, glm::vec3 atten)
         m = glm::scale(m, glm::vec3(dist));
         glUniformMatrix4fv(glGetUniformLocation(m_parent->activeShader(), "pvm"), 1, GL_FALSE, glm::value_ptr(pv*m));
         m_parent->pSphere()->drawArray();
+        ++m_numLightVolumes;
     } else {
         // Inside the volume - just draw full screen
         glUniformMatrix4fv(glGetUniformLocation(m_parent->activeShader(), "pvm"), 1, GL_FALSE, glm::value_ptr(glm::mat4(1.f)));
         m_parent->fsQuad()->drawArray();
+        ++m_numFsLights;
     }
+}
+
+void DeferredModule::lightPoint(glm::vec3 pos, glm::vec3 color, float radius) {
+    lightPoint(pos, color, glm::vec3(1.f, 2.f/radius, 1.f/radius/radius));
+}
+
+void DeferredModule::resetLightCounts() {
+    m_numFsLights = 0;
+    m_numLightVolumes = 0;
+}
+
+void DeferredModule::printLightCounts() {
+    std::cout << "deferred module (full screen lights: " << m_numFsLights << ", light volumes: " << m_numLightVolumes << ")\n";
 }

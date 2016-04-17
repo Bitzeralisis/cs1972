@@ -7,6 +7,11 @@ void Entity::tickPhysicsDiscrete(float seconds) {
     m_position += seconds * m_velocity;
 }
 
+void Entity::tickPhysicsContinuous(float seconds) {
+    m_position += seconds * m_velocity + 0.5f * seconds * seconds * m_accel;
+    m_velocity += seconds * m_accel;
+}
+
 void Entity::checkCollide(Entity *other) {
     glm::vec3& thisPos = m_position;
     glm::vec3& thatPos = other->m_position;

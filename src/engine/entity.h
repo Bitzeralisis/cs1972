@@ -33,7 +33,7 @@ protected:
 protected:
     inline REFERENCE_ACCESSOR_DEEP(Graphics,graphics,parent()->parent()->g)
     void tickPhysicsDiscrete(float seconds);
-    void tickPhysicsContinuous(float seconds); // NYI
+    void tickPhysicsContinuous(float seconds);
     void checkCollide(Entity *other);
 
 public:

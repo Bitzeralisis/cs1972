@@ -25,7 +25,7 @@ public:
 private:
     int m_width;
     int m_height;
-    std::deque<Screen*> m_screenStack;
+    std::deque<Screen *> m_screenStack;
 
 public:
     Graphics g;
@@ -37,7 +37,7 @@ public:
 
     // Screen stack management
     void pushScreen(Screen *a);
-    Screen* popScreen();
+    Screen *popScreen();
 
 public:
     void initializeGL();

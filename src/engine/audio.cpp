@@ -10,6 +10,12 @@ Audio::Audio() {
     FMOD_System_GetSoftwareFormat(m_fmod, &m_sampleRate, 0, 0);
     err = FMOD_System_Init(m_fmod, 32, FMOD_INIT_NORMAL, 0);
     if (err != FMOD_OK) fprintf(stderr, "Error initializing FMOD: %i\n", err);
+
+    /*
+    FMOD_CHANNELGROUP *master;
+    FMOD_System_GetMasterChannelGroup(m_fmod, &master);
+    FMOD_ChannelGroup_SetVolume(master, 0.f);
+    */
 }
 
 Audio::~Audio() {
@@ -71,7 +77,7 @@ void Audio::queueBgmOnBeat(Sound *sound, float beat) {
         m_bgmOffset = (parentNowDSP - bgmNowDSP) + (m_sampleRate * m_bgm->m_offset);
     } else {
         queueSoundOnBeat(sound, beat);
-        m_bgmOffset +=  beat * (60.f * m_sampleRate / m_bgm->m_bpm);
+        //m_bgmOffset +=  beat * (60.f * m_sampleRate / m_bgm->m_bpm);
         m_bgm = sound;
     }
 }

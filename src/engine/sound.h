@@ -1,6 +1,7 @@
 #pragma once
 
 #include "util/CommonIncludes.h"
+#include "util/HeaderUtils.h"
 
 namespace CS1972Engine {
 
@@ -24,6 +25,8 @@ private:
     float m_offset = 0.f;
 
 public:
+    VALUE_ACCESSOR(float,bpm)
+
     void setMusicParams(float bpm, float offset);
     void setLoop(bool loop);
     void setLoopBeats(float beat1, float beat2);

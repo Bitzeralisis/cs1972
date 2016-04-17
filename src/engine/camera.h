@@ -51,10 +51,12 @@ public:
     void walk(const glm::vec3& dir);
     void normalizeView();
     glm::vec3 lookVector() const;
+    glm::vec3 upVector() const;
     glm::mat4 viewMatrix() const;
     glm::mat4 perspectiveMatrix() const;
 
     glm::vec3 orthoProject(glm::vec3 pos) const;
+    glm::vec3 inverseOrthoProject(glm::vec3 pos) const;
     bool frustumCullAABB(const csm::aabb& aabb) const;
 };
 

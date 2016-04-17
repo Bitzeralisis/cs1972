@@ -99,7 +99,11 @@ public:
 
 class ellipsoid {
 public:
-    explicit ellipsoid(glm::vec3 c, glm::vec3 r)
+    ellipsoid()
+        : center(glm::vec3())
+        , radii(glm::vec3())
+    { }
+    ellipsoid(glm::vec3 c, glm::vec3 r)
         : center(c)
         , radii(r)
     { }

@@ -31,14 +31,17 @@ SOURCES += \
     src/util/obj.cpp \
     src/engine/graphics/shadermodule.cpp \
     src/engine/graphics/deferredmodule.cpp \
-    src/game/initscreen.cpp \
     src/csm/csm.cpp \
     src/engine/graphics/uishadermodule.cpp \
     src/engine/graphics/bloommodule.cpp \
     src/engine/graphics/particlemodule.cpp \
     src/engine/audio.cpp \
     src/engine/sound.cpp \
-    src/game/entity/lightentity.cpp
+    src/game/entity/lightentity.cpp \
+    src/game/gamescreen.cpp \
+    src/game/entity/enemyentity.cpp \
+    src/game/entity/playershotentity.cpp \
+    src/engine/enginedef.cpp
 
 HEADERS += \
     libs/glew-1.10.0/include/GL/glew.h \
@@ -64,13 +67,19 @@ HEADERS += \
     src/game/coggame.h \
     src/engine/graphics/shadermodule.h \
     src/engine/graphics/deferredmodule.h \
-    src/game/initscreen.h \
     src/engine/graphics/uishadermodule.h \
     src/engine/graphics/bloommodule.h \
     src/engine/graphics/particlemodule.h \
     src/engine/audio.h \
     src/engine/sound.h \
-    src/game/entity/lightentity.h
+    src/game/entity/lightentity.h \
+    src/game/entity/cogentity.h \
+    src/game/gamescreen.h \
+    src/game/entity/enemyentity.h \
+    src/game/entity/playerentity.h \
+    src/game/entity/playershotentity.h \
+    src/engine/enginedef.h \
+    src/game/enginedef.h
 
 
 FORMS += src/mainwindow.ui
@@ -84,7 +93,8 @@ OTHER_FILES += \
     res/images/cube.png \
     res/images/particle1.png \
     res/images/particle2.png \
-    res/images/particle3.png
+    res/images/particle3.png \
+    res/images/reticle.png
 
 DISTFILES += \
     res/shaders/shader.vert \

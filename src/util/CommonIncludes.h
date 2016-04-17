@@ -3,6 +3,8 @@
 
 /*A file for any includes or structs that need to be used in many different places. */
 
+#include "engine/enginedef.h"
+
 #include "GL/glew.h"
 #include <iostream>
 

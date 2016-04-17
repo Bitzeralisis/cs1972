@@ -12,3 +12,34 @@
 
 2) ALEX'S IDOL CORNER. _________________________________________________________
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+  !! WARNING !! __/\_/\__ THAR BE DARGONS DOWN BENEATH __/\_/\__ !! WARNING !!
+
+
+3) ADVANCED MECHANICS. _________________________________________________________
+
+    SHOOTING & COMBO.
+
+        As long as the shoot button is held, you will shoot once every 16th
+        beat. After the shoot button is released, you will shoot exactly 8 more
+        shots.
+
+        Each beat, there is a chance to either increase or decrease the combo.
+        One time only per beat, when the shoot button is pressed: if the shoot
+        button was pressed with perfect timing, then the combo increases by 1,
+        and if the shoot button was pressed without perfect timing, then combo
+        decreases by 1. Also, if the shoot button was not pressed during the
+        beat, then combo decreases by 1 if it has been more than one beat since
+        the shoot button was pressed with perfect timing.

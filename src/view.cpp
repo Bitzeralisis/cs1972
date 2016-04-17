@@ -24,12 +24,12 @@ View::View(QWidget *parent) : QGLWidget(parent)
     }
     frameIndex = 0;
 
-    game = new COG::COGGame();
+    GAME = new COG::COGGame();
 }
 
 View::~View()
 {
-    delete game;
+    delete GAME;
 }
 
 void View::initializeGL()
@@ -70,7 +70,7 @@ void View::initializeGL()
     // the default).
     glFrontFace(GL_CCW);
 
-    game->initializeGL();
+    GAME->initializeGL();
 }
 
 void View::paintGL()
@@ -81,24 +81,24 @@ void View::paintGL()
     glPushAttrib(GL_ALL_ATTRIB_BITS);
     glPushMatrix();
 
-    game->draw();
+    GAME->draw();
 
     glPopMatrix();
     glPopAttrib();
 
-    glColor3f(1,1,1);
-    renderText(10, 20, "FPS: " + QString::number((int) (fps)), this->font());
+    //glColor3f(1,1,1);
+    //renderText(10, 20, "FPS: " + QString::number((int) (fps)), this->font());
 }
 
 void View::resizeGL(int w, int h)
 {
     glViewport(0, 0, w, h);
-    game->resizeEvent(w, h);
+    GAME->resizeEvent(w, h);
 }
 
 void View::mousePressEvent(QMouseEvent *event)
 {
-    game->mousePressEvent(event);
+    GAME->mousePressEvent(event);
 }
 
 void View::mouseMoveEvent(QMouseEvent *event)
@@ -113,30 +113,30 @@ void View::mouseMoveEvent(QMouseEvent *event)
     int deltaX = event->x() - width() / 2;
     int deltaY = event->y() - height() / 2;
     if (!deltaX && !deltaY) return;
-    //QCursor::setPos(mapToGlobal(QPoint(width() / 2, height() / 2)));
+    QCursor::setPos(mapToGlobal(QPoint(width() / 2, height() / 2)));
 
-    game->mouseMoveEvent(event);
+    GAME->mouseMoveEvent(event);
 }
 
 void View::mouseReleaseEvent(QMouseEvent *event)
 {
-    game->mouseReleaseEvent(event);
+    GAME->mouseReleaseEvent(event);
 }
 
 void View::wheelEvent(QWheelEvent *event)
 {
-    game->wheelEvent(event);
+    GAME->wheelEvent(event);
 }
 
 void View::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Escape) QApplication::quit();
-    game->keyPressEvent(event);
+    GAME->keyPressEvent(event);
 }
 
 void View::keyReleaseEvent(QKeyEvent *event)
 {
-    game->keyReleaseEvent(event);
+    GAME->keyReleaseEvent(event);
 }
 
 void View::tick()
@@ -153,7 +153,13 @@ void View::tick()
     fps /= FRAMES_TO_AVERAGE;
     fps = 1.f / fps;
 
-    game->tick(seconds);
+    QString title = "Children of Gaia";
+    title += " (FPS: ";
+    title += QString::number((int)fps);
+    title += ")";
+    window()->setWindowTitle(title);
+
+    GAME->tick(seconds);
 
     // Flag this view for repainting (Qt will call paintGL() soon after)
     update();

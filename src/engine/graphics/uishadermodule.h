@@ -25,6 +25,8 @@ public:
     void orthoTransform(float left, float right, float bottom, float top);
     void color(glm::vec4 color);
     void drawQuad(float left, float right, float bottom, float top);
+    void drawQuad(float left, float right, float bottom, float top, float texLeft, float texRight, float texBottom, float texTop);
+    void drawQuad(float left, float right, float bottom, float top, float rotation, float texLeft, float texRight, float texBottom, float texTop);
     glm::vec3 cameraSpaceToUisSpace(glm::vec3 pos);
 };
 

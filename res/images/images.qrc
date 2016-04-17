@@ -4,5 +4,6 @@
         <file>particle2.png</file>
         <file>particle3.png</file>
         <file>particle1.png</file>
+        <file>reticle.png</file>
     </qresource>
 </RCC>

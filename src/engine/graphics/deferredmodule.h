@@ -23,6 +23,11 @@ private:
     GLuint m_glowTex;
     GLuint m_depthTex;
 
+    float m_cutoff = 0.f;
+
+    int m_numFsLights;
+    int m_numLightVolumes;
+
 public:
     VALUE_ACCESSOR(GLuint,normalTex)
     VALUE_ACCESSOR(GLuint,colorTex)
@@ -49,6 +54,9 @@ public:
     void lightAmbient(glm::vec3 color);
     void lightDirectional(glm::vec3 dir, glm::vec3 color);
     void lightPoint(glm::vec3 pos, glm::vec3 color, glm::vec3 atten);
+    void lightPoint(glm::vec3 pos, glm::vec3 color, float radius);
+    void resetLightCounts();
+    void printLightCounts();
 };
 
 }

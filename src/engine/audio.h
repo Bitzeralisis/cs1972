@@ -21,6 +21,7 @@ private:
 
 public:
     VALUE_ACCESSOR(FMOD_SYSTEM *,fmod)
+    VALUE_ACCESSOR(const Sound *,bgm)
     float getBeat();
 
     void tick(float seconds);
