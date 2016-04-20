@@ -1,9 +1,12 @@
 <RCC>
     <qresource prefix="/images">
-        <file>cube.png</file>
         <file>particle2.png</file>
         <file>particle3.png</file>
         <file>particle1.png</file>
         <file>reticle.png</file>
+        <file>target.png</file>
+        <file>cube1.png</file>
+        <file>cube2.png</file>
+        <file>hud.png</file>
     </qresource>
 </RCC>

@@ -12,9 +12,11 @@ in vec2 texc;
 void main() {
     vec2 dir = direction/screenSize;
     vec3 color = weight[0] * texture2D(tex, texc).rgb;
-    for (int i = 1; i < 17; ++i) {
-        color += weight[i] * texture2D(tex, texc + i*dir).rgb;
-        color += weight[i] * texture2D(tex, texc - i*dir).rgb;
+    for (int i = 1; i < 17; i += 2) {
+        float total = weight[i]+weight[i+1];
+        float pos = weight[i+1] / total + i;
+        color += total * texture2D(tex, texc + pos*dir).rgb;
+        color += total * texture2D(tex, texc - pos*dir).rgb;
     }
     fragColor = color;
 }

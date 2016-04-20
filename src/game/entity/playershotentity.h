@@ -13,6 +13,9 @@ public:
     virtual ~PlayerShotEntity();
 
 private:
+    const float TARGET_SIZE_FACTOR = 6.f;
+
+private:
     PlayerEntity *m_parent;
     float m_shotBeat;
     EnemyEntity *m_target;

@@ -18,6 +18,7 @@ public:
     enum {
         DRAW_GEOMETRY,
         DRAW_LIGHTS,
+        DRAW_ORTHOGRAPHIC,
         NUM_DRAWS
     };
 
@@ -36,8 +37,11 @@ public:
 private:
     const float RETICLE_SIZE_FACTOR = 1.f/8.f;
     const float RETICLE_SIZE_FACTOR_DRAW = 1.f/6.f;
-    const float PERFECT_TIMING_WINDOW = 0.06f;
+    const float PERFECT_TIMING_WINDOW = 0.1f;
     const int MAX_COMBO = 8;
+
+    const float GRAPHICS_OFFSET = 0.f;
+    const float INPUT_OFFSET = 0.f;
 
 private:
     CS1972Engine::World *m_world;
@@ -59,7 +63,9 @@ private:
     float m_shootUntil = -1.f;
     float m_prevBeatChecked = -1.f;
     float m_prevPerfectShot = -1.f;
+    float m_prevMiss = -1.f;
     int m_combo = 1;
+    int m_prevJudge = 0;
 
     bool m_mouseHeld[3] = { false, false, false };
 

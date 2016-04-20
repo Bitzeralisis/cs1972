@@ -90,11 +90,14 @@ RESOURCES += \
     res/obj/obj.qrc
 
 OTHER_FILES += \
-    res/images/cube.png \
+    res/images/cube1.png \
+    res/images/cube2.png \
     res/images/particle1.png \
     res/images/particle2.png \
     res/images/particle3.png \
-    res/images/reticle.png
+    res/images/reticle.png \
+    res/images/target.png \
+    res/images/hud.png
 
 DISTFILES += \
     res/shaders/shader.vert \

@@ -6,6 +6,7 @@
 #include "engine/primitive.h"
 #include "engine/graphics/deferredmodule.h"
 #include "engine/graphics/shadermodule.h"
+#include "engine/graphics/uishadermodule.h"
 #include "csm/csm.h"
 
 using namespace COG;
@@ -27,33 +28,54 @@ void PlayerShotEntity::tickBeats(float beats) {
 }
 
 void PlayerShotEntity::draw(int pass) {
-    if (pass != GameScreen::DRAW_GEOMETRY)
-        return;
+    float beat = GAME->beat();
 
-    float travel = GAME->beat() - m_shotBeat;
+    switch (pass) {
+    case GameScreen::DRAW_GEOMETRY: {
+        glm::vec3 dir = m_target->position() - m_parent->position();
+        glm::vec3 rej = m_up - glm::dot(m_up, dir) / glm::length2(dir) * dir;
+        rej = glm::normalize(rej);
 
-    glm::vec3 dir = m_target->position() - m_parent->position();
-    glm::vec3 rej = m_up - glm::dot(m_up, dir) / glm::length2(dir) * dir;
-    rej = glm::normalize(rej);
+        int numPoints = 51;
+        int length = 11;
+        GLfloat *line = new GLfloat[8*numPoints];
+        for (int i = 0; i < numPoints; ++i) {
+            float t = (float) i / (numPoints-1);
+            glm::vec3 pos = csm::bezier_curve(m_parent->position()+m_back, rej, m_target->position(), t);
+            line[8*i+0] = pos.x;
+            line[8*i+1] = pos.y;
+            line[8*i+2] = pos.z;
+        }
+        CS1972Engine::Primitive *primitive = new CS1972Engine::Primitive(numPoints, 8*numPoints*sizeof(GLfloat), line);
 
-    int numPoints = 11;
-    GLfloat *line = new GLfloat[8*numPoints];
-    for (int i = 0; i < numPoints; ++i) {
-        float along = (float) i / (numPoints-1);
-        float t = 0.2f + 0.8f*(0.2f*along + 0.8f*travel);
-        glm::vec3 pos = csm::bezier_curve(m_parent->position()+m_back, rej, m_target->position(), t);
-        line[8*i+0] = pos.x;
-        line[8*i+1] = pos.y;
-        line[8*i+2] = pos.z;
+        float travel = glm::min(glm::max(0.f, beat-m_shotBeat), 1.f) * (numPoints-length);
+        graphics().shader()->useTexture(false);
+        graphics().shader()->color(glm::vec4(0.f));
+        graphics().deferred()->useGlowTexture(false);
+        graphics().shader()->mTransform(glm::mat4(1.f));
+        glLineWidth(5.f);
+
+        graphics().deferred()->glowColor(glm::vec4(1.f));
+        primitive->drawArray(GL_LINE_STRIP, travel, length);
+        glLineWidth(1.f);
+        graphics().deferred()->glowColor(glm::vec4(0.5f));
+        primitive->drawArray(GL_LINE_STRIP, travel+length, numPoints-(travel+length));
+
+        delete line;
+        delete primitive;
     }
 
-    glLineWidth(3.f);
-    graphics().shader()->useTexture(false);
-    graphics().shader()->color(glm::vec4(0.f));
-    graphics().deferred()->useGlowTexture(false);
-    graphics().deferred()->glowColor(glm::vec4(1.f));
-    graphics().shader()->mTransform(glm::mat4(1.f));
-    CS1972Engine::Primitive(numPoints, 8*numPoints*sizeof(GLfloat), line).drawArray(GL_LINE_STRIP, 0, numPoints);
-
-    delete line;
+    case GameScreen::DRAW_ORTHOGRAPHIC: {
+        glm::vec3 pos = graphics().uishader()->cameraSpaceToUisSpace(m_target->position());
+        if (pos.z > 0.f) {
+            pos = glm::round(pos);
+            float rotation = 22.5f - glm::min(45.f*(beat-m_shotBeat), 22.5f);
+            float hSize = parent()->parent()->height()/TARGET_SIZE_FACTOR * 0.5f * (1.f+rotation/22.5f);
+            graphics().shader()->useTexture(true);
+            graphics().shader()->bindTexture("target");
+            graphics().uishader()->color(glm::vec4(1.f, 1.f, 1.f, 1.f-rotation/22.5f));
+            graphics().uishader()->drawQuad(pos.x-hSize, pos.x+hSize, pos.y-hSize, pos.y+hSize, rotation, 0.f, 0.5f, 0.f, 0.5f);
+        }
+    }
+    }
 }

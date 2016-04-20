@@ -6,7 +6,13 @@
 
                                 Children of Gaia
 
-1) ANNOTATED RUBRIC. ___________________________________________________________
+1) BUILD INSTRUCTIONS. _________________________________________________________
+
+	Please make sure to copy $PROJECT_DIRECOTRY/res/sound/* to
+	$RUN_DIRECTORY/sound/* after building.
+
+
+2) ANNOTATED RUBRIC. ___________________________________________________________
 
 COMPLETE/INCOMPLETE
 
@@ -15,15 +21,50 @@ Retries used: NONE (2 extra retries left)
 Engine Requirements
 ========================================
 [ ] Supports playback of short sound clips and long music files
+
+	Please see src/engine/audio.*. I also additionally support setting a sound
+	as the background music track, and queueing sounds to play on specific
+	times in the future with sample precision (as provided by FMOD).
+
 [ ] Bloom lighting
+
+	Please see src/engine/graphics/bloommodule.*. I extract parts of the screen
+	that are very bright from an HDR texture, blur it, and blend it back to the
+	screen. The blur is a horizontal/vertical separated 33x33 kernel that
+	samples textures in between texels to save on texture fetches.
+
 [ ] Particle systems that are updated/drawn on the GPU
+
+	Please see src/engine/graphics/particlemodule.*. The particles are both
+	drawn and updated on the GPU. Particle data, such as position, life, and
+	velocity, are represented as floats in textures, and a special shader
+	performs the particle physics. Particles are drawn as an array of points
+	which are used to index into particles in the particle textures, then
+	turned into billboarded quads by a geometry shader. My particles obey depth
+	and are additively blended.
 
 Game Requirements
 ========================================
 [ ] Has at least 2 distinct sound effects that can be triggered on command
+
+	The clap sound effect plays immediately on clicking, and the tick sound
+	effect plays once every 16th beat aligned to 16th beats as long as the
+	mouse is held (and a bit after).
+
 [ ] Has some form of background music
+
+	Yes.
+
 [ ] Demonstrates bloom lighting with at least one light source
+
+	Yes. Please see the glowing cubes in the corners, or just spawn a bunch of
+	particles and watch as they cause bloom to happen.
+
 [ ] Demonstrates usage of at least 1000 particles simultaneously
+
+	I've set up my particle system to do up to 2^16 (32K) particles. While
+	holding the mouse down, each cube is approximately 2000 particles.
+
 
 Global requirements
 ========================================
@@ -43,13 +84,15 @@ Global requirements
 [ ] Runs at 30+ UPS and never dips below 20 UPS unless indicated in the
     specific handout
 
+	Hopefully...
 
-2) KNOWN BUGS. _________________________________________________________________
+
+3) KNOWN BUGS. _________________________________________________________________
 
     None known.
 
 
-3) TIME SPENT. _________________________________________________________________
+4) TIME SPENT. _________________________________________________________________
 
-    hours.
+    Too many hours.
 

@@ -21,6 +21,7 @@ uniform int lightType = 1;
 uniform vec3 lightPosition = vec3(10.f, 10.f, 5.f);
 uniform vec3 lightColor = vec3(1.f, 1.f, 1.f);
 uniform vec3 lightAtten = vec3(1.f, 0.f, 0.f);
+uniform float lightCutoff = 0.f;
 
 void main() {
     vec2 texc = gl_FragCoord.xy / screenSize;
@@ -45,17 +46,21 @@ void main() {
             vertexToLight = normalize(lightPosition - position_worldSpace);
             float dist = distance(lightPosition, position_worldSpace);
             brightness = 1.f / dot(lightAtten, vec3(1.f, dist, dist*dist));
+            brightness = max(0.f, (brightness-lightCutoff) * (1.f/(1.f-lightCutoff)));
         }
 
         // Diffuse lighting
         float diffuseIntensity = max(0.f, dot(vertexToLight, normal_worldSpace));
 
         // Specular lighting
+        /*
         vec3 lightReflection = normalize(-reflect(vertexToLight, normal_worldSpace));
         vec3 eyeDirection = normalize(eye_worldSpace - position_worldSpace);
         float specIntensity = pow(max(0.0, dot(eyeDirection, lightReflection)), 100);
+        */
 
-        brightness *= mix(diffuseIntensity, specIntensity, 0.2f);
+        //brightness *= mix(diffuseIntensity, specIntensity, 0.2f);
+        brightness *= diffuseIntensity;
         fragColor = vec4(lightColor * base_color.rgb * brightness, 1.f);
     } else {
         fragColor = vec4(lightColor * base_color.rgb, 1.f);

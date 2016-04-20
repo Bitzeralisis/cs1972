@@ -15,6 +15,7 @@
 #include "csm/csm_collide.h"
 #include "glm/gtx/rotate_vector.hpp"
 #include <QKeyEvent>
+#include <chrono>
 
 using namespace COG;
 
@@ -24,27 +25,33 @@ int PARTS_H = 256;
 GameScreen::GameScreen(CS1972Engine::Game *parent)
     : Screen(parent)
 {
-    if (!graphics().hasTexture("cube"))
-        graphics().putTexture("cube", graphics().loadTextureFromQRC(":/images/cube.png", GL_LINEAR));
+    if (!graphics().hasTexture("cube1"))
+        graphics().putTexture("cube1", graphics().loadTextureFromQRC(":/images/cube1.png", GL_LINEAR));
+    if (!graphics().hasTexture("cube2"))
+        graphics().putTexture("cube2", graphics().loadTextureFromQRC(":/images/cube2.png", GL_LINEAR));
     if (!graphics().hasTexture("particle"))
         graphics().putTexture("particle", graphics().loadTextureFromQRC(":/images/particle1.png", GL_LINEAR));
     if (!graphics().hasTexture("reticle"))
         graphics().putTexture("reticle", graphics().loadTextureFromQRC(":/images/reticle.png", GL_LINEAR));
+    if (!graphics().hasTexture("target"))
+        graphics().putTexture("target", graphics().loadTextureFromQRC(":/images/target.png", GL_NEAREST));
+    if (!graphics().hasTexture("hud"))
+        graphics().putTexture("hud", graphics().loadTextureFromQRC(":/images/hud.png", GL_LINEAR));
 
     graphics().deferred()->initGbuffer(parent->width(), parent->height());
     graphics().bloom()->initBuffers(parent->width(), parent->height());
     graphics().particle()->init(PARTS_W, PARTS_H);
 
-    m_sfx1 = audio().createSoundSample("../cs1972/res/sound/handclap.aif");
-    m_sfx2 = audio().createSoundSample("../cs1972/res/sound/808hh08.aif");
+    m_sfx1 = audio().createSoundSample("sound/handclap.aif");
+    m_sfx2 = audio().createSoundSample("sound/808hh08.aif");
 
-    m_bgm = audio().createSoundStream("../cs1972/res/sound/1.mp3");
+    m_bgm = audio().createSoundStream("sound/1.mp3");
     m_bgm->setMusicParams(150.f, 0.052245f);
     m_bgm->setLoop(true);
     m_bgm->setLoopBeats(32.f, 96.f);
 
     m_world = new CS1972Engine::World(parent, NUM_LAYERS);
-    m_world->addEntity(LAYER_ENEMIES, new EnemyEntity(0.f, glm::vec3(5.f, -1.5f, -1.5f)));
+    //m_world->addEntity(LAYER_ENEMIES, new EnemyEntity(0.f, glm::vec3(5.f, -1.5f, -1.5f)));
 
     m_player = new PlayerEntity();
     m_world->addEntity(LAYER_CONTROLLER, m_player);
@@ -102,22 +109,22 @@ void GameScreen::goodCombo(float beat) {
     if (m_combo < MAX_COMBO)
         m_combo += 1;
     m_prevPerfectShot = beat;
-    std::cout << "GOOD " << m_combo << '\n';
-    std::cout.flush();
+    m_prevJudge = 1;
 }
 
 void GameScreen::badCombo(float) {
-    if (m_combo > 1)
+    if (m_combo > 1) {
         m_combo -= 1;
-    std::cout << "BAD  " << m_combo << '\n';
-    std::cout.flush();
+        m_prevJudge = 2;
+    }
 }
 
-void GameScreen::missCombo(float) {
-    if (m_combo > 1)
+void GameScreen::missCombo(float beat) {
+    if (m_combo > 1) {
         m_combo -= 1;
-    std::cout << "MISS " << m_combo << '\n';
-    std::cout.flush();
+        m_prevJudge = 3;
+        m_prevMiss = beat;
+    }
 }
 
 void GameScreen::tick(float seconds) {
@@ -173,8 +180,8 @@ void GameScreen::tick(float seconds) {
             glm::vec3 behind = -1.f * graphics().camera()->lookVector();
             glm::vec3 angle = glm::normalize(glm::rotate(graphics().camera()->upVector(), glm::pi<float>()*glm::mod(m_prevShot, 2.f), graphics().camera()->lookVector()));
             m_world->addEntity(new PlayerShotEntity(m_player, m_prevShot, bestEnemy, behind, angle));
-            audio().queueSoundOnBeat(m_sfx2, m_prevShot);
         }
+        audio().queueSoundOnBeat(m_sfx2, m_prevShot);
 
         // Generate some particles
         for (int i = 0; i < 1; ++i) {
@@ -214,7 +221,7 @@ int deferred = 0;
 int particles = 0;
 
 void GameScreen::draw() {
-    float beat = audio().getBeat();
+    float beat = audio().getBeat() + GRAPHICS_OFFSET*audio().bgm()->bpm()/60.f;
     GAME->beat(beat);
     drawScene(beat);
     drawHud(beat);
@@ -244,13 +251,13 @@ void GameScreen::drawScene(float beat) {
     graphics().shader()->pvTransformFromCamera();
     graphics().shader()->useFog(true, 40.f, 50.f, glm::vec3(0.f));
 
-    graphics().shader()->useTexture(false);
-    graphics().shader()->bindTexture("cube");
-    graphics().deferred()->bindGlowTexture("cube");
-    float brightness = glm::max(-0.05f, 0.15f*(1.f - 1.1f*glm::mod(beat, 1.f)));
+    graphics().shader()->useTexture(true);
+    graphics().shader()->bindTexture("cube2");
+    graphics().deferred()->bindGlowTexture("cube1");
+    float brightness = 0.2f*(1.f - 1.f*glm::mod(beat, 1.f));
     for (int x = -4; x < 4; ++x)
         for (int y = -4; y < 4; ++y)
-            for (int i = 0; i < 12; ++i) {
+            for (int i = -1; i < 12; ++i) {
                 if (x == -2 && y == -2 && (i % 3 == 0)) {
                     graphics().shader()->color(glm::vec4(0.f));
                     graphics().deferred()->useGlowTexture(false);
@@ -398,23 +405,29 @@ void GameScreen::drawHud(float beat) {
     graphics().uishader()->use();
     graphics().uishader()->orthoTransform(0.f, W, H, 0.f);
 
+    // Draw orthographic ui
+
+    m_world->draw(DRAW_ORTHOGRAPHIC);
+
     // Draw the reticle
 
     float hSize = H*RETICLE_SIZE_FACTOR_DRAW * 0.5f;
     graphics().shader()->bindTexture("reticle");
 
-        float hSize2 = hSize * (1.f+glm::mod(beat, 1.f));
-        graphics().uishader()->color(glm::vec4(1.f, 1.f, 1.f, glm::max(0.f, glm::min(0.5f*(m_shootUntil-beat), 1.f-glm::mod(beat, 1.f)))));
-        graphics().uishader()->drawQuad(
-            m_mousePosition.x-hSize2, m_mousePosition.x+hSize2, m_mousePosition.y-hSize2, m_mousePosition.y+hSize2,
-            0.25f, 0.5f, 0.5f, 1.f
-        );
+    float hSize2 = hSize * (1.f+glm::mod(beat, 1.f));
+    graphics().uishader()->color(glm::vec4(1.f, 1.f, 1.f, glm::max(0.f, glm::min(0.5f*(m_shootUntil-beat), 1.f-glm::mod(beat, 1.f)))));
+    graphics().uishader()->drawQuad(
+        m_mousePosition.x-hSize2, m_mousePosition.x+hSize2, m_mousePosition.y-hSize2, m_mousePosition.y+hSize2,
+        0.25f, 0.5f, 0.5f, 1.f
+    );
 
-    graphics().uishader()->color(glm::vec4(1.f));
-    for (float f = glm::ceil(beat*4.f)/4.f; f < m_shootUntil; f += 0.25f) {
+    //for (float f = glm::ceil(beat*4.f)/4.f; f < m_shootUntil; f += 0.25f) {
+    for (int i = 0; i < m_combo; ++i) {
+        graphics().uishader()->color(glm::vec4(1.f));
         graphics().uishader()->drawQuad(
             m_mousePosition.x-hSize, m_mousePosition.x+hSize, m_mousePosition.y-hSize, m_mousePosition.y+hSize,
-            -180.f * glm::mod(f, 2.f),
+            //-180.f * glm::mod(f, 2.f),
+            -45.f * i,
             0.5f, 0.75f, 0.5f, 1.f
         );
     }
@@ -425,19 +438,53 @@ void GameScreen::drawHud(float beat) {
         0.f, 0.25f, 0.f, 0.5f
     );
 
+    /*
     graphics().uishader()->color(glm::vec4(1.f, 1.f, 1.f, glm::max(0.f, 0.5f*(m_shootUntil-beat))));
     graphics().uishader()->drawQuad(
         m_mousePosition.x-hSize, m_mousePosition.x+hSize, m_mousePosition.y-hSize, m_mousePosition.y+hSize,
         -180.f * glm::mod(beat, 2.f),
         0.25f, 0.5f, 0.f, 0.5f
     );
+    */
 
-    if (m_mouseHeld[0]) {
+    if (m_mouseHeld[0] || beat-m_prevMiss < 2.f*PERFECT_TIMING_WINDOW) {
         hSize *= 1.05f;
-        graphics().uishader()->color(glm::vec4(1.f, 1.f, 1.f, 0.5f));
+        if (m_prevJudge == 2 || m_prevJudge == 3)
+            graphics().uishader()->color(glm::vec4(1.f, 0.f, 0.f, 1.f));
+        else
+            graphics().uishader()->color(glm::vec4(1.f, 1.f, 1.f, 0.5f));
         graphics().uishader()->drawQuad(
             m_mousePosition.x-hSize, m_mousePosition.x+hSize, m_mousePosition.y-hSize, m_mousePosition.y+hSize,
             0.f, 0.25f, 0.5f, 1.f
+        );
+        for (int i = 0; i < m_combo; ++i) {
+            graphics().uishader()->drawQuad(
+                m_mousePosition.x-hSize, m_mousePosition.x+hSize, m_mousePosition.y-hSize, m_mousePosition.y+hSize,
+                -45.f * i,
+                0.75f, 1.f, 0.5f, 1.f
+            );
+        }
+    }
+
+    // Draw the HUD
+
+    graphics().shader()->bindTexture("hud");
+    graphics().uishader()->color(glm::vec4(1.f));
+    graphics().uishader()->drawQuad(
+        0.f, W, H-(0.125f*W), H,
+        0.f, 1.f, 0.f, 0.25f
+    );
+    graphics().uishader()->drawQuad(
+        0.f, W, 0.f, 0.125f*W,
+        0.f, 1.f, 0.75f, 1.f
+    );
+
+    for (int i = 0; i < 3; ++i) {
+        float left = 112.f/2048.f + 32.f/2048.f*i;
+        float right = left + 32.f/2048.f;
+        graphics().uishader()->drawQuad(
+            left*W, right*W, H-68.f/2048.f*W, H-36.f/2048.f*W,
+            0.f, 32.f/2048.f, 0.25f, 0.25f+32.f/1024.f
         );
     }
 
@@ -445,7 +492,7 @@ void GameScreen::drawHud(float beat) {
 }
 
 void GameScreen::mousePressEvent(QMouseEvent *event) {
-    float beat = audio().getBeat();
+    float beat = audio().getBeat() + INPUT_OFFSET*audio().bgm()->bpm()/60.f;
 
     switch (event->button()) {
     case Qt::LeftButton: {
@@ -492,7 +539,7 @@ void GameScreen::mouseMoveEvent(QMouseEvent *event) {
 }
 
 void GameScreen::mouseReleaseEvent(QMouseEvent *event) {
-    float beat = audio().getBeat();
+    float beat = audio().getBeat() + INPUT_OFFSET*audio().bgm()->bpm()/60.f;
 
     switch (event->button()) {
     case Qt::LeftButton:
@@ -516,6 +563,8 @@ void GameScreen::mouseReleaseEvent(QMouseEvent *event) {
 void GameScreen::wheelEvent(QWheelEvent *event) { }
 
 void GameScreen::keyPressEvent(QKeyEvent *event) {
+    float beat = audio().getBeat() + INPUT_OFFSET*audio().bgm()->bpm()/60.f;
+
     switch (event->key()) {
     case Qt::Key_F1:
         deferred = (deferred+1) % 3;

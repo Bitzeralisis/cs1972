@@ -142,6 +142,11 @@ void DeferredModule::useDeferredShader() {
     glActiveTexture(GL_TEXTURE0);
 }
 
+void DeferredModule::setLightCutoff(float cutoff) {
+    m_cutoff = cutoff;
+    glUniform1f(glGetUniformLocation(m_parent->activeShader(), "lightCutoff"), m_cutoff);
+}
+
 void DeferredModule::lightAmbient(glm::vec3 color) {
     glUniform1i(glGetUniformLocation(m_parent->activeShader(), "useLight"), false);
     glUniform3fv(glGetUniformLocation(m_parent->activeShader(), "lightColor"), 1, glm::value_ptr(color));
