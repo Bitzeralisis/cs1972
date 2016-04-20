@@ -9,6 +9,11 @@ win32 {
     INCLUDEPATH += libs/fmod-win32/inc
     DEPENDPATH += libs/fmod-win32/inc
 }
+unix {
+    LIBS += -L$$PWD/libs/fmod-unix/lib/x86_64 -lfmod
+    INCLUDEPATH += libs/fmod-unix/inc
+    DEPENDPATH += libs/fmod-unix/inc
+}
 QMAKE_CXXFLAGS += -lpthread -std=c++11
 
 INCLUDEPATH += src libs glm libs/glew-1.10.0/include
