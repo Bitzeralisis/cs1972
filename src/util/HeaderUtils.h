@@ -13,4 +13,10 @@
 
 #define VALACC_MUT(TYPE,NAME) VALUE_ACCESSOR(TYPE,NAME) MUTATOR(TYPE,NAME)
 
+#define MAP_PUT(TYPE,VAR1,VAR2) inline void put##VAR1(const char *name, TYPE VAR2) { m_##VAR2##s[name] = VAR2; }
+#define MAP_HAS(TYPE,VAR1,VAR2) inline bool has##VAR1(const char *name) const { return m_##VAR2##s.count(name); }
+#define MAP_GET(TYPE,VAR1,VAR2) inline TYPE get##VAR1(const char *name) { return m_##VAR2##s[name]; }
+#define MAP_DELETE_DCLR(TYPE,VAR1,VAR2) inline void delete##VAR1(const char *name, TYPE VAR2);
+#define MAP_OPS(TYPE,VAR1,VAR2) MAP_PUT(TYPE,VAR1,VAR2) MAP_HAS(TYPE,VAR1,VAR2) MAP_GET(TYPE,VAR1,VAR2)
+
 #endif // HEADERUTILS_H

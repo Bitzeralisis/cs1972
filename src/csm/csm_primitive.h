@@ -119,4 +119,19 @@ public:
     inline ellipsoid operator/(const glm::vec3 &rhs) const { return ellipsoid(center/rhs, radii/rhs); }
 };
 
+// Extremely bad definition of a cone where its apex is at point, opens towards dir, and has a radius of radius at exactly 1 unit away
+class cone {
+public:
+    cone(glm::vec3 p, glm::vec3 d, float r)
+        : point(p)
+        , dir(d)
+        , radius(r)
+    { }
+
+public:
+    const glm::vec3 point;
+    const glm::vec3 dir;
+    const float radius;
+};
+
 }

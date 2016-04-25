@@ -1,9 +1,9 @@
 #include "gamescreen.h"
 #include "game/coggame.h"
-#include "entity/enemyentity.h"
 #include "entity/lightentity.h"
 #include "entity/playerentity.h"
 #include "entity/playershotentity.h"
+#include "entity/enemy/cubeaenemyentity.h"
 #include "engine/primitive.h"
 #include "engine/sound.h"
 #include "engine/world.h"
@@ -16,6 +16,7 @@
 #include "glm/gtx/rotate_vector.hpp"
 #include <QKeyEvent>
 #include <chrono>
+#include <list>
 
 using namespace COG;
 
@@ -42,8 +43,12 @@ GameScreen::GameScreen(CS1972Engine::Game *parent)
     graphics().bloom()->initBuffers(parent->width(), parent->height());
     graphics().particle()->init(PARTS_W, PARTS_H);
 
-    m_sfx1 = audio().createSoundSample("sound/handclap.aif");
-    m_sfx2 = audio().createSoundSample("sound/808hh08.aif");
+    if (!audio().hasSound("handclap.aif"))
+        audio().putSound("handclap.aif", audio().createSoundSample("sound/handclap.aif"));
+    if (!audio().hasSound("808hh08.aif"))
+        audio().putSound("808hh08.aif", audio().createSoundSample("sound/808hh08.aif"));
+    if (!audio().hasSound("noisy1.aif"))
+        audio().putSound("noisy1.aif", audio().createSoundSample("sound/noisy1.aif"));
 
     m_bgm = audio().createSoundStream("sound/1.mp3");
     m_bgm->setMusicParams(150.f, 0.052245f);
@@ -51,9 +56,9 @@ GameScreen::GameScreen(CS1972Engine::Game *parent)
     m_bgm->setLoopBeats(32.f, 96.f);
 
     m_world = new CS1972Engine::World(parent, NUM_LAYERS);
-    //m_world->addEntity(LAYER_ENEMIES, new EnemyEntity(0.f, glm::vec3(5.f, -1.5f, -1.5f)));
 
     m_player = new PlayerEntity();
+    GAME->controller(m_player);
     m_world->addEntity(LAYER_CONTROLLER, m_player);
 }
 
@@ -66,8 +71,6 @@ GameScreen::~GameScreen() {
     delete m_world;
 
     delete m_bgm;
-    delete m_sfx1;
-    delete m_sfx2;
 }
 
 void GameScreen::boundMouse() {
@@ -97,11 +100,42 @@ void GameScreen::boundMouse() {
     m_mousePosition = glm::round(m_mousePosition);
 }
 
-void GameScreen::checkComboUpTo(float beat) {
-    while (m_prevBeatChecked < beat) {
+void GameScreen::startShooting(float beat) {
+    audio().playSound("handclap.aif");
+
+    float thisBeat = glm::round(beat);
+    if (m_prevBeatChecked < thisBeat)
+        m_prevBeatChecked = thisBeat - 1.f;
+
+    // Check this beat, either assigning it a good combo or bad combo
+    if (m_prevBeatChecked < thisBeat) {
+        float timing = glm::abs(beat-thisBeat) / audio().bgm()->bpm() * 60.f;
+        if (timing <= PERFECT_TIMING_WINDOW)
+            goodCombo(thisBeat);
+        else
+            badCombo(thisBeat);
         m_prevBeatChecked += 1.f;
-        if (m_prevBeatChecked > m_prevPerfectShot+1.f)
-            missCombo(beat);
+    }
+
+    m_prevShot = glm::max(m_prevShot, glm::round(beat*4.f)/4.f);
+}
+
+void GameScreen::keepShooting(float beat) {
+    m_shootUntil = beat + 2.f;
+
+    // Check combo up to current beat
+    float thisBeat = glm::round(beat);
+    while (m_prevBeatChecked < thisBeat-1.f) {
+        m_prevBeatChecked += 1.f;
+        missCombo(beat);
+    }
+
+    // Then check this beat: if we've gone past the perfect timing window, then this beat is a miss
+    if (m_prevBeatChecked < thisBeat) {
+        if (beat - thisBeat > PERFECT_TIMING_WINDOW && thisBeat > m_prevPerfectShot + 1.f) {
+            missCombo(thisBeat);
+            m_prevBeatChecked += 1.f;
+        }
     }
 }
 
@@ -127,6 +161,8 @@ void GameScreen::missCombo(float beat) {
     }
 }
 
+float prevBeat = 0.f;
+
 void GameScreen::tick(float seconds) {
     float beat = audio().getBeat();
 
@@ -139,40 +175,34 @@ void GameScreen::tick(float seconds) {
         audio().queueBgmOnBeat(m_bgm, 0.f);
     }
 
+    float beats = seconds*audio().bgm()->bpm()/60.f;
+
     boundMouse();
 
     // Check all shooting related things
-
-    // Fisrt check combo up to current beat
-    float thisBeat = glm::round(beat);
-    checkComboUpTo(thisBeat - 1.f);
-
-    // Then check this beat: if we've gone past the perfect timing window, then this beat is a miss
-    if (m_prevBeatChecked < thisBeat) {
-        if (beat - thisBeat > PERFECT_TIMING_WINDOW && thisBeat > m_prevPerfectShot + 1.f) {
-            missCombo(thisBeat);
-            m_prevBeatChecked += 1.f;
-        }
-    }
-
     float m_nextShot = glm::ceil(beat*4.f)/4.f;
-    if (m_mouseHeld[0])
-        m_shootUntil = beat + 2.f;
+    if (m_mouseHeld[0] || m_keysHeld[3])
+        keepShooting(beat);
 
     glm::vec2 mousePosition = glm::vec2(2.f, -2.f) * m_mousePosition/glm::vec2(parent->width(), parent->height()) + glm::vec2(-1.f, 1.f);
-    csm::ray ray(glm::vec3(0.f), graphics().camera()->inverseOrthoProject(glm::vec3(mousePosition.x, mousePosition.y, 1.f)));
+    glm::vec3 pos = graphics().camera()->position();
+    glm::vec3 dir = graphics().camera()->inverseOrthoProject(glm::vec3(mousePosition.x, mousePosition.y, 0.1));
+    csm::cone cone(pos, dir, RETICLE_SIZE_FACTOR_HIT);
     while (m_prevShot < m_nextShot && m_nextShot < m_shootUntil) {
         m_prevShot += 0.25f;
 
+        // Determine the closest valid (still has enough health to be locked-on) enemy under the reticle
         float best = std::numeric_limits<float>::infinity();
         EnemyEntity *bestEnemy = 0;
         std::list<EnemyEntity *> *enemies = (std::list<EnemyEntity *> *)m_world->getEntities(LAYER_ENEMIES);
         for (std::list<EnemyEntity *>::iterator it = enemies->begin(); it != enemies->end(); ++it) {
-            glm::vec3 i, n;
-            float dist = csm::raycast_ellipsoid(ray, (*it)->getEllipsoid() + (*it)->position(), i, n);
-            if (dist >= 0.f && dist < best) {
-                best = dist;
-                bestEnemy = *it;
+            bool hit = csm::intersect_cone_ellipsoid(cone, (*it)->getEllipsoid() + (*it)->position());
+            if (hit && (*it)->futureHealth() > 0) {
+                float dist = glm::distance2(pos, (*it)->position());
+                if (dist < best) {
+                    best = dist;
+                    bestEnemy = *it;
+                }
             }
         }
 
@@ -180,40 +210,32 @@ void GameScreen::tick(float seconds) {
             glm::vec3 behind = -1.f * graphics().camera()->lookVector();
             glm::vec3 angle = glm::normalize(glm::rotate(graphics().camera()->upVector(), glm::pi<float>()*glm::mod(m_prevShot, 2.f), graphics().camera()->lookVector()));
             m_world->addEntity(new PlayerShotEntity(m_player, m_prevShot, bestEnemy, behind, angle));
+            audio().queueSoundOnBeat("808hh08.aif", m_prevShot);
         }
-        audio().queueSoundOnBeat(m_sfx2, m_prevShot);
+    }
 
-        // Generate some particles
-        for (int i = 0; i < 1; ++i) {
-            float xPos = 8.f * (float) rand() / RAND_MAX - 4.f + 10.f;
-            float yPos = 8.f * (float) rand() / RAND_MAX - 4.f;
-            float zPos = 8.f * (float) rand() / RAND_MAX - 4.f;
-            int numParts = 500.f * (float) rand() / RAND_MAX + 1500.f;
-            GLfloat *pos = new GLfloat[4*numParts];
-            GLfloat *vel = new GLfloat[3*numParts];
-            for (int i = 0; i < numParts; ++i) {
-                pos[4*i+0] = 1.f * (float) rand() / RAND_MAX - 0.5f + xPos;
-                pos[4*i+1] = 1.f * (float) rand() / RAND_MAX - 0.5f + yPos;
-                pos[4*i+2] = 1.f * (float) rand() / RAND_MAX - 0.5f + zPos;
-                pos[4*i+3] = 1.f * (float) rand() / RAND_MAX + 1.f;
-            }
-            for (int i = 0; i < numParts; ++i) {
-                vel[3*i+0] = 0.8f * (float) rand() / RAND_MAX - 0.4f - 2.f;
-                vel[3*i+1] = 0.8f * (float) rand() / RAND_MAX - 0.4f;
-                vel[3*i+2] = 0.8f * (float) rand() / RAND_MAX - 0.4f;
-            }
-            graphics().particle()->putParticles(numParts, pos, vel);
-            delete pos;
-            delete vel;
+    m_player->combo(m_combo);
 
-            m_world->addEntity(LAYER_AMBIENCE, new LightEntity(m_prevShot, glm::vec3(xPos, yPos, zPos), glm::vec3(-0.8f, 0.f, 0.f)));
-        }
+    // Update the world
+    while (prevBeat < beat) {
+        m_world->addEntity(LAYER_ENEMIES, new CubeaEnemyEntity(prevBeat, glm::vec3(0.f, -1.5f, -1.5f)));
+        prevBeat += 1.f;
     }
 
     m_world->tick(beat);
 
-    m_timestep += seconds;
-    m_time += seconds;
+    // Offset everything by the player's position so that player is always at origin
+    int layers[2] = { LAYER_AMBIENCE, LAYER_ENEMIES };
+    for (int i = 0; i < 2; ++i) {
+        const std::list<CS1972Engine::Entity *> *e = m_world->getEntities(layers[i]);
+        for (std::list<CS1972Engine::Entity *>::const_iterator it = e->begin(); it != e->end(); ++it)
+            ((COGEntity *) (*it))->offsetPosition(m_player->position());
+    }
+    m_particleOffset -= m_player->position();
+    m_player->offsetPosition(m_player->position());
+
+    m_beatstep += beats;
+    m_beats += beats;
 }
 
 int bloom = 0;
@@ -226,14 +248,20 @@ void GameScreen::draw() {
     drawScene(beat);
     drawHud(beat);
 
-    m_timestep = 0.f;
+    m_beatstep = 0.f;
 }
 
 void GameScreen::drawScene(float beat) {
-    float dx = -2.f * glm::mod(m_time, 9.f);
+    float dx = -0.8f * glm::mod(m_beats, 22.5f);
 
     // Update particles
-    graphics().particle()->updateParticles(m_timestep);
+    if (m_beatstep > 0.f) {
+        graphics().particle()->usePhysicsShader();
+        graphics().particle()->globalVelocity(m_particleOffset/m_beatstep);
+        graphics().particle()->updateParticles(m_beatstep);
+        graphics().useShader(0);
+        m_particleOffset = glm::vec3(0.f);
+    }
 
     // Set up camera
     boundMouse();
@@ -412,6 +440,7 @@ void GameScreen::drawHud(float beat) {
     // Draw the reticle
 
     float hSize = H*RETICLE_SIZE_FACTOR_DRAW * 0.5f;
+    graphics().shader()->useTexture(true);
     graphics().shader()->bindTexture("reticle");
 
     float hSize2 = hSize * (1.f+glm::mod(beat, 1.f));
@@ -447,7 +476,7 @@ void GameScreen::drawHud(float beat) {
     );
     */
 
-    if (m_mouseHeld[0] || beat-m_prevMiss < 2.f*PERFECT_TIMING_WINDOW) {
+    if (m_mouseHeld[0] || m_keysHeld[3] ||  beat-m_prevMiss < 2.f*PERFECT_TIMING_WINDOW) {
         hSize *= 1.05f;
         if (m_prevJudge == 2 || m_prevJudge == 3)
             graphics().uishader()->color(glm::vec4(1.f, 0.f, 0.f, 1.f));
@@ -479,11 +508,36 @@ void GameScreen::drawHud(float beat) {
         0.f, 1.f, 0.75f, 1.f
     );
 
-    for (int i = 0; i < 3; ++i) {
-        float left = 112.f/2048.f + 32.f/2048.f*i;
+    // Score
+    int score = m_player->score();
+    for (int i = 0; i < glm::max(1, (int) log10(m_player->score()) + 1); ++i) {
+        int digit = score % 10;
+        float left = 1894.f/2048.f - 17.f/2048.f*i;
         float right = left + 32.f/2048.f;
         graphics().uishader()->drawQuad(
-            left*W, right*W, H-68.f/2048.f*W, H-36.f/2048.f*W,
+            left*W, right*W, 32.f/2048.f*W, 64.f/2048.f*W,
+            32.f/2048.f*digit, 32.f/2048.f*digit + 32.f/2048.f, 0.5f, 0.5f+32.f/1024.f
+        );
+        score /= 10;
+    }
+
+    // Life ticks
+    for (int i = 0; i < 3; ++i) {
+        float left = 1792.f/2048.f - 64.f/2048.f*i;
+        float right = left + 64.f/2048.f;
+        graphics().uishader()->drawQuad(
+            left*W, right*W, H-104.f/2048.f*W, H-40.f/2048.f*W,
+            32.f/2048.f, 96.f/2048.f, 0.25f, 0.25f+64.f/1024.f
+        );
+    }
+
+    // Shot ticks
+    int i = 0;
+    for (float f = glm::ceil(beat*4.f)/4.f; f < m_shootUntil; f += 0.25f, ++i) {
+        float left = 112.f/2048.f + 28.f/2048.f*i;
+        float right = left + 32.f/2048.f;
+        graphics().uishader()->drawQuad(
+            left*W, right*W, H-66.f/2048.f*W, H-34.f/2048.f*W,
             0.f, 32.f/2048.f, 0.25f, 0.25f+32.f/1024.f
         );
     }
@@ -496,26 +550,8 @@ void GameScreen::mousePressEvent(QMouseEvent *event) {
 
     switch (event->button()) {
     case Qt::LeftButton: {
-        audio().playSound(m_sfx1);
-
         m_mouseHeld[0] = true;
-
-        // Check all beats up to this one, possibly assigning them miss combos
-        float thisBeat = glm::round(beat);
-        checkComboUpTo(thisBeat - 1.f);
-
-        // Check this beat, either assigning it a good combo or bad combo
-        if (m_prevBeatChecked < thisBeat) {
-            float timing = glm::abs(beat-thisBeat) / audio().bgm()->bpm() * 60.f;
-            if (timing <= PERFECT_TIMING_WINDOW)
-                goodCombo(thisBeat);
-            else
-                badCombo(thisBeat);
-            m_prevBeatChecked += 1.f;
-        }
-
-        m_prevShot = glm::max(m_prevShot, glm::round(beat*4.f)/4.f);
-
+        startShooting(beat);
         break;
     }
 
@@ -544,7 +580,7 @@ void GameScreen::mouseReleaseEvent(QMouseEvent *event) {
     switch (event->button()) {
     case Qt::LeftButton:
         m_mouseHeld[0] = false;
-        m_shootUntil = beat + 2.f;
+        keepShooting(beat);
         break;
 
     case Qt::MiddleButton:
@@ -566,6 +602,12 @@ void GameScreen::keyPressEvent(QKeyEvent *event) {
     float beat = audio().getBeat() + INPUT_OFFSET*audio().bgm()->bpm()/60.f;
 
     switch (event->key()) {
+    case Qt::Key_S:
+        m_keysHeld[3] = true;
+        if (!event->isAutoRepeat())
+            startShooting(beat);
+        break;
+
     case Qt::Key_F1:
         deferred = (deferred+1) % 3;
         break;
@@ -583,7 +625,19 @@ void GameScreen::keyPressEvent(QKeyEvent *event) {
     }
 }
 
-void GameScreen::keyReleaseEvent(QKeyEvent *event) { }
+void GameScreen::keyReleaseEvent(QKeyEvent *event) {
+    float beat = audio().getBeat() + INPUT_OFFSET*audio().bgm()->bpm()/60.f;
+
+    switch (event->key()) {
+    case Qt::Key_S:
+        m_keysHeld[3] = false;
+        m_shootUntil = beat + 2.f;
+        break;
+
+    default:
+        break;
+    }
+}
 
 void GameScreen::resizeEvent(int w, int h) {
     graphics().deferred()->cleanupGbuffer();

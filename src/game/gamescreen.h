@@ -21,8 +21,6 @@ public:
         DRAW_ORTHOGRAPHIC,
         NUM_DRAWS
     };
-
-private:
     enum {
         LAYER_CONTROLLER,
         LAYER_AMBIENCE,
@@ -37,7 +35,8 @@ public:
 private:
     const float RETICLE_SIZE_FACTOR = 1.f/8.f;
     const float RETICLE_SIZE_FACTOR_DRAW = 1.f/6.f;
-    const float PERFECT_TIMING_WINDOW = 0.1f;
+    const float RETICLE_SIZE_FACTOR_HIT = 1.f/16.f;
+    const float PERFECT_TIMING_WINDOW = 0.090f;
     const int MAX_COMBO = 8;
 
     const float GRAPHICS_OFFSET = 0.f;
@@ -47,17 +46,16 @@ private:
     CS1972Engine::World *m_world;
 
     bool m_firstTick = true;
-    float m_timestep;
-    float m_time = 0.f;
+    float m_beatstep;
+    float m_beats = 0.f;
 
     CS1972Engine::Sound *m_bgm;
-    CS1972Engine::Sound *m_sfx1;
-    CS1972Engine::Sound *m_sfx2;
 
     float m_maxYaw = 0.25f*glm::pi<float>();
     float m_maxPitch = 0.25f*glm::pi<float>();
 
     PlayerEntity *m_player;
+    glm::vec3 m_particleOffset = glm::vec3(0.f);
     glm::vec2 m_mousePosition;
     float m_prevShot = -1.f;
     float m_shootUntil = -1.f;
@@ -68,10 +66,12 @@ private:
     int m_prevJudge = 0;
 
     bool m_mouseHeld[3] = { false, false, false };
+    bool m_keysHeld[4] = { false, false, false, false };
 
 private:
     void boundMouse();
-    void checkComboUpTo(float beat);
+    void startShooting(float beat);
+    void keepShooting(float beat);
     void goodCombo(float beat);
     void badCombo(float beat);
     void missCombo(float beat);

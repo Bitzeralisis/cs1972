@@ -1,7 +1,10 @@
 #include "lightentity.h"
+#include "game/coggame.h"
 #include "game/gamescreen.h"
+#include "game/entity/playerentity.h"
 #include "engine/graphics.h"
 #include "engine/graphics/deferredmodule.h"
+#include "engine/graphics/particlemodule.h"
 
 using namespace COG;
 
@@ -10,6 +13,7 @@ LightEntity::LightEntity(float beat, glm::vec3 pos, glm::vec3 vel)
 {
     m_position = pos;
     m_velocity = vel;
+    GAME->controller()->makeParticles(pos, vel);
 }
 
 void LightEntity::tickBeats(float beats) {

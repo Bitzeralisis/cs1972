@@ -3,10 +3,10 @@
 using namespace CS1972Engine;
 
 Primitive::Primitive(int vertices, int size, GLfloat *data)
-    : Primitive(vertices, size, data, 0)
+    : Primitive(vertices, size, GL_TRIANGLES, data, 0)
 { }
 
-Primitive::Primitive(int vertices, int size, void *data, int type) {
+Primitive::Primitive(int vertices, int size, GLenum defaultMode, void *data, int type) {
     glGenBuffers(1, &m_vbo);
     glGenVertexArrays(1, &m_vao);
     glBindVertexArray(m_vao);
@@ -14,6 +14,8 @@ Primitive::Primitive(int vertices, int size, void *data, int type) {
 
     m_vertices = vertices;
     glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+
+    m_defaultMode = defaultMode;
 
     switch (type) {
     case 0: // 3 vertices, 3 normals, 2 texture coordinates
@@ -42,7 +44,7 @@ Primitive::~Primitive() {
 
 void Primitive::drawArray() const {
     glBindVertexArray(m_vao);
-    glDrawArrays(GL_TRIANGLES, 0, m_vertices);
+    glDrawArrays(m_defaultMode, 0, m_vertices);
     glBindVertexArray(0);
 }
 

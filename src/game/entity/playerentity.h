@@ -6,13 +6,21 @@ namespace COG {
 
 class PlayerEntity : public COGEntity {
 public:
-    PlayerEntity()
-        : COGEntity(0.f)
-    { }
+    PlayerEntity();
     virtual ~PlayerEntity() { }
 
+private:
+    int m_score = 0;
+    int m_combo;
+
 public:
-    virtual void tickBeats(float beats) override { }
+    VALACC_MUT(int,score)
+    VALACC_MUT(int,combo)
+
+    void gainScoreValue(int score);
+    void makeParticles(glm::vec3 position, glm::vec3 velocity);
+
+    virtual void tickBeats(float beats) override;
     virtual void draw(int pass) override { }
 };
 

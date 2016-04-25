@@ -1,5 +1,6 @@
 #include "audio.h"
 #include "sound.h"
+#include <iostream>
 
 using namespace CS1972Engine;
 
@@ -28,7 +29,8 @@ float Audio::getBeat() {
 
     unsigned long long dsp;
     FMOD_Channel_GetDSPClock(m_bgm->m_channel, 0, &dsp);
-    return (dsp - m_bgmOffset) / (60 * m_sampleRate / m_bgm->m_bpm);
+    float beat= (long long) (dsp - m_bgmOffset) / (60 * m_sampleRate / m_bgm->m_bpm);
+    return beat;
 }
 
 void Audio::tick(float) {
@@ -37,7 +39,14 @@ void Audio::tick(float) {
 
 Sound *Audio::createSound(const char *path, int flags) {
     FMOD_SOUND *sound;
-    FMOD_System_CreateSound(m_fmod, path, flags, 0, &sound);
+    FMOD_RESULT result;
+    result = FMOD_System_CreateSound(m_fmod, path, flags, 0, &sound);
+    if (result) {
+        std::cerr << "Failed to create sound: " << FMOD_ErrorString(result) << '\n';
+        std::cerr << "path: " << path << '\n';
+        std::cerr << "flags: " << flags << '\n';
+        exit(result);
+    }
     return new Sound(this, sound);
 }
 
@@ -53,6 +62,10 @@ void Audio::playSound(Sound *sound) {
     FMOD_System_PlaySound(m_fmod, sound->m_sound, 0, false, &sound->m_channel);
 }
 
+void Audio::playSound(const char *sound) {
+    playSound(getSound(sound));
+}
+
 void Audio::queueSoundOnBeat(Sound *sound, float beat) {
     // Have `sound` start at a time such that its start offset matches up with `beat` in the current bgm
     if (m_bgm == 0) {
@@ -64,6 +77,10 @@ void Audio::queueSoundOnBeat(Sound *sound, float beat) {
         FMOD_Channel_SetDelay(sound->m_channel, beatMasterDSP - soundStartOffsetDSP, 0, true);
         FMOD_Channel_SetPaused(sound->m_channel, false);
     }
+}
+
+void Audio::queueSoundOnBeat(const char *sound, float beat) {
+    queueSoundOnBeat(getSound(sound), beat);
 }
 
 void Audio::queueBgmOnBeat(Sound *sound, float beat) {

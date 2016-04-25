@@ -1,37 +1,47 @@
 #include "enemyentity.h"
-#include "game/gamescreen.h"
-#include "engine/primitive.h"
-#include "engine/graphics/deferredmodule.h"
-#include "engine/graphics/shadermodule.h"
+#include "playerentity.h"
+#include "playershotentity.h"
+#include "game/coggame.h"
 
 using namespace COG;
 
-EnemyEntity::EnemyEntity(float beat, glm::vec3 pos)
+EnemyEntity::EnemyEntity(float beat, int health, int value)
     : COGEntity(beat)
-{
-    m_position = pos;
+    , m_health(health)
+    , m_futureHealth(health)
+    , m_scoreValue(value)
+{ }
+
+EnemyEntity::~EnemyEntity() {
+    for (std::deque<PlayerShotEntity *>::iterator it = m_attachedShots.begin(); it != m_attachedShots.end(); ++it)
+        (*it)->detatchShot(false, m_position);
+}
+
+void EnemyEntity::attachShot(PlayerShotEntity *shot) {
+    m_attachedShots.push_back(shot);
+    --m_futureHealth;
 }
 
 void EnemyEntity::tickBeats(float beats) {
+    // Take damage from shots
+    while (!m_attachedShots.empty() && m_attachedShots.front()->shotBeat()+1.f <= beat()) {
+        float beat = m_attachedShots.front()->shotBeat()+1.f;
+
+        m_attachedShots.front()->detatchShot(true, m_position);
+        m_attachedShots.pop_front();
+        --m_health;
+
+        // Die
+        if (m_health <= 0) {
+            GAME->controller()->gainScoreValue(m_scoreValue);
+            deathEffect(beat);
+            for (std::deque<PlayerShotEntity *>::iterator it = m_attachedShots.begin(); it != m_attachedShots.end(); ++it)
+                (*it)->detatchShot(false, m_position);
+            parent()->deleteEntity(this);
+        } else {
+            hitEffect(beat);
+        }
+    }
+
     tickPhysicsContinuous(beats);
-}
-
-void EnemyEntity::draw(int pass) {
-    if (pass != GameScreen::DRAW_GEOMETRY)
-        return;
-
-    graphics().shader()->useTexture(false);
-    graphics().shader()->color(glm::vec4(0.f));
-    graphics().deferred()->useGlowTexture(true);
-    graphics().deferred()->bindGlowTexture("cube");
-    graphics().deferred()->glowColor(glm::vec4(0.75f, 0.5f, 0.15f, 1.f));
-    glm::mat4 m(1.f);
-    m = glm::translate(m, m_position);
-    m = glm::scale(m, glm::vec3(0.5f));
-    graphics().shader()->mTransform(m);
-    graphics().pBox()->drawArray();
-}
-
-csm::ellipsoid EnemyEntity::getEllipsoid() const {
-    return csm::ellipsoid(glm::vec3(0.f), glm::vec3(0.5f));
 }

@@ -37,6 +37,8 @@ public:
 
     void init(int width, int height);
     void cleanup();
+    void usePhysicsShader();
+    void globalVelocity(glm::vec3 vel);
     void putParticles(int numParticles, GLfloat *posLife, GLfloat *vel);
     void updateParticles(float seconds);
     void useParticleShader();

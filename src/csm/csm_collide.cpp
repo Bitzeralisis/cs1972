@@ -66,6 +66,24 @@ float csm::raycast_cylinderSurface(const ray &ray, const cylinder &cylinder, glm
     return (p2 > 0.f && p2 < glm::length2(dv)) ? neg : -1.f;
 }
 
+// Hacky, probably wrong way of checking if a point is in a cone
+bool csm::intersect_point_cone(const glm::vec3 &point, const cone &cone) {
+    glm::vec3 dp = point - cone.point;
+    glm::vec3 proj = glm::dot(dp, cone.dir) / glm::length2(cone.dir) * cone.dir;
+    float radius2 = cone.radius*cone.radius * glm::length2(proj);
+    float dist2 = glm::distance2(proj, dp);
+    return dist2 <= radius2;
+}
+
+// Extremely hacky and incorrect cone ellipsoid intersection where ellipsoid's radius is just added to radius of cone
+bool csm::intersect_cone_ellipsoid(const cone &cone, const ellipsoid &ellipsoid) {
+    glm::vec3 dp = ellipsoid.center - cone.point;
+    glm::vec3 proj = glm::dot(dp, cone.dir) / glm::length2(cone.dir) * cone.dir;
+    float radius = cone.radius*glm::length(proj) + ellipsoid.radii[0];
+    float dist = glm::distance(proj, dp);
+    return dist <= radius;
+}
+
 inline float collide_unitSphere_triangleInterior(const glm::vec3 &v0, const glm::vec3 &v1, const csm::triangle &t, glm::vec3 &intersect, glm::vec3 &normal) {
     glm::vec3 n = t.normal();
     glm::vec3 p0 = v0 - n;

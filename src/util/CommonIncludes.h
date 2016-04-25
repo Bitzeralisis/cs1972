@@ -17,6 +17,7 @@
 
 #include "fmod_common.h"
 #include "fmod.hpp"
+#include "fmod_errors.h"
 
 #define RAND2_MAX USHRT_MAX
 unsigned rand2();

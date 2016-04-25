@@ -46,7 +46,10 @@ SOURCES += \
     src/game/gamescreen.cpp \
     src/game/entity/enemyentity.cpp \
     src/game/entity/playershotentity.cpp \
-    src/engine/enginedef.cpp
+    src/engine/enginedef.cpp \
+    src/game/coggame.cpp \
+    src/game/entity/enemy/cubeaenemyentity.cpp \
+    src/game/entity/playerentity.cpp
 
 HEADERS += \
     libs/glew-1.10.0/include/GL/glew.h \
@@ -84,7 +87,8 @@ HEADERS += \
     src/game/entity/playerentity.h \
     src/game/entity/playershotentity.h \
     src/engine/enginedef.h \
-    src/game/enginedef.h
+    src/game/enginedef.h \
+    src/game/entity/enemy/cubeaenemyentity.h
 
 
 FORMS += src/mainwindow.ui

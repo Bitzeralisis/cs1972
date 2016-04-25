@@ -21,6 +21,8 @@ protected:
     VALUE_ACCESSOR(float,beat)
 
 public:
+    void offsetPosition(glm::vec3 controllerPos) { m_position -= controllerPos; }
+
     virtual void tickBeats(float beats) = 0;
     virtual void draw(int pass) override = 0;
     virtual csm::ellipsoid getEllipsoid() const override { return csm::ellipsoid(); }

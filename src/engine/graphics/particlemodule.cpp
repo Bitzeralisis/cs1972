@@ -68,7 +68,7 @@ void ParticleModule::init(int width, int height) {
         indices[2*i+0] = (float)(i%width)/width;
         indices[2*i+1] = (float)(i/width)/height;
     }
-    m_indices = new Primitive(width*height, 2*width*height*sizeof(GLfloat), indices, 1);
+    m_indices = new Primitive(width*height, 2*width*height*sizeof(GLfloat), GL_POINTS, indices, 1);
 
     m_width = width;
     m_height = height;
@@ -114,12 +114,19 @@ void ParticleModule::putParticles(int numParticles, GLfloat *posLife, GLfloat *v
     }
 }
 
+void ParticleModule::usePhysicsShader() {
+    m_parent->useShader(m_physicsShader);
+}
+
+void ParticleModule::globalVelocity(glm::vec3 vel) {
+    glUniform3fv(glGetUniformLocation(m_parent->activeShader(), "globalVelocity"), 1, glm::value_ptr(vel));
+}
+
 void ParticleModule::updateParticles(float seconds) {
     // Save viewport
     GLint viewport[4];
     glGetIntegerv(GL_VIEWPORT, viewport);
 
-    m_parent->useShader(m_physicsShader);
     glViewport(0, 0, m_width, m_height);
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_result);
@@ -132,9 +139,10 @@ void ParticleModule::updateParticles(float seconds) {
     m_parent->fsQuad()->drawArray();
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    m_parent->useShader(0);
+    // Load viewport
     glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
 
+    // Swap textures
     GLuint swap = m_posLifeTex;
     m_posLifeTex = m_resultTex;
     m_resultTex = swap;
@@ -161,7 +169,7 @@ void ParticleModule::drawParticles() {
 
     m_parent->shader()->pvTransformFromCamera();
     glBindTexture(GL_TEXTURE_2D, m_resultTex);
-    m_indices->drawArray(GL_POINTS, 0, m_width*m_height);
+    m_indices->drawArray();
 
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);
