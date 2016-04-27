@@ -15,6 +15,8 @@ unix {
     DEPENDPATH += libs/fmod-unix/inc
 }
 QMAKE_CXXFLAGS += -lpthread -std=c++11
+QMAKE_CXXFLAGS_RELEASE -= -O2
+QMAKE_CXXFLAGS_RELEASE += -O3
 
 INCLUDEPATH += src libs glm libs/glew-1.10.0/include
 DEPENDPATH += src libs glm libs/glew-1.10.0/include

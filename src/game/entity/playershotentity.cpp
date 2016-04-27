@@ -115,7 +115,7 @@ void PlayerShotEntity::draw(int pass) {
             if (beat < m_shotBeat + 1.f) {
                 pos = glm::round(pos);
                 float rotation = 22.5f - glm::min(45.f*(beat-m_shotBeat), 22.5f);
-                float hSize = parent()->parent()->height()/TARGET_SIZE_FACTOR * 0.5f * (1.f+rotation/22.5f);
+                float hSize = parent()->parent()->height()*TARGET_SIZE_FACTOR * 0.5f * (1.f+rotation/22.5f);
                 graphics().shader()->useTexture(true);
                 graphics().shader()->bindTexture("target");
                 graphics().uishader()->color(glm::vec4(1.f, 1.f, 1.f, 1.f-rotation/22.5f));
@@ -127,7 +127,7 @@ void PlayerShotEntity::draw(int pass) {
                 graphics().uishader()->color(glm::vec4(1.f, 1.f, 1.f, fade));
                 glm::mat4 m(1.f);
                 m = glm::translate(m, pos);
-                m = glm::scale(m, glm::vec3(parent()->parent()->height()/BURST_SIZE_FACTOR*(1.f-fade*fade) / dist));
+                m = glm::scale(m, glm::vec3(parent()->parent()->height()*BURST_SIZE_FACTOR*(1.f-fade*fade) / dist));
                 graphics().shader()->mTransform(m);
                 graphics().getPrimitive("uis_circleLoop")->drawArray();
                 m = glm::scale(m, glm::vec3(1.f/(1.f-fade*fade)));

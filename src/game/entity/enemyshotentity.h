@@ -12,7 +12,7 @@ public:
     virtual ~EnemyShotEntity() { }
 
 private:
-    const float HEXAGON_SIZE_FACTOR = 3.5f;
+    const float HEXAGON_SIZE_FACTOR = 1.f/3.5f;
 
 private:
     PlayerEntity *m_target;

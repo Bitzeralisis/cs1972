@@ -17,8 +17,8 @@ public:
     virtual ~PlayerShotEntity();
 
 private:
-    const float TARGET_SIZE_FACTOR = 6.f;
-    const float BURST_SIZE_FACTOR = 1.f/1.66666666f;
+    const float TARGET_SIZE_FACTOR = 1.f/6.f;
+    const float BURST_SIZE_FACTOR = 5.f/3.f;
 
 private:
     PlayerEntity *m_parent;

@@ -43,7 +43,7 @@ void EnemyShotEntity::draw(int pass) {
     case GameScreen::DRAW_ORTHOGRAPHIC: {
         glm::vec3 pos = graphics().uishader()->cameraSpaceToUisSpace(m_position);
         float travel = (m_hitBeat-beat)/8.f;
-        float hSize = parent()->parent()->height()/HEXAGON_SIZE_FACTOR * 0.5f;
+        float hSize = parent()->parent()->height()*HEXAGON_SIZE_FACTOR * 0.5f;
         graphics().shader()->useTexture(true);
         graphics().shader()->bindTexture("enemyshot");
         graphics().uishader()->color(glm::vec4(0.f, 1.f, 1.f, (1.f-travel)*(1.f-0.5f*glm::mod(beat, 1.f))));

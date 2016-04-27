@@ -187,8 +187,6 @@ void GameScreen::defend(float beat, int lane) {
         if ((*it)->approachLane() != lane)
             continue;
         float timing = ((*it)->hitBeat()-beat) / audio().bgm()->bpm() * 60.f;
-        std::cout << timing;
-        std::cout.flush();
         if (timing < -1.f * DEFENSE_TIMING_WINDOW)
             continue;
         else if (timing <= DEFENSE_TIMING_WINDOW) {
@@ -220,9 +218,10 @@ void GameScreen::tick(float seconds) {
 
     // Check all shooting related things
     float m_nextShot = glm::ceil(beat*4.f)/4.f;
-    if (m_mouseHeld[0] || m_keysHeld[3]) {
+    if (m_mouseHeld[0] || m_keysHeld[3])
         keepShooting(beat);
 
+    if (m_nextShot < m_shootUntil) {
         // Determine the closest valid (still has enough health to be locked-on) enemy under the reticle
         glm::vec2 mousePosition = glm::vec2(2.f, -2.f) * m_mousePosition/glm::vec2(parent->width(), parent->height()) + glm::vec2(-1.f, 1.f);
         glm::vec3 pos = graphics().camera()->position();
@@ -303,7 +302,9 @@ void GameScreen::tick(float seconds) {
 }
 
 void GameScreen::draw() {
-    float beat = audio().getBeat() + GRAPHICS_OFFSET*audio().bgm()->bpm()/60.f;
+    float beat = 0.f;
+    if (audio().bgm())
+        beat = audio().getBeat() + GRAPHICS_OFFSET*audio().bgm()->bpm()/60.f;
     GAME->beat(beat);
     drawScene(beat);
     drawHud(beat);
@@ -596,7 +597,7 @@ void GameScreen::mousePressEvent(QMouseEvent *event) {
 void GameScreen::mouseMoveEvent(QMouseEvent *event) {
     int dx = event->x() - parent->width() / 2;
     int dy = event->y() - parent->height() / 2;
-    m_mousePosition += glm::vec2(dx, dy);
+    m_mousePosition += glm::vec2(dx, dy) * MOUSE_SENSITIVITY_FACTOR * (float) parent->height();
 }
 
 void GameScreen::mouseReleaseEvent(QMouseEvent *event) {

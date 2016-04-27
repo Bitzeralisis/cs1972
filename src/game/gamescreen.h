@@ -35,6 +35,7 @@ public:
     virtual ~GameScreen();
 
 private:
+    const float MOUSE_SENSITIVITY_FACTOR = 1.f/400.f;
     const float RETICLE_SIZE_FACTOR = 1.f/8.f;
     const float RETICLE_SIZE_FACTOR_DRAW = 1.f/6.f;
     const float RETICLE_SIZE_FACTOR_HIT = 1.f/16.f;
