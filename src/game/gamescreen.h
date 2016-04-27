@@ -11,6 +11,7 @@ class World;
 
 namespace COG {
 
+class EnemyEntity;
 class PlayerEntity;
 
 class GameScreen : public CS1972Engine::Screen {
@@ -59,6 +60,7 @@ private:
 
     PlayerEntity *m_player;
     glm::vec2 m_mousePosition;
+    EnemyEntity *m_nextTarget = 0;
     float m_prevShot = -1.f;
     float m_shootUntil = -1.f;
     float m_prevBeatChecked = -1.f;

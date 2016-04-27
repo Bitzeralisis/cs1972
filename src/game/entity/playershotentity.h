@@ -18,6 +18,7 @@ public:
 
 private:
     const float TARGET_SIZE_FACTOR = 6.f;
+    const float BURST_SIZE_FACTOR = 1.f/1.66666666f;
 
 private:
     PlayerEntity *m_parent;

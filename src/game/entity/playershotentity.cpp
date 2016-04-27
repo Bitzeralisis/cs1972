@@ -57,35 +57,56 @@ void PlayerShotEntity::draw(int pass) {
     case GameScreen::DRAW_GEOMETRY:
         if (beat < m_shotBeat + 1.f) {
             glm::vec3 dir = lockedPosition - m_parent->position();
-            glm::vec3 rej = m_up - glm::dot(m_up, dir) / glm::length2(dir) * dir;
-            rej = glm::normalize(rej);
+            //glm::vec3 rej = m_up - glm::dot(m_up, dir) / glm::length2(dir) * dir;
+            //rej = glm::normalize(rej);
+            glm::vec3 rej = 2.f*glm::normalize(m_up);
 
-            int numPoints = 51;
-            int length = 11;
-            GLfloat *line = new GLfloat[8*numPoints];
-            for (int i = 0; i < numPoints; ++i) {
-                float t = (float) i / (numPoints-1);
+            graphics().shader()->useTexture(false);
+            graphics().shader()->color(glm::vec4(0.f));
+            graphics().deferred()->useGlowTexture(false);
+            graphics().shader()->mTransform(glm::mat4(1.f));
+
+            int totalPoints = 51;
+            int beamLength = 10;
+            float beamStart = glm::min(glm::max(0.f, beat-m_shotBeat), 1.f) * (totalPoints-beamLength);
+            //int beamEnd = beamStart + beamLength;
+            //int lineLength = totalPoints - beamEnd;
+
+            GLfloat *beam = new GLfloat[16*(beamLength+1)];
+            for (int i = 0; i <= beamLength; ++i) {
+                float t = glm::min((i+beamStart) / (totalPoints-1), 1.f);
+                glm::vec3 pos = csm::bezier_curve(m_parent->position()+m_back, rej, lockedPosition, t);
+                glm::vec3 nextPos = csm::bezier_curve(m_parent->position()+m_back, rej, lockedPosition, t + 1.f/(totalPoints-1));
+                glm::vec3 toNext = nextPos-pos;
+                glm::vec3 toEye = m_parent->position()-pos;
+                glm::vec3 right = 0.01f*glm::normalize(glm::cross(toNext, toEye));
+                glm::vec3 p1 = pos-right;
+                glm::vec3 p2 = pos+right;
+                beam[16*i+ 0] = p1.x;
+                beam[16*i+ 1] = p1.y;
+                beam[16*i+ 2] = p1.z;
+                beam[16*i+ 8] = p2.x;
+                beam[16*i+ 9] = p2.y;
+                beam[16*i+10] = p2.z;
+            }
+            graphics().deferred()->glowColor(glm::vec4(1.5f, 1.5f, 1.5f, 1.f));
+            CS1972Engine::Primitive(2*(beamLength+1), 8*2*(beamLength+1)*sizeof(GLfloat), GL_TRIANGLE_STRIP, beam, 0).drawArray();
+            delete beam;
+
+            /*
+            GLfloat *line = new GLfloat[8*(lineLength+1)];
+            for (int i = 0; i <= lineLength; ++i) {
+                float t = (float) (i+beamEnd) / (totalPoints-1);
                 glm::vec3 pos = csm::bezier_curve(m_parent->position()+m_back, rej, lockedPosition, t);
                 line[8*i+0] = pos.x;
                 line[8*i+1] = pos.y;
                 line[8*i+2] = pos.z;
             }
-            CS1972Engine::Primitive *primitive = new CS1972Engine::Primitive(numPoints, 8*numPoints*sizeof(GLfloat), line);
-
-            int travel = glm::min(glm::max(0.f, beat-m_shotBeat), 1.f) * (numPoints-length);
-            graphics().shader()->useTexture(false);
-            graphics().shader()->color(glm::vec4(0.f));
-            graphics().deferred()->useGlowTexture(false);
-            graphics().shader()->mTransform(glm::mat4(1.f));
-            glLineWidth(5.f);
-            graphics().deferred()->glowColor(glm::vec4(1.f));
-            primitive->drawArray(GL_LINE_STRIP, travel, length);
             glLineWidth(1.f);
             graphics().deferred()->glowColor(glm::vec4(0.5f));
-            primitive->drawArray(GL_LINE_STRIP, travel+length, numPoints-(travel+length));
-
+            CS1972Engine::Primitive(lineLength+1, 8*(lineLength+1)*sizeof(GLfloat), GL_LINE_STRIP, line, 0).drawArray();
             delete line;
-            delete primitive;
+            */
         }
 
     case GameScreen::DRAW_ORTHOGRAPHIC: {
@@ -101,11 +122,17 @@ void PlayerShotEntity::draw(int pass) {
                 graphics().uishader()->drawQuad(pos.x-hSize, pos.x+hSize, pos.y-hSize, pos.y+hSize, rotation, 0.f, 0.5f, 0.f, 0.5f);
             } else if (beat < m_shotBeat + 2.f) {
                 float fade = m_shotBeat+2.f - beat;
+                float dist = glm::distance(m_parent->position(), lockedPosition);
                 graphics().shader()->useTexture(false);
                 graphics().uishader()->color(glm::vec4(1.f, 1.f, 1.f, fade));
                 glm::mat4 m(1.f);
                 m = glm::translate(m, pos);
-                m = glm::scale(m, glm::vec3(parent()->parent()->height()/TARGET_SIZE_FACTOR*(1.f-fade*fade)));
+                m = glm::scale(m, glm::vec3(parent()->parent()->height()/BURST_SIZE_FACTOR*(1.f-fade*fade) / dist));
+                graphics().shader()->mTransform(m);
+                graphics().getPrimitive("uis_circleLoop")->drawArray();
+                m = glm::scale(m, glm::vec3(1.f/(1.f-fade*fade)));
+                fade -= 0.05f;
+                m = glm::scale(m, glm::vec3(1.f-fade*fade));
                 graphics().shader()->mTransform(m);
                 graphics().getPrimitive("uis_circleLoop")->drawArray();
             }

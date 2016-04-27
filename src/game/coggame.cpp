@@ -7,8 +7,8 @@ using namespace COG;
 COGGame::~COGGame() { }
 
 void COGGame::initGL() {
-    GLfloat *circleLoop = new GLfloat[30*8];
-    for (int i = 0; i < 30; ++i) {
+    GLfloat *circleLoop = new GLfloat[60*8];
+    for (int i = 0; i < 60; ++i) {
         float d = glm::pi<float>() * i / 15.f;
         circleLoop[8*i+0] = glm::sin(d);
         circleLoop[8*i+1] = -1.f*glm::cos(d);
@@ -17,7 +17,7 @@ void COGGame::initGL() {
         circleLoop[8*i+4] = 0.f;
         circleLoop[8*i+5] = -1.f;
     }
-    g.putPrimitive("uis_circleLoop", new CS1972Engine::Primitive(30, 30*8*sizeof(GLfloat), GL_LINE_LOOP, circleLoop, 0));
+    g.putPrimitive("uis_circleLoop", new CS1972Engine::Primitive(60, 60*8*sizeof(GLfloat), GL_LINE_LOOP, circleLoop, 0));
     delete circleLoop;
 
     GLfloat diamondData[] = {

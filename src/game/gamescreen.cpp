@@ -220,17 +220,15 @@ void GameScreen::tick(float seconds) {
 
     // Check all shooting related things
     float m_nextShot = glm::ceil(beat*4.f)/4.f;
-    if (m_mouseHeld[0] || m_keysHeld[3])
+    if (m_mouseHeld[0] || m_keysHeld[3]) {
         keepShooting(beat);
 
-    glm::vec2 mousePosition = glm::vec2(2.f, -2.f) * m_mousePosition/glm::vec2(parent->width(), parent->height()) + glm::vec2(-1.f, 1.f);
-    glm::vec3 pos = graphics().camera()->position();
-    glm::vec3 dir = graphics().camera()->inverseOrthoProject(glm::vec3(mousePosition.x, mousePosition.y, 0.1));
-    csm::cone cone(pos, dir, RETICLE_SIZE_FACTOR_HIT);
-    while (m_prevShot < m_nextShot && m_nextShot < m_shootUntil) {
-        m_prevShot += 0.25f;
-
         // Determine the closest valid (still has enough health to be locked-on) enemy under the reticle
+        glm::vec2 mousePosition = glm::vec2(2.f, -2.f) * m_mousePosition/glm::vec2(parent->width(), parent->height()) + glm::vec2(-1.f, 1.f);
+        glm::vec3 pos = graphics().camera()->position();
+        glm::vec3 dir = graphics().camera()->inverseOrthoProject(glm::vec3(mousePosition.x, mousePosition.y, 0.1));
+        csm::cone cone(pos, dir, RETICLE_SIZE_FACTOR_HIT);
+
         float best = std::numeric_limits<float>::infinity();
         EnemyEntity *bestEnemy = 0;
         std::list<EnemyEntity *> *enemies = (std::list<EnemyEntity *> *)m_world->getEntities(LAYER_ENEMIES);
@@ -238,7 +236,7 @@ void GameScreen::tick(float seconds) {
             if (!(*it)->targetable())
                 continue;
             bool hit = csm::intersect_cone_ellipsoid(cone, (*it)->getEllipsoid() + (*it)->position());
-            if (hit && (*it)->futureHealth() > 0) {
+            if (hit && glm::dot((*it)->position(), dir) > 0.f && (*it)->futureHealth() > 0) {
                 float dist = glm::distance2(pos, (*it)->position());
                 if (dist < best) {
                     best = dist;
@@ -246,12 +244,19 @@ void GameScreen::tick(float seconds) {
                 }
             }
         }
+        if (bestEnemy)
+            m_nextTarget = bestEnemy;
+    }
 
-        if (bestEnemy != 0) {
+    while (m_prevShot < m_nextShot && m_nextShot < m_shootUntil) {
+        m_prevShot += 0.25f;
+
+        if (m_nextTarget != 0) {
             glm::vec3 behind = -1.f * graphics().camera()->lookVector();
             glm::vec3 angle = glm::normalize(glm::rotate(graphics().camera()->upVector(), glm::pi<float>()*glm::mod(m_prevShot, 2.f), graphics().camera()->lookVector()));
-            m_world->addEntity(new PlayerShotEntity(m_player, m_prevShot, bestEnemy, behind, angle));
+            m_world->addEntity(new PlayerShotEntity(m_player, m_prevShot, m_nextTarget, behind, angle));
             audio().queueSoundOnBeat("808hh08.aif", m_prevShot);
+            m_nextTarget = 0;
         }
     }
 
