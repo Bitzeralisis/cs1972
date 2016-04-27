@@ -7,7 +7,7 @@ using namespace COG;
 COGGame::~COGGame() { }
 
 void COGGame::initGL() {
-    GLfloat circleLoop[30*8];
+    GLfloat *circleLoop = new GLfloat[30*8];
     for (int i = 0; i < 30; ++i) {
         float d = glm::pi<float>() * i / 15.f;
         circleLoop[8*i+0] = glm::sin(d);
@@ -17,6 +17,36 @@ void COGGame::initGL() {
         circleLoop[8*i+4] = 0.f;
         circleLoop[8*i+5] = -1.f;
     }
-    g.putPrimitive("uis_circleLoop", new CS1972Engine::Primitive(30, sizeof(circleLoop), GL_LINE_LOOP, circleLoop, 0));
+    g.putPrimitive("uis_circleLoop", new CS1972Engine::Primitive(30, 30*8*sizeof(GLfloat), GL_LINE_LOOP, circleLoop, 0));
+    delete circleLoop;
+
+    GLfloat diamondData[] = {
+         .5f, 0.f, 0.f, 1.f, 1.f, 1.f, 1.f,0.f,
+         0.f, .5f, 0.f, 1.f, 1.f, 1.f, 0.f,1.f,
+         0.f, 0.f, .5f, 1.f, 1.f, 1.f, 0.f,0.f,
+         .5f, 0.f, 0.f, 1.f, 1.f,-1.f, 1.f,0.f,
+         0.f, 0.f,-.5f, 1.f, 1.f,-1.f, 0.f,0.f,
+         0.f, .5f, 0.f, 1.f, 1.f,-1.f, 0.f,1.f,
+         .5f, 0.f, 0.f, 1.f,-1.f,-1.f, 1.f,0.f,
+         0.f,-.5f, 0.f, 1.f,-1.f,-1.f, 0.f,1.f,
+         0.f, 0.f,-.5f, 1.f,-1.f,-1.f, 0.f,0.f,
+         .5f, 0.f, 0.f, 1.f,-1.f, 1.f, 1.f,0.f,
+         0.f, 0.f, .5f, 1.f,-1.f, 1.f, 0.f,0.f,
+         0.f,-.5f, 0.f, 1.f,-1.f, 1.f, 0.f,1.f,
+        -.5f, 0.f, 0.f,-1.f, 1.f, 1.f, 1.f,0.f,
+         0.f, 0.f, .5f,-1.f, 1.f, 1.f, 0.f,0.f,
+         0.f, .5f, 0.f,-1.f, 1.f, 1.f, 0.f,1.f,
+        -.5f, 0.f, 0.f,-1.f, 1.f,-1.f, 1.f,0.f,
+         0.f, .5f, 0.f,-1.f, 1.f,-1.f, 0.f,1.f,
+         0.f, 0.f,-.5f,-1.f, 1.f,-1.f, 0.f,0.f,
+        -.5f, 0.f, 0.f,-1.f,-1.f,-1.f, 1.f,0.f,
+         0.f, 0.f,-.5f,-1.f,-1.f,-1.f, 0.f,0.f,
+         0.f,-.5f, 0.f,-1.f,-1.f,-1.f, 0.f,1.f,
+        -.5f, 0.f, 0.f,-1.f,-1.f, 1.f, 1.f,0.f,
+         0.f,-.5f, 0.f,-1.f,-1.f, 1.f, 0.f,1.f,
+         0.f, 0.f, .5f,-1.f,-1.f, 1.f, 0.f,0.f,
+    };
+    g.putPrimitive("diamond", new CS1972Engine::Primitive(24, sizeof(diamondData), diamondData));
+
     pushScreen(new GameScreen(this));
 }

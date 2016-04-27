@@ -1,75 +1,32 @@
                           cs.brown.edu/courses/cs1972
-                                     final1
+                                     final2
                                     by ajlin
-                           due: 11:59 PM, 04/19/2016
+                           due: 11:59 PM, 04/26/2016
 
 
                                 Children of Gaia
 
 1) CONTROLS. ___________________________________________________________________
 
-	LMB [Hold]  > SHOOT
+	SHOOT  > (LMB) or [S]
+	DEFEND > [W]
+	
 
+
+2) MECHANICS. __________________________________________________________________
 
 	COMBO SYSTEM.
 
-		The diamonds around the reticle is your combo. Each time you click on
-		the beat, your combo goes up by 1. If you click off the beat, or do not
-		click on the beat, your combo will slowly decrease. Mantain a full
-		combo to get a high score!
+		The diamonds around the reticle is your combo, and your score gain is
+		multiplied by your combo. Each time you shoot on the beat, your combo
+		goes up by 1. If you shoot off the beat, or hold the shoot button, your
+		combo will slowly decrease. Mantain a full combo to get a high score!
 
 
-2) ALEX'S IDOL CORNER. _________________________________________________________
+	DEFENSE SYSTEM.
 
-	Child of Eden was actually about saving an "idol" of sorts named Lumi. Lumi
-	was the first human to live their entire life in space, and could only
-	connect with people of the Earth through her songs. After her death,
-	scientists preserved her mind digitally, and in the future came reconstruct
-	her persona in "Eden", the digital virtual reality space that replaced the
-	internet. Therefore, as the first person to be born into the digital world,
-	Lumi became the "Child of Eden".
-
-	Children of Gaia is based loosely off this mythos, where the Eden system
-	exists; the mother of the Eden system was named "Gaia", and those who share
-	her blood (descendants of the original creators of the Gaia system) have
-	amazing powers beyond those of regular people. These "Children of Gaia"
-	fight for control of Eden in a war of ideals.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  !! WARNING !! __/\_/\__ THAR BE DARGONS DOWN BENEATH __/\_/\__ !! WARNING !!
-
-
-3) ADVANCED MECHANICS. _________________________________________________________
-
-    SHOOTING & COMBO.
-
-        As long as the shoot button is held, you will shoot once every 16th
-        beat. After the shoot button is released, you will shoot exactly 8 more
-        shots.
-
-        Each beat, there is a chance to either increase or decrease the combo.
-        One time only per beat, when the shoot button is pressed: if the shoot
-        button was pressed with perfect timing, then the combo increases by 1,
-        and if the shoot button was pressed without perfect timing, then combo
-        decreases by 1. Also, if the shoot button was not pressed during the
-        beat, then combo decreases by 1 if it has been more than one beat since
-        the shoot button was pressed with perfect timing.
+		Currently in a very rough state, much of it is going to change in the
+		upcoming weeks. For now, enemy projectiles have a hexagonal ring
+		overlaid on them. When the arrows in the ring line up, press the defend
+		button to block it. (There isn't any feedback for blocking properly
+		yet, but then again you can't die either so it doesn't really matter.)

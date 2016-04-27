@@ -1,7 +1,9 @@
 #include "enemyentity.h"
+#include "enemyshotentity.h"
 #include "playerentity.h"
 #include "playershotentity.h"
 #include "game/coggame.h"
+#include "game/gamescreen.h"
 
 using namespace COG;
 
@@ -15,6 +17,12 @@ EnemyEntity::EnemyEntity(float beat, int health, int value)
 EnemyEntity::~EnemyEntity() {
     for (std::deque<PlayerShotEntity *>::iterator it = m_attachedShots.begin(); it != m_attachedShots.end(); ++it)
         (*it)->detatchShot(false, m_position);
+}
+
+void EnemyEntity::shoot(float beat, glm::vec3 pos, int type, int lane) {
+    EnemyShotEntity *shot = new EnemyShotEntity(beat, pos, GAME->controller(), type, lane);
+    parent()->addEntity(GameScreen::LAYER_ENEMY_PROJECTILES, shot);
+    GAME->controller()->attachShot(shot);
 }
 
 void EnemyEntity::attachShot(PlayerShotEntity *shot) {

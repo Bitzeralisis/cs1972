@@ -16,12 +16,18 @@ private:
     int m_health;
     int m_futureHealth;
     int m_scoreValue;
+    bool m_targetable = true;
     std::deque<PlayerShotEntity *> m_attachedShots;
+
+protected:
+    MUTATOR(bool,targetable)
 
 public:
     VALUE_ACCESSOR(int,health)
     VALUE_ACCESSOR(int,futureHealth)
+    VALUE_ACCESSOR(bool,targetable)
 
+    void shoot(float beat, glm::vec3 pos, int type, int lane);
     void attachShot(PlayerShotEntity *shot);
 
     virtual void tickBeats(float beats) override;

@@ -12,7 +12,7 @@ Primitive::Primitive(int vertices, int size, GLenum defaultMode, void *data, int
     glBindVertexArray(m_vao);
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 
-    m_vertices = vertices;
+    m_numVertices = vertices;
     glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 
     m_defaultMode = defaultMode;
@@ -44,7 +44,7 @@ Primitive::~Primitive() {
 
 void Primitive::drawArray() const {
     glBindVertexArray(m_vao);
-    glDrawArrays(m_defaultMode, 0, m_vertices);
+    glDrawArrays(m_defaultMode, 0, m_numVertices);
     glBindVertexArray(0);
 }
 

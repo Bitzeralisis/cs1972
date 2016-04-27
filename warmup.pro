@@ -48,8 +48,11 @@ SOURCES += \
     src/game/entity/playershotentity.cpp \
     src/engine/enginedef.cpp \
     src/game/coggame.cpp \
-    src/game/entity/enemy/cubeaenemyentity.cpp \
-    src/game/entity/playerentity.cpp
+    src/game/entity/playerentity.cpp \
+    src/game/entity/ambiententity.cpp \
+    src/game/entity/enemy/diamondaenemy.cpp \
+    src/game/entity/enemy/cubeaenemy.cpp \
+    src/game/entity/enemyshotentity.cpp
 
 HEADERS += \
     libs/glew-1.10.0/include/GL/glew.h \
@@ -88,7 +91,10 @@ HEADERS += \
     src/game/entity/playershotentity.h \
     src/engine/enginedef.h \
     src/game/enginedef.h \
-    src/game/entity/enemy/cubeaenemyentity.h
+    src/game/entity/ambiententity.h \
+    src/game/entity/enemy/diamondaenemy.h \
+    src/game/entity/enemy/cubeaenemy.h \
+    src/game/entity/enemyshotentity.h
 
 
 FORMS += src/mainwindow.ui
@@ -101,10 +107,12 @@ RESOURCES += \
 OTHER_FILES += \
     res/images/cube1.png \
     res/images/cube2.png \
+    res/images/diamond1.png \
     res/images/particle1.png \
     res/images/particle2.png \
     res/images/particle3.png \
     res/images/reticle.png \
+    res/images/enemyshot.png \
     res/images/target.png \
     res/images/hud.png
 

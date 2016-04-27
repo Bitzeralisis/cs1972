@@ -1,4 +1,5 @@
 #include "playerentity.h"
+#include "game/entity/enemyshotentity.h"
 #include "engine/graphics/particlemodule.h"
 
 using namespace COG;
@@ -6,11 +7,7 @@ using namespace COG;
 PlayerEntity::PlayerEntity()
     : COGEntity(0.f)
 {
-    m_velocity = glm::vec3(0.8f, 0.f, 0.f);
-}
-
-void PlayerEntity::tickBeats(float beats) {
-    tickPhysicsContinuous(beats);
+    m_velocity = glm::vec3(1.f, 0.f, 0.f);
 }
 
 void PlayerEntity::gainScoreValue(int score) {
@@ -35,4 +32,12 @@ void PlayerEntity::makeParticles(glm::vec3 position, glm::vec3 velocity) {
     graphics().particle()->putParticles(numParts, pos, vel);
     delete pos;
     delete vel;
+}
+
+void PlayerEntity::attachShot(EnemyShotEntity *shot) {
+    m_attachedShots.push_back(shot);
+}
+
+void PlayerEntity::tickBeats(float beats) {
+    tickPhysicsContinuous(beats);
 }

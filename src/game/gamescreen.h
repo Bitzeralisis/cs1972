@@ -25,6 +25,7 @@ public:
         LAYER_CONTROLLER,
         LAYER_AMBIENCE,
         LAYER_ENEMIES,
+        LAYER_ENEMY_PROJECTILES,
         NUM_LAYERS
     };
 
@@ -37,6 +38,7 @@ private:
     const float RETICLE_SIZE_FACTOR_DRAW = 1.f/6.f;
     const float RETICLE_SIZE_FACTOR_HIT = 1.f/16.f;
     const float PERFECT_TIMING_WINDOW = 0.090f;
+    const float DEFENSE_TIMING_WINDOW = 0.090f;
     const int MAX_COMBO = 8;
 
     const float GRAPHICS_OFFSET = 0.f;
@@ -44,6 +46,7 @@ private:
 
 private:
     CS1972Engine::World *m_world;
+    glm::vec3 m_particleOffset = glm::vec3(0.f);
 
     bool m_firstTick = true;
     float m_beatstep;
@@ -55,7 +58,6 @@ private:
     float m_maxPitch = 0.25f*glm::pi<float>();
 
     PlayerEntity *m_player;
-    glm::vec3 m_particleOffset = glm::vec3(0.f);
     glm::vec2 m_mousePosition;
     float m_prevShot = -1.f;
     float m_shootUntil = -1.f;
@@ -64,6 +66,10 @@ private:
     float m_prevMiss = -1.f;
     int m_combo = 1;
     int m_prevJudge = 0;
+
+    int m_health = 3;
+    float m_iframes = 0.f;
+    float m_defenseDisable = 0.f;
 
     bool m_mouseHeld[3] = { false, false, false };
     bool m_keysHeld[4] = { false, false, false, false };
@@ -75,6 +81,9 @@ private:
     void goodCombo(float beat);
     void badCombo(float beat);
     void missCombo(float beat);
+
+    void takeDamage();
+    void defend(float beat, int lane);
 
 public:
     virtual void tick(float seconds) override;

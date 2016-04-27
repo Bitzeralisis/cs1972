@@ -112,13 +112,14 @@ void World::tick(float seconds) {
 
     // Remove and delete entities
     for (std::deque<std::list<Entity *>>::iterator layer = m_entities.begin(); layer != m_entities.end(); ++layer) {
-        for (std::list<Entity *>::iterator it = layer->begin(); it != layer->end(); ++it) {
+        for (std::list<Entity *>::iterator it = layer->begin(); it != layer->end(); ) {
             if ((*it)->m_removeFlag) {
                 Entity *item = *it;
                 item->m_parent = 0;
                 if (item->m_deleteFlag) delete item;
                 it = layer->erase(it);
-            }
+            } else
+                ++it;
         }
     }
 

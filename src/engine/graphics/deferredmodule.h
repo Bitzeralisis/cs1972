@@ -51,7 +51,7 @@ public:
 
     // Deferred pass shader
     void useDeferredShader();
-    void setLightCutoff(float cutoff);
+    void lightCutoff(float cutoff);
     void lightAmbient(glm::vec3 color);
     void lightDirectional(glm::vec3 dir, glm::vec3 color);
     void lightPoint(glm::vec3 pos, glm::vec3 color, glm::vec3 atten);

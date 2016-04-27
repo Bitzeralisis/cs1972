@@ -1,7 +1,7 @@
                           cs.brown.edu/courses/cs1972
-                                     final1
+                                     final2
                                     by ajlin
-                           due: 11:59 PM, 04/19/2016
+                           due: 11:59 PM, 04/26/2016
 
 
                                 Children of Gaia
@@ -14,57 +14,46 @@
 
 2) ANNOTATED RUBRIC. ___________________________________________________________
 
-COMPLETE/INCOMPLETE
-
-Retries used: NONE (2 extra retries left)
-
 Engine Requirements
 ========================================
-[ ] Supports playback of short sound clips and long music files
+[ ] All engine features from Final1 are polished and ready for usage
 
-	Please see src/engine/audio.*. I also additionally support setting a sound
-	as the background music track, and queueing sounds to play on specific
-	times in the future with sample precision (as provided by FMOD).
-
-[ ] Bloom lighting
-
-	Please see src/engine/graphics/bloommodule.*. I extract parts of the screen
-	that are very bright from an HDR texture, blur it, and blend it back to the
-	screen. The blur is a horizontal/vertical separated 33x33 kernel that
-	samples textures in between texels to save on texture fetches.
-
-[ ] Particle systems that are updated/drawn on the GPU
-
-	Please see src/engine/graphics/particlemodule.*. The particles are both
-	drawn and updated on the GPU. Particle data, such as position, life, and
-	velocity, are represented as floats in textures, and a special shader
-	performs the particle physics. Particles are drawn as an array of points
-	which are used to index into particles in the particle textures, then
-	turned into billboarded quads by a geometry shader. My particles obey depth
-	and are additively blended.
+    They are all ready for usage, though I do plan on adding more features if I
+    need them.
 
 Game Requirements
 ========================================
-[ ] Has at least 2 distinct sound effects that can be triggered on command
+[ ] The player constantly moves forward on a rail (can be just straight
+    forward)
 
-	The clap sound effect plays immediately on clicking, and the tick sound
-	effect plays once every 16th beat aligned to 16th beats as long as the
-	mouse is held (and a bit after).
+    The way this works is that all entities are offset by the player's
+    position, such that the player always remains at the origin.
 
-[ ] Has some form of background music
+[ ] At least two distinct, killable enemy types
 
-	Yes.
+    The cubes and diamonds are quite different (apart from being simple
+    polyhedra).
 
-[ ] Demonstrates bloom lighting with at least one light source
+[ ] Some semblance of a defense mechanic exists (does not need to be fully
+    implemented)
 
-	Yes. Please see the glowing cubes in the corners, or just spawn a bunch of
-	particles and watch as they cause bloom to happen.
+    I am experimenting with how the defense system is displayed and I am going
+    to change it from the current one; however I ran out of time to change it.
+    Additionally, some mechanics of the defense ring, such as it being disabled
+    if you fail to block anything by pressing a defense button, have not been
+    implemented yet.
 
-[ ] Demonstrates usage of at least 1000 particles simultaneously
+[ ] A score is displayed on the screen that is updated when enemies die, other
+    events happen, etc.
 
-	I've set up my particle system to do up to 2^16 (32K) particles. While
-	holding the mouse down, each cube is approximately 2000 particles.
+    Please see the upper-right corner of the screen.
 
+[ ] Score is somehow calculated using a combination of rhythm and user input
+
+    Score gain is based on the base value of an enemy times the current combo
+    you have.  Combo increases if you press shoot (LMB or S) on the beat of the
+    music. It decreases if you press it off the beat, or you hold down the
+    shoot button.
 
 Global requirements
 ========================================
@@ -83,8 +72,6 @@ Global requirements
 [ ] Works at 800x600 and fullscreen resolutions
 [ ] Runs at 30+ UPS and never dips below 20 UPS unless indicated in the
     specific handout
-
-	Hopefully...
 
 
 3) KNOWN BUGS. _________________________________________________________________

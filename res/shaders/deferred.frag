@@ -39,7 +39,7 @@ void main() {
         float brightness = 1.f;
         if (lightType == 1) {
             // Directional light
-            vertexToLight = normalize(lightPosition);
+            vertexToLight = normalize(-1.f*lightPosition);
             brightness = 1.f;
         } else if (lightType == 2) {
             // Point light
@@ -53,14 +53,12 @@ void main() {
         float diffuseIntensity = max(0.f, dot(vertexToLight, normal_worldSpace));
 
         // Specular lighting
-        /*
         vec3 lightReflection = normalize(-reflect(vertexToLight, normal_worldSpace));
         vec3 eyeDirection = normalize(eye_worldSpace - position_worldSpace);
-        float specIntensity = pow(max(0.0, dot(eyeDirection, lightReflection)), 100);
-        */
+        float specIntensity = pow(max(0.0, dot(eyeDirection, lightReflection)), 4);
 
-        //brightness *= mix(diffuseIntensity, specIntensity, 0.2f);
-        brightness *= diffuseIntensity;
+        brightness *= mix(diffuseIntensity, specIntensity, 0.5f);
+        //brightness *= diffuseIntensity;
         fragColor = vec4(lightColor * base_color.rgb * brightness, 1.f);
     } else {
         fragColor = vec4(lightColor * base_color.rgb, 1.f);

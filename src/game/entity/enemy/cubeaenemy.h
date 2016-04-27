@@ -4,10 +4,10 @@
 
 namespace COG {
 
-class CubeaEnemyEntity : public EnemyEntity {
+class CubeaEnemy : public EnemyEntity {
 public:
-    CubeaEnemyEntity(float beat, glm::vec3 pos);
-    virtual ~CubeaEnemyEntity() { }
+    CubeaEnemy(float beat, glm::vec3 pos);
+    virtual ~CubeaEnemy() { }
 
 public:
     virtual void tickBeats(float beats) override;

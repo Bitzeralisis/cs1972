@@ -72,13 +72,12 @@ void PlayerShotEntity::draw(int pass) {
             }
             CS1972Engine::Primitive *primitive = new CS1972Engine::Primitive(numPoints, 8*numPoints*sizeof(GLfloat), line);
 
-            float travel = glm::min(glm::max(0.f, beat-m_shotBeat), 1.f) * (numPoints-length);
+            int travel = glm::min(glm::max(0.f, beat-m_shotBeat), 1.f) * (numPoints-length);
             graphics().shader()->useTexture(false);
             graphics().shader()->color(glm::vec4(0.f));
             graphics().deferred()->useGlowTexture(false);
             graphics().shader()->mTransform(glm::mat4(1.f));
             glLineWidth(5.f);
-
             graphics().deferred()->glowColor(glm::vec4(1.f));
             primitive->drawArray(GL_LINE_STRIP, travel, length);
             glLineWidth(1.f);

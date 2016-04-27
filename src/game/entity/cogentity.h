@@ -9,15 +9,19 @@ class COGGame;
 class COGEntity : public CS1972Engine::Entity {
 public:
     COGEntity(float beat)
-        : m_lastBeat(beat)
+        : m_firstBeat(beat)
+        , m_prevBeat(beat)
     { }
     virtual ~COGEntity() { }
 
 private:
-    float m_lastBeat;
+    float m_firstBeat;
+    float m_prevBeat;
     float m_beat;
 
 protected:
+    inline float totalBeats() const { return m_beat-m_firstBeat; }
+    VALUE_ACCESSOR(float,firstBeat)
     VALUE_ACCESSOR(float,beat)
 
 public:
@@ -29,9 +33,9 @@ public:
 
     virtual void tick(float seconds) final override {
         m_beat = seconds;
-        if (m_beat > m_lastBeat) {
-            tickBeats(m_beat - m_lastBeat);
-            m_lastBeat = m_beat;
+        if (m_beat > m_prevBeat) {
+            tickBeats(m_beat - m_prevBeat);
+            m_prevBeat = m_beat;
         }
     }
     virtual glm::vec2 getCylinder() const final override { return glm::vec2(); }

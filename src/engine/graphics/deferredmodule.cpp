@@ -142,7 +142,7 @@ void DeferredModule::useDeferredShader() {
     glActiveTexture(GL_TEXTURE0);
 }
 
-void DeferredModule::setLightCutoff(float cutoff) {
+void DeferredModule::lightCutoff(float cutoff) {
     m_cutoff = cutoff;
     glUniform1f(glGetUniformLocation(m_parent->activeShader(), "lightCutoff"), m_cutoff);
 }

@@ -8,5 +8,7 @@
         <file>cube1.png</file>
         <file>cube2.png</file>
         <file>hud.png</file>
+        <file>diamond1.png</file>
+        <file>enemyshot.png</file>
     </qresource>
 </RCC>

@@ -1,9 +1,11 @@
 #include "gamescreen.h"
 #include "game/coggame.h"
-#include "entity/lightentity.h"
+#include "entity/ambiententity.h"
+#include "entity/enemyshotentity.h"
 #include "entity/playerentity.h"
 #include "entity/playershotentity.h"
-#include "entity/enemy/cubeaenemyentity.h"
+#include "entity/enemy/cubeaenemy.h"
+#include "entity/enemy/diamondaenemy.h"
 #include "engine/primitive.h"
 #include "engine/sound.h"
 #include "engine/world.h"
@@ -12,6 +14,7 @@
 #include "engine/graphics/particlemodule.h"
 #include "engine/graphics/shadermodule.h"
 #include "engine/graphics/uishadermodule.h"
+#include "csm/csm.h"
 #include "csm/csm_collide.h"
 #include "glm/gtx/rotate_vector.hpp"
 #include <QKeyEvent>
@@ -30,10 +33,14 @@ GameScreen::GameScreen(CS1972Engine::Game *parent)
         graphics().putTexture("cube1", graphics().loadTextureFromQRC(":/images/cube1.png", GL_LINEAR));
     if (!graphics().hasTexture("cube2"))
         graphics().putTexture("cube2", graphics().loadTextureFromQRC(":/images/cube2.png", GL_LINEAR));
+    if (!graphics().hasTexture("diamond1"))
+        graphics().putTexture("diamond1", graphics().loadTextureFromQRC(":/images/diamond1.png", GL_LINEAR));
     if (!graphics().hasTexture("particle"))
         graphics().putTexture("particle", graphics().loadTextureFromQRC(":/images/particle1.png", GL_LINEAR));
     if (!graphics().hasTexture("reticle"))
         graphics().putTexture("reticle", graphics().loadTextureFromQRC(":/images/reticle.png", GL_LINEAR));
+    if (!graphics().hasTexture("enemyshot"))
+        graphics().putTexture("enemyshot", graphics().loadTextureFromQRC(":/images/enemyshot.png", GL_LINEAR));
     if (!graphics().hasTexture("target"))
         graphics().putTexture("target", graphics().loadTextureFromQRC(":/images/target.png", GL_NEAREST));
     if (!graphics().hasTexture("hud"))
@@ -49,6 +56,10 @@ GameScreen::GameScreen(CS1972Engine::Game *parent)
         audio().putSound("808hh08.aif", audio().createSoundSample("sound/808hh08.aif"));
     if (!audio().hasSound("noisy1.aif"))
         audio().putSound("noisy1.aif", audio().createSoundSample("sound/noisy1.aif"));
+    if (!audio().hasSound("supergate-snare.aif"))
+        audio().putSound("supergate-snare.aif", audio().createSoundSample("sound/supergate-snare.aif"));
+    if (!audio().hasSound("popslap.aif"))
+        audio().putSound("popslap.aif", audio().createSoundSample("sound/popslap.aif"));
 
     m_bgm = audio().createSoundStream("sound/1.mp3");
     m_bgm->setMusicParams(150.f, 0.052245f);
@@ -59,7 +70,9 @@ GameScreen::GameScreen(CS1972Engine::Game *parent)
 
     m_player = new PlayerEntity();
     GAME->controller(m_player);
+
     m_world->addEntity(LAYER_CONTROLLER, m_player);
+    m_world->addEntity(LAYER_AMBIENCE, new AmbientEntity(0.f));
 }
 
 GameScreen::~GameScreen() {
@@ -132,7 +145,7 @@ void GameScreen::keepShooting(float beat) {
 
     // Then check this beat: if we've gone past the perfect timing window, then this beat is a miss
     if (m_prevBeatChecked < thisBeat) {
-        if (beat - thisBeat > PERFECT_TIMING_WINDOW && thisBeat > m_prevPerfectShot + 1.f) {
+        if ((beat-thisBeat)/audio().bgm()->bpm()*60.f > PERFECT_TIMING_WINDOW && thisBeat > m_prevPerfectShot + 1.f) {
             missCombo(thisBeat);
             m_prevBeatChecked += 1.f;
         }
@@ -161,7 +174,33 @@ void GameScreen::missCombo(float beat) {
     }
 }
 
-float prevBeat = 0.f;
+void GameScreen::takeDamage() {
+    if (m_iframes <= 0.f) {
+        m_health -= 1;
+        m_iframes = 4.f;
+        m_defenseDisable = 0.f;
+    }
+}
+
+void GameScreen::defend(float beat, int lane) {
+    for (std::deque<EnemyShotEntity *>::iterator it = m_player->attachedShots()->begin(); it != m_player->attachedShots()->end(); ++it) {
+        if ((*it)->approachLane() != lane)
+            continue;
+        float timing = ((*it)->hitBeat()-beat) / audio().bgm()->bpm() * 60.f;
+        std::cout << timing;
+        std::cout.flush();
+        if (timing < -1.f * DEFENSE_TIMING_WINDOW)
+            continue;
+        else if (timing <= DEFENSE_TIMING_WINDOW) {
+            m_world->deleteEntity(*it);
+            m_player->attachedShots()->erase(it);
+            break;
+        } else
+            m_defenseDisable = 2.f;
+    }
+}
+
+float prevBeat = -1.f;
 
 void GameScreen::tick(float seconds) {
     float beat = audio().getBeat();
@@ -196,6 +235,8 @@ void GameScreen::tick(float seconds) {
         EnemyEntity *bestEnemy = 0;
         std::list<EnemyEntity *> *enemies = (std::list<EnemyEntity *> *)m_world->getEntities(LAYER_ENEMIES);
         for (std::list<EnemyEntity *>::iterator it = enemies->begin(); it != enemies->end(); ++it) {
+            if (!(*it)->targetable())
+                continue;
             bool hit = csm::intersect_cone_ellipsoid(cone, (*it)->getEllipsoid() + (*it)->position());
             if (hit && (*it)->futureHealth() > 0) {
                 float dist = glm::distance2(pos, (*it)->position());
@@ -216,10 +257,28 @@ void GameScreen::tick(float seconds) {
 
     m_player->combo(m_combo);
 
+    // Check enemy shots
+    for (std::deque<EnemyShotEntity *>::iterator it = m_player->attachedShots()->begin(); it != m_player->attachedShots()->end(); ) {
+        if ((beat-(*it)->hitBeat())/audio().bgm()->bpm()*60.f > DEFENSE_TIMING_WINDOW) {
+            takeDamage();
+            m_world->deleteEntity(*it);
+            it = m_player->attachedShots()->erase(it);
+        } else
+            ++it;
+    }
+    if (m_iframes > 0.f)
+        m_iframes -= beats;
+    if (m_defenseDisable > 0.f)
+        m_defenseDisable -= beats;
+
     // Update the world
     while (prevBeat < beat) {
-        m_world->addEntity(LAYER_ENEMIES, new CubeaEnemyEntity(prevBeat, glm::vec3(0.f, -1.5f, -1.5f)));
         prevBeat += 1.f;
+        float x = csm::rand(-12.f, 12.f);
+        float y = csm::rand(-3.f, 3.f);
+        m_world->addEntity(LAYER_ENEMIES, new CubeaEnemy(prevBeat, glm::vec3(40.f, y, x)));
+        if (glm::mod(prevBeat, 16.f) == 3.f)
+            m_world->addEntity(LAYER_ENEMIES, new DiamondaEnemy(prevBeat, glm::vec3(csm::rand(5.f, 6.f), 20.f, csm::rand(-3.f, 3.f))));
     }
 
     m_world->tick(beat);
@@ -238,10 +297,6 @@ void GameScreen::tick(float seconds) {
     m_beats += beats;
 }
 
-int bloom = 0;
-int deferred = 0;
-int particles = 0;
-
 void GameScreen::draw() {
     float beat = audio().getBeat() + GRAPHICS_OFFSET*audio().bgm()->bpm()/60.f;
     GAME->beat(beat);
@@ -251,9 +306,11 @@ void GameScreen::draw() {
     m_beatstep = 0.f;
 }
 
-void GameScreen::drawScene(float beat) {
-    float dx = -0.8f * glm::mod(m_beats, 22.5f);
+int bloom = 0;
+int deferred = 0;
+int particles = 0;
 
+void GameScreen::drawScene(float beat) {
     // Update particles
     if (m_beatstep > 0.f) {
         graphics().particle()->usePhysicsShader();
@@ -277,34 +334,8 @@ void GameScreen::drawScene(float beat) {
     // Render geometry to g-buffer
     graphics().deferred()->useGbufferShader();
     graphics().shader()->pvTransformFromCamera();
-    graphics().shader()->useFog(true, 40.f, 50.f, glm::vec3(0.f));
-
-    graphics().shader()->useTexture(true);
-    graphics().shader()->bindTexture("cube2");
-    graphics().deferred()->bindGlowTexture("cube1");
-    float brightness = 0.2f*(1.f - 1.f*glm::mod(beat, 1.f));
-    for (int x = -4; x < 4; ++x)
-        for (int y = -4; y < 4; ++y)
-            for (int i = -1; i < 12; ++i) {
-                if (x == -2 && y == -2 && (i % 3 == 0)) {
-                    graphics().shader()->color(glm::vec4(0.f));
-                    graphics().deferred()->useGlowTexture(false);
-                    graphics().deferred()->glowColor(glm::vec4(3.f, 0.1f, 0.1f, 1.f));
-                } else if (x == 1 && y == 1 && (i % 3 == 0)) {
-                    graphics().shader()->color(glm::vec4(0.f));
-                    graphics().deferred()->useGlowTexture(false);
-                    graphics().deferred()->glowColor(glm::vec4(0.1f, 0.1f, 3.f, 1.f));
-                } else {
-                    graphics().shader()->color(glm::vec4(1.f));
-                    graphics().deferred()->useGlowTexture(true);
-                    graphics().deferred()->glowColor(glm::vec4(brightness));
-                }
-                graphics().shader()->mTransform(glm::translate(glm::mat4(1.f), glm::vec3(dx+6.f*i, 6.f*x+3.f, 6.f*y+3.f)));
-                graphics().pBox()->drawArray();
-            }
-
+    graphics().shader()->useFog(true, 30.f, 40.f, glm::vec3(0.f));
     m_world->draw(DRAW_GEOMETRY);
-
     graphics().useShader(0);
 
     if (particles == 0 || particles == 2) {
@@ -333,17 +364,6 @@ void GameScreen::drawScene(float beat) {
         // Render lights in deferred pass
         graphics().deferred()->useDeferredShader();
         graphics().shader()->pvTransformFromCamera();
-        graphics().deferred()->lightDirectional(glm::vec3(0.f, 1.f, 0.f), glm::vec3(0.15f, 0.15f, 0.1f));
-        int x = 1;
-        int y = 1;
-        for (int i = -06; i < 12; i += 3) {
-            graphics().deferred()->lightPoint(glm::vec3(dx+6.f*i, 6.f*x+3.f, 6.f*y+3.f), glm::vec3(0.f, 0.f, 2.3f), 5.f);
-        }
-        x = -2;
-        y = -2;
-        for (int i = -06; i < 12; i += 3) {
-            graphics().deferred()->lightPoint(glm::vec3(dx+6.f*i, 6.f*x+3.f, 6.f*y+3.f), glm::vec3(2.3f, 0.f, 0.f), 5.f);
-        }
         m_world->draw(DRAW_LIGHTS);
         graphics().useShader(0);
 
@@ -522,7 +542,7 @@ void GameScreen::drawHud(float beat) {
     }
 
     // Life ticks
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < m_health; ++i) {
         float left = 1792.f/2048.f - 64.f/2048.f*i;
         float right = left + 64.f/2048.f;
         graphics().uishader()->drawQuad(
@@ -602,6 +622,12 @@ void GameScreen::keyPressEvent(QKeyEvent *event) {
     float beat = audio().getBeat() + INPUT_OFFSET*audio().bgm()->bpm()/60.f;
 
     switch (event->key()) {
+    case Qt::Key_W:
+        m_keysHeld[0] = true;
+        if (!event->isAutoRepeat())
+            defend(beat, 0);
+        break;
+
     case Qt::Key_S:
         m_keysHeld[3] = true;
         if (!event->isAutoRepeat())
@@ -629,6 +655,10 @@ void GameScreen::keyReleaseEvent(QKeyEvent *event) {
     float beat = audio().getBeat() + INPUT_OFFSET*audio().bgm()->bpm()/60.f;
 
     switch (event->key()) {
+    case Qt::Key_W:
+        m_keysHeld[0] = false;
+        break;
+
     case Qt::Key_S:
         m_keysHeld[3] = false;
         m_shootUntil = beat + 2.f;
