@@ -19,8 +19,8 @@ EnemyEntity::~EnemyEntity() {
         (*it)->detatchShot(false, m_position);
 }
 
-void EnemyEntity::shoot(float beat, glm::vec3 pos, int type, int lane) {
-    EnemyShotEntity *shot = new EnemyShotEntity(beat, pos, GAME->controller(), type, lane);
+void EnemyEntity::shoot(float beat, float travelTime, glm::vec3 pos, glm::vec3 vel, int type, int lane) {
+    EnemyShotEntity *shot = new EnemyShotEntity(beat, travelTime, pos, vel, GAME->controller(), type, lane);
     parent()->addEntity(GameScreen::LAYER_ENEMY_PROJECTILES, shot);
     GAME->controller()->attachShot(shot);
 }

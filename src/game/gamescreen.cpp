@@ -37,6 +37,8 @@ GameScreen::GameScreen(CS1972Engine::Game *parent)
         graphics().putTexture("diamond1", graphics().loadTextureFromQRC(":/images/diamond1.png", GL_LINEAR));
     if (!graphics().hasTexture("particle"))
         graphics().putTexture("particle", graphics().loadTextureFromQRC(":/images/particle1.png", GL_LINEAR));
+    if (!graphics().hasTexture("blur"))
+        graphics().putTexture("blur", graphics().loadTextureFromQRC(":/images/particle2.png", GL_NEAREST));
     if (!graphics().hasTexture("reticle"))
         graphics().putTexture("reticle", graphics().loadTextureFromQRC(":/images/reticle.png", GL_LINEAR));
     if (!graphics().hasTexture("enemyshot"))
@@ -60,6 +62,10 @@ GameScreen::GameScreen(CS1972Engine::Game *parent)
         audio().putSound("supergate-snare.aif", audio().createSoundSample("sound/supergate-snare.aif"));
     if (!audio().hasSound("popslap.aif"))
         audio().putSound("popslap.aif", audio().createSoundSample("sound/popslap.aif"));
+    if (!audio().hasSound("tambourine-simple1.aif"))
+        audio().putSound("tambourine-simple1.aif", audio().createSoundSample("sound/tambourine-simple1.aif"));
+    if (!audio().hasSound("chewie_scratch.aif"))
+        audio().putSound("chewie_scratch.aif", audio().createSoundSample("sound/chewie_scratch.aif"));
 
     m_bgm = audio().createSoundStream("sound/1.mp3");
     m_bgm->setMusicParams(150.f, 0.052245f);
@@ -178,24 +184,32 @@ void GameScreen::takeDamage() {
     if (m_iframes <= 0.f) {
         m_health -= 1;
         m_iframes = 4.f;
-        m_defenseDisable = 0.f;
     }
 }
 
 void GameScreen::defend(float beat, int lane) {
-    for (std::deque<EnemyShotEntity *>::iterator it = m_player->attachedShots()->begin(); it != m_player->attachedShots()->end(); ++it) {
-        if ((*it)->approachLane() != lane)
-            continue;
-        float timing = ((*it)->hitBeat()-beat) / audio().bgm()->bpm() * 60.f;
-        if (timing < -1.f * DEFENSE_TIMING_WINDOW)
-            continue;
-        else if (timing <= DEFENSE_TIMING_WINDOW) {
-            m_world->deleteEntity(*it);
-            m_player->attachedShots()->erase(it);
-            break;
-        } else
-            m_defenseDisable = 2.f;
+    if (m_defenseDisable <= 0.f) {
+        for (std::deque<EnemyShotEntity *>::iterator it = m_player->attachedShots()->begin(); it != m_player->attachedShots()->end(); ++it) {
+            if ((*it)->approachLane() != lane)
+                continue;
+            float timing = ((*it)->hitBeat()-beat) / audio().bgm()->bpm() * 60.f;
+            if (timing < -1.f * DEFENSE_TIMING_WINDOW)
+                continue;
+            else if (timing <= DEFENSE_TIMING_WINDOW) {
+                audio().queueSoundOnBeat("tambourine-simple1.aif", (*it)->hitBeat());
+                m_prevSuccessfulBlock[(*it)->approachLane()] = (*it)->hitBeat();
+                m_player->makeParticles(32, (*it)->visualPosition(), 0.1f, 2.f*m_player->velocity(), glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.25f, 0.5f));
+                m_world->deleteEntity(*it);
+                m_player->attachedShots()->erase(it);
+                return;
+            }
+        }
     }
+
+    audio().getSound("chewie_scratch.aif")->stop();
+    audio().playSound("chewie_scratch.aif");
+    m_defenseDisable = 2.f;
+    m_prevMissedBlock[lane] = beat;
 }
 
 float prevBeat = -1.f;
@@ -357,7 +371,7 @@ void GameScreen::drawScene(float beat) {
 
     // Draw to hdr buffer
     graphics().bloom()->bindHdrBuffer();
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Prepare to do full-screen filters
     glEnable(GL_BLEND);
@@ -385,6 +399,26 @@ void GameScreen::drawScene(float beat) {
         graphics().shader()->bindTexture(graphics().deferred()->glowTex());
         graphics().uishader()->drawQuad(0.f, 1.f, 0.f, 1.f);
         graphics().useShader(0);
+    }
+
+    {
+        // Blend in additive geometry
+        glEnable(GL_DEPTH_TEST);
+        glDepthMask(false);
+
+        graphics().shader()->use();
+        graphics().deferred()->blitGbufferDepthTo(parent->width(), parent->height(), graphics().bloom()->hdr());
+        graphics().shader()->pvTransformFromCamera();
+        graphics().shader()->useLight(false);
+        graphics().shader()->useFog(true, 30.f, 40.f, glm::vec3(0.f));
+
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        m_world->draw(DRAW_ADDITIVE);
+
+        graphics().useShader(0);
+        glBlendFunc(GL_ONE, GL_ONE);
+        glDepthMask(true);
+        glDisable(GL_DEPTH_TEST);
     }
 
     // Stop drawing to hdr buffer
@@ -438,6 +472,8 @@ void GameScreen::drawScene(float beat) {
         graphics().uishader()->color(glm::vec4(1.f));
         graphics().shader()->bindTexture(graphics().particle()->velTex());
         graphics().uishader()->drawQuad(W, 2.f*W, 0.f, H);
+        graphics().shader()->bindTexture(graphics().particle()->colorTex());
+        graphics().uishader()->drawQuad(2.f*W, 3.f*W, 0.f, H);
     }
 
     glDisable(GL_BLEND);
@@ -493,14 +529,12 @@ void GameScreen::drawHud(float beat) {
         0.f, 0.25f, 0.f, 0.5f
     );
 
-    /*
-    graphics().uishader()->color(glm::vec4(1.f, 1.f, 1.f, glm::max(0.f, 0.5f*(m_shootUntil-beat))));
+    graphics().uishader()->color(glm::vec4(1.f));
     graphics().uishader()->drawQuad(
         m_mousePosition.x-hSize, m_mousePosition.x+hSize, m_mousePosition.y-hSize, m_mousePosition.y+hSize,
         -180.f * glm::mod(beat, 2.f),
         0.25f, 0.5f, 0.f, 0.5f
     );
-    */
 
     if (m_mouseHeld[0] || m_keysHeld[3] ||  beat-m_prevMiss < 2.f*PERFECT_TIMING_WINDOW) {
         hSize *= 1.05f;
@@ -518,6 +552,161 @@ void GameScreen::drawHud(float beat) {
                 -45.f * i,
                 0.75f, 1.f, 0.5f, 1.f
             );
+        }
+    }
+
+    // Draw the defense ring
+
+    // Figure out whether or not we should display the ring, and which lanes to display
+    float lanesHave[3] = { 0.f, 0.f, 0.f };
+    float hasAny = 0.f;
+    for (std::deque<EnemyShotEntity *>::iterator it = m_player->attachedShots()->begin(); it != m_player->attachedShots()->end(); ++it) {
+        if ((*it)->hitBeat()-beat > 8.f)
+            break;
+        else if ((*it)->hitBeat()-beat > 4.f) {
+            lanesHave[(*it)->approachLane()] = 0.5f;
+            hasAny = 0.5f;
+        } else {
+            lanesHave[(*it)->approachLane()] = 1.f;
+            hasAny = 1.f;
+        }
+    }
+    for (int i = 0; i < 3; ++i)
+        if (beat - m_prevSuccessfulBlock[i] < 2.f) {
+            lanesHave[i] = 1.f;
+            hasAny = 1.f;
+        }
+    if (m_iframes > 0.f)
+        hasAny = 1.f;
+
+    if (hasAny > 0.f) {
+        graphics().shader()->bindTexture("enemyshot");
+        glm::vec2 size(H*DEFENSERING_SIZE_FACTOR);
+        glm::vec2 center(0.5f*W, H-0.09375f*H);
+        float offset = size.x*2.5f;
+        float laneLength = size.x*8.f;
+        float fallSpeed = 0.4f;
+        float laneOffset = offset-size.x/2.f+laneLength/2.f;
+        glm::vec2 laneSize(size.x, laneLength);
+        glm::vec2 centers[3] = { center-glm::vec2(0.f, offset), center-glm::vec2(offset, 0.f), center+glm::vec2(offset, 0.f) };
+        glm::vec2 laneCenters[3] = { center-glm::vec2(0.f, laneOffset), center-glm::vec2(laneOffset, 0.f), center+glm::vec2(laneOffset, 0.f) };
+        glm::vec2 offsets[3] = { glm::vec2(0.f, -1.f*fallSpeed*laneLength), glm::vec2(-1.f*fallSpeed*laneLength, 0.f), glm::vec2(fallSpeed*laneLength, 0.f) };
+        float rotations[3] = { 0.f, 90.f, -90.f };
+
+        float flicker = hasAny;
+        if (m_defenseDisable > 0.f)
+            flicker = (glm::mod(beat, 0.5f) < 0.25f) ? 1.f : 0.5f;
+
+        // Draw UI elements
+        graphics().uishader()->color(glm::vec4(1.f, 1.f, 1.f, flicker));
+        if (m_iframes > 0.f)
+            graphics().uishader()->drawQuad(
+                center, 2.f*size, 0.f,
+                0.375f, 0.5f, 0.75f, 1.f
+            );
+        if (m_defenseDisable <= 0.f) {
+            if (m_iframes <= 0.f)
+                graphics().uishader()->drawQuad(
+                    center, 2.f*size, 0.f,
+                    0.375f, 0.5f, 0.25f, 0.5f
+                );
+            graphics().uishader()->drawQuad(
+                center, 4.f*size, 45.f*glm::mod(beat, 8.f),
+                0.5f, 0.75f, 0.f, 0.5f
+            );
+            graphics().uishader()->drawQuad(
+                center, 4.f*size, -45.f*glm::mod(beat, 8.f),
+                0.75f, 1.f, 0.f, 0.5f
+            );
+            graphics().uishader()->drawQuad(
+                center, 4.f*size, 0.f,
+                0.5f, 0.75f, 0.5f, 1.f
+            );
+        } else {
+            if (m_iframes <= 0.f)
+                graphics().uishader()->drawQuad(
+                    center, 2.f*size, 0.f,
+                    0.375f, 0.5f, 0.5f, 0.75f
+                );
+            graphics().uishader()->drawQuad(
+                center, 4.f*size, 0.f,
+                0.75f, 1.f, 0.5f, 1.f
+            );
+        }
+
+        // Draw lanes
+        if (m_defenseDisable <= 0.f)
+            for (int i = 0; i < 3; ++i) {
+                graphics().uishader()->color(glm::vec4(1.f, 1.f, 1.f, lanesHave[i]));
+                graphics().uishader()->drawQuad(
+                    laneCenters[i], laneSize, rotations[i],
+                    0.0625f, 0.125f, 0.f, 1.f
+                );
+            }
+
+        // Draw projectiles
+        float blink = (glm::mod(beat, 1.f) < 0.5f) ? 0.f : 0.0625f;
+        graphics().uishader()->color(glm::vec4(0.5f, 0.5f, 0.5f, 1.f));
+        for (std::deque<EnemyShotEntity *>::iterator it = m_player->attachedShots()->begin(); it != m_player->attachedShots()->end(); ++it) {
+            if ((*it)->hitBeat()-beat > 8.f)
+                break;
+            if ((*it)->hitBeat()-beat <= 4.f)
+                graphics().uishader()->color(glm::vec4(1.f));
+            float offset = 0.f;
+            if (glm::mod((*it)->hitBeat(), 1.f) != 0.f)
+                offset += 0.25f;
+            if (glm::mod((*it)->hitBeat(), 0.5f) != 0.f)
+                offset += 0.25f;
+            if (glm::mod((*it)->hitBeat(), 0.25f) != 0.f)
+                offset += 0.25f;
+            int lane = (*it)->approachLane();
+            graphics().uishader()->drawQuad(
+                centers[lane] + offsets[lane]*((*it)->hitBeat()-beat), size, 0.f,
+                0.125f+blink, 0.1875f+blink, 0.f+offset, 0.125f+offset
+            );
+        }
+
+        // Draw hit markers && judgements
+        for (int i = 0; i < 3; ++i) {
+            if (m_keysHeld[i]) {
+                graphics().uishader()->color(glm::vec4(1.f));
+                if (m_defenseDisable <= 0.f && beat-m_prevSuccessfulBlock[i] < 2.f)
+                    graphics().uishader()->drawQuad(
+                        centers[i], size, 0.f,
+                        0.f, 0.0625f, 0.125f, 0.25f
+                    );
+                else
+                    graphics().uishader()->drawQuad(
+                        centers[i], size, 0.f,
+                        0.f, 0.0625f, 0.25f, 0.375f
+                    );
+            } else if (m_defenseDisable <= 0.f) {
+                graphics().uishader()->color(glm::vec4(1.f, 1.f, 1.f, lanesHave[i]));
+                graphics().uishader()->drawQuad(
+                    centers[i], size, 0.f,
+                    0.f, 0.0625f, 0.f, 0.125f
+                );
+            }
+
+            graphics().uishader()->color(glm::vec4(1.f));
+            if (beat-m_prevMissedBlock[i] < 2.f) {
+                graphics().uishader()->drawQuad(
+                    centers[i], 2.f*size, 0.f,
+                    0.375f, 0.5f, 0.f, 0.25f
+                );
+            } else if (beat-m_prevSuccessfulBlock[i] < 2.f) {
+                float offset = 0.f;
+                if (glm::mod(m_prevSuccessfulBlock[i], 1.f) != 0.f)
+                    offset += 0.25f;
+                if (glm::mod(m_prevSuccessfulBlock[i], 0.5f) != 0.f)
+                    offset += 0.25f;
+                if (glm::mod(m_prevSuccessfulBlock[i], 0.25f) != 0.f)
+                    offset += 0.25f;
+                graphics().uishader()->drawQuad(
+                    centers[i], 2.f*size, 0.f,
+                    0.25f, 0.375f, 0.f+offset, 0.25f+offset
+                );
+            }
         }
     }
 
@@ -566,6 +755,13 @@ void GameScreen::drawHud(float beat) {
             left*W, right*W, H-66.f/2048.f*W, H-34.f/2048.f*W,
             0.f, 32.f/2048.f, 0.25f, 0.25f+32.f/1024.f
         );
+    }
+
+    // Full-screen effects
+    if (m_iframes > 0.f) {
+        graphics().shader()->useTexture(false);
+        graphics().uishader()->color(glm::vec4(1.f, 0.f, 0.f, m_iframes/8.f));
+        graphics().uishader()->drawQuad(0.f, W, 0.f, H);
     }
 
     graphics().useShader(0);
@@ -634,6 +830,18 @@ void GameScreen::keyPressEvent(QKeyEvent *event) {
             defend(beat, 0);
         break;
 
+    case Qt::Key_A:
+        m_keysHeld[1] = true;
+        if (!event->isAutoRepeat())
+            defend(beat, 1);
+        break;
+
+    case Qt::Key_D:
+        m_keysHeld[2] = true;
+        if (!event->isAutoRepeat())
+            defend(beat, 2);
+        break;
+
     case Qt::Key_S:
         m_keysHeld[3] = true;
         if (!event->isAutoRepeat())
@@ -663,6 +871,14 @@ void GameScreen::keyReleaseEvent(QKeyEvent *event) {
     switch (event->key()) {
     case Qt::Key_W:
         m_keysHeld[0] = false;
+        break;
+
+    case Qt::Key_A:
+        m_keysHeld[1] = false;
+        break;
+
+    case Qt::Key_D:
+        m_keysHeld[2] = false;
         break;
 
     case Qt::Key_S:

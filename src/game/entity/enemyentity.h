@@ -27,7 +27,7 @@ public:
     VALUE_ACCESSOR(int,futureHealth)
     VALUE_ACCESSOR(bool,targetable)
 
-    void shoot(float beat, glm::vec3 pos, int type, int lane);
+    void shoot(float beat, float travelTime, glm::vec3 pos, glm::vec3 vel, int type, int lane);
     void attachShot(PlayerShotEntity *shot);
 
     virtual void tickBeats(float beats) override;

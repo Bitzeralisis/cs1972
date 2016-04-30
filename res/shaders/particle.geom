@@ -5,12 +5,14 @@ layout(points) in;
 layout(triangle_strip, max_vertices = 4) out;
 
 in float life[];
+in vec3 color[];
 
 uniform mat4 p;
 uniform float particleSize;
 
 out vec2 texc;
 out float lifef;
+out vec3 colorv;
 
 void main() {
     if (life[0] > 0.f) {
@@ -20,6 +22,7 @@ void main() {
             gl_Position = p * eyePos;
             texc = corners[i];
             lifef = life[0];
+            colorv = color[0];
             EmitVertex();
         }
     }

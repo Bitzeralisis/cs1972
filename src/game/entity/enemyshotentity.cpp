@@ -6,22 +6,30 @@
 #include "engine/graphics/deferredmodule.h"
 #include "engine/graphics/shadermodule.h"
 #include "engine/graphics/uishadermodule.h"
+#include "csm/csm.h"
+#include <glm/gtx/rotate_vector.hpp>
 
 using namespace COG;
 
-EnemyShotEntity::EnemyShotEntity(float beat, glm::vec3 pos, PlayerEntity *target, int type, int lane)
+EnemyShotEntity::EnemyShotEntity(float beat, float travelTime, glm::vec3 pos, glm::vec3 vel, PlayerEntity *target, int type, int lane)
     : COGEntity(beat)
     , m_target(target)
-    , m_hitBeat(beat+8.f)
+    , m_visualPosition(pos)
+    , m_shotVel(vel)
+    , m_travelTime(travelTime)
+    , m_hitBeat(beat+travelTime)
     , m_shotType(type)
     , m_approachLane(lane)
 {
     m_position = pos;
 }
 
-void EnemyShotEntity::tickBeats(float beats) {
-    float travel = beats / (m_hitBeat-(beat()-beats));
-    m_position = travel*(m_target->position()+glm::vec3(0.3f, 0.f, 0.f)) + (1.f-travel)*m_position;
+void EnemyShotEntity::tickBeats(float) {
+    float travel = (m_hitBeat-beat()) / m_travelTime;
+    float rotation[3] = { 0.f, 0.25f*glm::pi<float>(), -0.25f*glm::pi<float>() };
+    glm::vec3 direction = glm::rotate(m_target->velocity(), rotation[m_approachLane], graphics().camera()->upVector());
+    direction = 1.f*glm::normalize(direction);
+    m_visualPosition = csm::bezier_curve(m_target->position() + direction, m_target->position() + 5.f*direction, m_position+m_shotVel, m_position, travel);
 }
 
 void EnemyShotEntity::draw(int pass) {
@@ -32,16 +40,28 @@ void EnemyShotEntity::draw(int pass) {
         graphics().shader()->useTexture(false);
         graphics().shader()->color(glm::vec4(0.f));
         graphics().deferred()->useGlowTexture(false);
-        graphics().deferred()->glowColor(glm::vec4(3.5f, 0.2f, 0.2f, 1.f));
+        graphics().deferred()->glowColor(glm::vec4(1.5f, 0.2f, 0.2f, 1.f));
         glm::mat4 m(1.f);
-        m = glm::translate(m, m_position);
+        m = glm::translate(m, m_visualPosition);
         m = glm::scale(m, glm::vec3(0.2f));
+        m = glm::rotate(m, totalBeats(), glm::vec3(1.f, 1.f, 1.f));
         graphics().shader()->mTransform(m);
-        graphics().pSphere()->drawArray();
+        graphics().getPrimitive("cubeLines")->drawArray();
+        break;
     }
 
+    case GameScreen::DRAW_ADDITIVE: {
+        graphics().shader()->useTexture(true);
+        graphics().shader()->bindTexture("blur");
+        graphics().shader()->color(glm::vec4(1.0f, 0.0f, 0.0f, 1.f));
+        graphics().shader()->mTransform(graphics().shader()->billboardMTransform(m_visualPosition, glm::vec2(0.3f)));
+        graphics().pQuad()->drawArray();
+        break;
+    }
+
+    /*
     case GameScreen::DRAW_ORTHOGRAPHIC: {
-        glm::vec3 pos = graphics().uishader()->cameraSpaceToUisSpace(m_position);
+        glm::vec3 pos = graphics().uishader()->cameraSpaceToUisSpace(m_visualPosition);
         float travel = (m_hitBeat-beat)/8.f;
         float hSize = parent()->parent()->height()*HEXAGON_SIZE_FACTOR * 0.5f;
         graphics().shader()->useTexture(true);
@@ -53,6 +73,8 @@ void EnemyShotEntity::draw(int pass) {
             graphics().uishader()->drawQuad(pos.x-hSize, pos.x+hSize, pos.y-hSize, pos.y+hSize,  360.f*travel, 0.f, 0.25f, 0.5f, 1.f);
             graphics().uishader()->drawQuad(pos.x-hSize, pos.x+hSize, pos.y-hSize, pos.y+hSize, -360.f*travel, 0.f, 0.25f, 0.5f, 1.f);
         }
+        break;
     }
+    */
     }
 }

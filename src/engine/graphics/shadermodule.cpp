@@ -72,3 +72,15 @@ void ShaderModule::useLight(bool use, int type, glm::vec3 pos) {
     glUniform1i(glGetUniformLocation(m_parent->activeShader(), "lightType"), type);
     glUniform3fv(glGetUniformLocation(m_parent->activeShader(), "lightPosition"), 1, glm::value_ptr(pos));
 }
+
+glm::mat4 ShaderModule::billboardMTransform(glm::vec3 position, glm::vec2 size, float rotation) {
+    glm::mat4 m(1.f);
+    m = glm::translate(m, position);
+    glm::vec3 toEye = m_parent->camera()->position() - position;
+    glm::vec3 normal = glm::vec3(0.f, 1.f, 0.f);
+    if (toEye.x != 0.f || toEye.z != 0.f)
+        m = glm::rotate(m, glm::acos(glm::dot(normal, toEye) / glm::length(toEye)), glm::cross(normal, toEye));
+    m = glm::rotate(m, rotation, normal);
+    m = glm::scale(m, glm::vec3(size.x, 0.f, size.y));
+    return m;
+}

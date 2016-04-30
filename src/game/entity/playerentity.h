@@ -23,7 +23,7 @@ public:
     std::deque<EnemyShotEntity *> *attachedShots() { return &m_attachedShots; }
 
     void gainScoreValue(int score);
-    void makeParticles(glm::vec3 position, glm::vec3 velocity);
+    void makeParticles(int amount, glm::vec3 position, float width, glm::vec3 velocity, glm::vec3 color, glm::vec2 life);
 
     void attachShot(EnemyShotEntity *shot);
 

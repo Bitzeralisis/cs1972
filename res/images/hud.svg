@@ -85,15 +85,6 @@
     </linearGradient>
     <linearGradient
        inkscape:collect="always"
-       xlink:href="#linearGradient4194"
-       id="linearGradient4226"
-       x1="-65.767769"
-       y1="540.36218"
-       x2="2113.7678"
-       y2="540.36218"
-       gradientUnits="userSpaceOnUse" />
-    <linearGradient
-       inkscape:collect="always"
        xlink:href="#linearGradient4220"
        id="linearGradient4285"
        x1="-65.767769"
@@ -104,37 +95,7 @@
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient4194"
-       id="linearGradient4329"
-       gradientUnits="userSpaceOnUse"
-       x1="-65.767769"
-       y1="540.36218"
-       x2="2113.7678"
-       y2="540.36218"
-       gradientTransform="translate(0,-18)" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient4194"
-       id="linearGradient4331"
-       gradientUnits="userSpaceOnUse"
-       x1="-65.767769"
-       y1="540.36218"
-       x2="2113.7678"
-       y2="540.36218"
-       gradientTransform="translate(0,-18)" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient4194"
        id="linearGradient4329-3"
-       gradientUnits="userSpaceOnUse"
-       x1="-65.767769"
-       y1="540.36218"
-       x2="2113.7678"
-       y2="540.36218"
-       gradientTransform="matrix(1,0,0,-1,-4.7033637e-8,1098.7244)" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient4194"
-       id="linearGradient4331-6"
        gradientUnits="userSpaceOnUse"
        x1="-65.767769"
        y1="540.36218"
@@ -158,9 +119,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.67285156"
-     inkscape:cx="374.40375"
-     inkscape:cy="451.08273"
+     inkscape:zoom="0.4757779"
+     inkscape:cx="878.09033"
+     inkscape:cy="479.57998"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -200,68 +161,44 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-28.36216)">
-    <g
-       id="g4213"
-       style="stroke:url(#linearGradient4226)">
-      <path
-         sodipodi:nodetypes="cccc"
-         inkscape:connector-curvature="0"
-         id="path4145"
-         d="m -64,138.36216 96,-96 1984,0 96,96"
-         style="opacity:1;fill:none;fill-rule:evenodd;stroke:url(#linearGradient4331);stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <path
-         sodipodi:nodetypes="cc"
-         inkscape:connector-curvature="0"
-         id="path4151"
-         d="m 16,58.36216 c 672,0 1344,0 2016,0"
-         style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:url(#linearGradient4329);stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:30px;line-height:125%;font-family:'OCR A Extended';-inkscape-font-specification:'OCR A Extended, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ff80ff;fill-opacity:0.75294119;fill-rule:nonzero;stroke:none;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;"
+    <text
+       sodipodi:linespacing="125%"
+       id="text4333"
+       y="1012.3622"
+       x="20"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:30px;line-height:125%;font-family:'OCR A Extended';-inkscape-font-specification:'OCR A Extended, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ff80ff;fill-opacity:0.75294118;fill-rule:nonzero;stroke:none;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         y="1012.3622"
          x="20"
+         id="tspan5249"
+         sodipodi:role="line">SHOT.</tspan></text>
+    <path
+       id="path4151-1"
+       style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:url(#linearGradient4329-3);stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;shape-rendering:crispEdges"
+       d="m 16,1022.3622 c 672,0 1344,0 2016,0 m -2096,-80.00004 96,96.00004 1984,0 96,-96.00004 m -2096,-884 c 672,0 1344,0 2016,0 m -2096,80 96,-96 1984,0 96,96" />
+    <text
+       sodipodi:linespacing="125%"
+       id="text4333-6"
+       y="1012.3622"
+       x="2028"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:30px;line-height:125%;font-family:'OCR A Extended';-inkscape-font-specification:'OCR A Extended, Normal';text-align:end;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:end;fill:#ff80ff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.75294118;shape-rendering:crispEdges"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:60px;line-height:125%;font-family:'OCR A Extended';-inkscape-font-specification:'OCR A Extended, Normal';text-align:end;writing-mode:lr-tb;text-anchor:end"
          y="1012.3622"
-         id="text4333"
-         sodipodi:linespacing="125%"><tspan
-           sodipodi:role="line"
-           id="tspan5249"
-           x="20"
-           y="1012.3622">SHOT.</tspan></text>
-      <path
-         sodipodi:nodetypes="cccc"
-         inkscape:connector-curvature="0"
-         id="path4145-6"
-         d="m -64,942.36216 96,96.00004 1984,0 96,-96.00004"
-         style="opacity:1;fill:none;fill-rule:evenodd;stroke:url(#linearGradient4331-6);stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;shape-rendering:crispEdges" />
-      <path
-         sodipodi:nodetypes="cc"
-         inkscape:connector-curvature="0"
-         id="path4151-1"
-         d="m 16,1022.3622 c 672,0 1344,0 2016,0"
-         style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:url(#linearGradient4329-3);stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;shape-rendering:crispEdges" />
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:30px;line-height:125%;font-family:'OCR A Extended';-inkscape-font-specification:'OCR A Extended, Normal';text-align:end;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:end;fill:#ff80ff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.75294118;shape-rendering:crispEdges"
          x="2028"
-         y="1012.3622"
-         id="text4333-6"
-         sodipodi:linespacing="125%"><tspan
-           sodipodi:role="line"
-           id="tspan5249-3"
-           x="2028"
-           y="1012.3622"
-           style="-inkscape-font-specification:'OCR A Extended, Normal';font-family:'OCR A Extended';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;font-size:60px;text-anchor:end;text-align:end;writing-mode:lr;line-height:125%">.LIFE</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:30px;line-height:125%;font-family:'OCR A Extended';-inkscape-font-specification:'OCR A Extended, Normal';text-align:end;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:end;fill:#ff80ff;fill-opacity:0.75294118;fill-rule:nonzero;stroke:none;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;shape-rendering:crispEdges"
-         x="2028"
+         id="tspan5249-3"
+         sodipodi:role="line">.LIFE</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text4333-2"
+       y="88.36216"
+       x="2028"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:30px;line-height:125%;font-family:'OCR A Extended';-inkscape-font-specification:'OCR A Extended, Normal';text-align:end;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:end;fill:#ff80ff;fill-opacity:0.75294118;fill-rule:nonzero;stroke:none;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;shape-rendering:crispEdges"
+       xml:space="preserve"><tspan
          y="88.36216"
-         id="text4333-2"
-         sodipodi:linespacing="125%"><tspan
-           sodipodi:role="line"
-           id="tspan5249-0"
-           x="2028"
-           y="88.36216">.SCORE</tspan></text>
-    </g>
+         x="2028"
+         id="tspan5249-0"
+         sodipodi:role="line">.SCORE</tspan></text>
     <path
        style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#ff80ff;stroke-width:6;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;shape-rendering:crispEdges"
        d="m 40,764.3622 24,-24.00008 24,24.00008 -24,24 z"
@@ -451,5 +388,16 @@
          sodipodi:role="line"
          style="fill:#ff00ff;fill-opacity:1"
          id="tspan4340">about 17 pixels apart</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text4333-2-6"
+       y="88.36216"
+       x="19.999977"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:30px;line-height:125%;font-family:'OCR A Extended';-inkscape-font-specification:'OCR A Extended, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ff80ff;fill-opacity:0.75294118;fill-rule:nonzero;stroke:none;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;shape-rendering:crispEdges"
+       xml:space="preserve"><tspan
+         y="88.36216"
+         x="19.999977"
+         id="tspan5249-0-2"
+         sodipodi:role="line">EDEN FULL-DIVE SYSTEM v.2093</tspan></text>
   </g>
 </svg>

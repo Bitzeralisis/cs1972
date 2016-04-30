@@ -47,7 +47,7 @@ public:
     void bindGlowTexture(GLuint tex);
     void bindGlowTexture(const char *name);
     void unbindGlowTexture();
-    void blitGbufferDepthToBb(int width, int height);
+    void blitGbufferDepthTo(int width, int height, GLuint fbo);
 
     // Deferred pass shader
     void useDeferredShader();

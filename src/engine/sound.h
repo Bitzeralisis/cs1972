@@ -19,7 +19,7 @@ public:
 private:
     Audio *m_parent;
     FMOD_SOUND *m_sound;
-    FMOD_CHANNEL *m_channel;
+    FMOD_CHANNEL *m_channel = 0;
 
     float m_bpm;
     float m_offset = 0.f;
@@ -30,6 +30,7 @@ public:
     void setMusicParams(float bpm, float offset);
     void setLoop(bool loop);
     void setLoopBeats(float beat1, float beat2);
+    void stop();
 };
 
 }

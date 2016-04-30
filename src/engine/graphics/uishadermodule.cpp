@@ -54,6 +54,19 @@ void UiShaderModule::drawQuad(float left, float right, float bottom, float top, 
     m_parent->uiQuad()->drawArray();
 }
 
+void UiShaderModule::drawQuad(glm::vec2 center, glm::vec2 size, float rotation, float texLeft, float texRight, float texBottom, float texTop) {
+    glm::mat4 m(1.f);
+    m = glm::translate(m, glm::vec3(center.x, center.y, 0.f));
+    m = glm::rotate(m, rotation/180.f*glm::pi<float>(), glm::vec3(0.f, 0.f, -1.f));
+    m = glm::scale(m, glm::vec3(size.x, size.y, 1.f));
+    m = glm::translate(m, glm::vec3(-0.5f, -0.5f, 0.f));
+
+    glUniformMatrix4fv(glGetUniformLocation(m_parent->activeShader(), "m"), 1, GL_FALSE, glm::value_ptr(m));
+    glUniform2f(glGetUniformLocation(m_parent->activeShader(), "tex_bl"), texLeft, texBottom);
+    glUniform2f(glGetUniformLocation(m_parent->activeShader(), "tex_ur"), texRight, texTop);
+    m_parent->uiQuad()->drawArray();
+}
+
 glm::vec3 UiShaderModule::cameraSpaceToUisSpace(glm::vec3 pos) {
     glm::vec3 retval = m_parent->camera()->orthoProject(pos) * 0.5f + glm::vec3(0.5f);
     retval *= glm::vec3(m_right-m_left, m_top-m_bottom, 1.f);

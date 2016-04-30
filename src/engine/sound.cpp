@@ -34,3 +34,7 @@ void Sound::setLoopBeats(float beat1, float beat2) {
     unsigned int start, end;
     FMOD_Sound_GetLoopPoints(m_sound, &start, FMOD_TIMEUNIT_PCM, &end, FMOD_TIMEUNIT_PCM);
 }
+
+void Sound::stop() {
+    FMOD_Channel_Stop(m_channel);
+}

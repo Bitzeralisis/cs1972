@@ -19,6 +19,7 @@ public:
     enum {
         DRAW_GEOMETRY,
         DRAW_LIGHTS,
+        DRAW_ADDITIVE,
         DRAW_ORTHOGRAPHIC,
         NUM_DRAWS
     };
@@ -35,12 +36,13 @@ public:
     virtual ~GameScreen();
 
 private:
-    const float MOUSE_SENSITIVITY_FACTOR = 1.f/400.f;
+    const float MOUSE_SENSITIVITY_FACTOR = 1.f/480.f;
     const float RETICLE_SIZE_FACTOR = 1.f/8.f;
     const float RETICLE_SIZE_FACTOR_DRAW = 1.f/6.f;
     const float RETICLE_SIZE_FACTOR_HIT = 1.f/16.f;
+    const float DEFENSERING_SIZE_FACTOR = 1.f/24.f;
     const float PERFECT_TIMING_WINDOW = 0.090f;
-    const float DEFENSE_TIMING_WINDOW = 0.090f;
+    const float DEFENSE_TIMING_WINDOW = 0.160f;
     const int MAX_COMBO = 8;
 
     const float GRAPHICS_OFFSET = 0.f;
@@ -73,6 +75,8 @@ private:
     int m_health = 3;
     float m_iframes = 0.f;
     float m_defenseDisable = 0.f;
+    float m_prevSuccessfulBlock[3] = { -2.f, -2.f, -2.f };
+    float m_prevMissedBlock[3] = { -2.f, -2.f, -2.f };
 
     bool m_mouseHeld[3] = { false, false, false };
     bool m_keysHeld[4] = { false, false, false, false };

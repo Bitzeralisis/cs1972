@@ -25,6 +25,7 @@ private:
     Primitive *m_indices;
     GLuint m_posLifeTex;
     GLuint m_velTex;
+    GLuint m_colorTex;
     GLuint m_result;
     GLuint m_resultTex;
 
@@ -33,13 +34,14 @@ public:
     VALUE_ACCESSOR(GLuint,height)
     VALUE_ACCESSOR(GLuint,posLifeTex)
     VALUE_ACCESSOR(GLuint,velTex)
+    VALUE_ACCESSOR(GLuint,colorTex)
     VALUE_ACCESSOR(GLuint,resultTex)
 
     void init(int width, int height);
     void cleanup();
     void usePhysicsShader();
     void globalVelocity(glm::vec3 vel);
-    void putParticles(int numParticles, GLfloat *posLife, GLfloat *vel);
+    void putParticles(int numParticles, GLfloat *posLife, GLfloat *vel, GLfloat *color);
     void updateParticles(float seconds);
     void useParticleShader();
     void particleStyle(const char *tex, float size);

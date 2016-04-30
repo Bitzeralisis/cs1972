@@ -37,6 +37,13 @@ void ParticleModule::init(int width, int height) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glBindTexture(GL_TEXTURE_2D, 0);
 
+    glGenTextures(1, &m_colorTex);
+    glBindTexture(GL_TEXTURE_2D, m_colorTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
     glGenFramebuffers(1, &m_result);
     glBindFramebuffer(GL_FRAMEBUFFER, m_result);
 
@@ -61,6 +68,7 @@ void ParticleModule::init(int width, int height) {
     m_parent->useShader(m_drawShader);
     glUniform1i(glGetUniformLocation(m_drawShader, "position_tex"), 0);
     glUniform1i(glGetUniformLocation(m_drawShader, "particle_tex"), 1);
+    glUniform1i(glGetUniformLocation(m_drawShader, "color_tex"), 2);
     m_parent->useShader(0);
 
     GLfloat *indices = new GLfloat[2*width*height];
@@ -78,11 +86,12 @@ void ParticleModule::cleanup() {
     delete m_indices;
     glDeleteTextures(1, &m_posLifeTex);
     glDeleteTextures(1, &m_velTex);
+    glDeleteTextures(1, &m_colorTex);
     glDeleteFramebuffers(1, &m_result);
     glDeleteTextures(1, &m_resultTex);
 }
 
-void ParticleModule::putParticles(int numParticles, GLfloat *posLife, GLfloat *vel) {
+void ParticleModule::putParticles(int numParticles, GLfloat *posLife, GLfloat *vel, GLfloat *color) {
     int numRows = numParticles / m_width;
     while (numRows > 0) {
         int first = m_currRow;
@@ -93,12 +102,16 @@ void ParticleModule::putParticles(int numParticles, GLfloat *posLife, GLfloat *v
 
         glBindTexture(GL_TEXTURE_2D, m_velTex);
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, first, m_width, last-first, GL_RGB, GL_FLOAT, vel);
+
+        glBindTexture(GL_TEXTURE_2D, m_colorTex);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, first, m_width, last-first, GL_RGB, GL_FLOAT, color);
         glBindTexture(GL_TEXTURE_2D, 0);
 
         m_currRow = last % m_height;
         numRows -= (last-first);
         posLife += 4*m_width*(last-first);
         vel += 3*m_width*(last-first);
+        color += 3*m_width*(last-first);
     }
 
     int lastRow = numParticles % m_width;
@@ -108,6 +121,9 @@ void ParticleModule::putParticles(int numParticles, GLfloat *posLife, GLfloat *v
 
         glBindTexture(GL_TEXTURE_2D, m_velTex);
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, m_currRow, lastRow, 1, GL_RGB, GL_FLOAT, vel);
+
+        glBindTexture(GL_TEXTURE_2D, m_colorTex);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, m_currRow, lastRow, 1, GL_RGB, GL_FLOAT, color);
         glBindTexture(GL_TEXTURE_2D, 0);
 
         m_currRow = (m_currRow+1) % m_height;
@@ -135,6 +151,8 @@ void ParticleModule::updateParticles(float seconds) {
     glBindTexture(GL_TEXTURE_2D, m_posLifeTex);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, m_velTex);
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, m_colorTex);
     glActiveTexture(GL_TEXTURE0);
     m_parent->fsQuad()->drawArray();
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

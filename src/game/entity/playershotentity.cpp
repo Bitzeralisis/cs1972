@@ -54,16 +54,16 @@ void PlayerShotEntity::draw(int pass) {
     float beat = GAME->beat();
 
     switch (pass) {
-    case GameScreen::DRAW_GEOMETRY:
+    case GameScreen::DRAW_ADDITIVE: {
         if (beat < m_shotBeat + 1.f) {
             glm::vec3 dir = lockedPosition - m_parent->position();
             //glm::vec3 rej = m_up - glm::dot(m_up, dir) / glm::length2(dir) * dir;
             //rej = glm::normalize(rej);
             glm::vec3 rej = 2.f*glm::normalize(m_up);
 
-            graphics().shader()->useTexture(false);
-            graphics().shader()->color(glm::vec4(0.f));
-            graphics().deferred()->useGlowTexture(false);
+            graphics().shader()->useTexture(true);
+            graphics().shader()->bindTexture("blur");
+            graphics().shader()->color(glm::vec4(1.5f, 1.5f, 1.5f, 1.f));
             graphics().shader()->mTransform(glm::mat4(1.f));
 
             int totalPoints = 51;
@@ -79,17 +79,20 @@ void PlayerShotEntity::draw(int pass) {
                 glm::vec3 nextPos = csm::bezier_curve(m_parent->position()+m_back, rej, lockedPosition, t + 1.f/(totalPoints-1));
                 glm::vec3 toNext = nextPos-pos;
                 glm::vec3 toEye = m_parent->position()-pos;
-                glm::vec3 right = 0.01f*glm::normalize(glm::cross(toNext, toEye));
+                glm::vec3 right = 0.02f*glm::normalize(glm::cross(toNext, toEye));
                 glm::vec3 p1 = pos-right;
                 glm::vec3 p2 = pos+right;
                 beam[16*i+ 0] = p1.x;
                 beam[16*i+ 1] = p1.y;
                 beam[16*i+ 2] = p1.z;
+                beam[16*i+ 6] = 0.f;
+                beam[16*i+ 7] = (float)i/beamLength;
                 beam[16*i+ 8] = p2.x;
                 beam[16*i+ 9] = p2.y;
                 beam[16*i+10] = p2.z;
+                beam[16*i+14] = 1.f;
+                beam[16*i+15] = (float)i/beamLength;
             }
-            graphics().deferred()->glowColor(glm::vec4(1.5f, 1.5f, 1.5f, 1.f));
             CS1972Engine::Primitive(2*(beamLength+1), 8*2*(beamLength+1)*sizeof(GLfloat), GL_TRIANGLE_STRIP, beam, 0).drawArray();
             delete beam;
 
@@ -109,6 +112,9 @@ void PlayerShotEntity::draw(int pass) {
             */
         }
 
+        break;
+    }
+
     case GameScreen::DRAW_ORTHOGRAPHIC: {
         glm::vec3 pos = graphics().uishader()->cameraSpaceToUisSpace(lockedPosition);
         if (pos.z > 0.f) {
@@ -124,7 +130,7 @@ void PlayerShotEntity::draw(int pass) {
                 float fade = m_shotBeat+2.f - beat;
                 float dist = glm::distance(m_parent->position(), lockedPosition);
                 graphics().shader()->useTexture(false);
-                graphics().uishader()->color(glm::vec4(1.f, 1.f, 1.f, fade));
+                graphics().uishader()->color(glm::vec4(1.f, 1.f, 1.f, fade*fade));
                 glm::mat4 m(1.f);
                 m = glm::translate(m, pos);
                 m = glm::scale(m, glm::vec3(parent()->parent()->height()*BURST_SIZE_FACTOR*(1.f-fade*fade) / dist));
@@ -137,6 +143,7 @@ void PlayerShotEntity::draw(int pass) {
                 graphics().getPrimitive("uis_circleLoop")->drawArray();
             }
         }
+        break;
     }
     }
 }

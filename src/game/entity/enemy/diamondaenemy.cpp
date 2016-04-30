@@ -4,6 +4,7 @@
 #include "engine/primitive.h"
 #include "engine/graphics/deferredmodule.h"
 #include "engine/graphics/shadermodule.h"
+#include "csm/csm.h"
 
 using namespace COG;
 
@@ -26,7 +27,11 @@ void DiamondaEnemy::tickBeats(float beats) {
 
     if (!m_shot && totalBeats() >= 5.f) {
         m_shot = true;
-        shoot(firstBeat() + 5.f, m_position + glm::vec3(0.f, 0.75f, 0.f), 0, 0);
+        shoot(firstBeat() + 5.f, 8.f, m_position + glm::vec3(0.f, 0.75f, 0.f), glm::vec3(0.f, 4.f, 0.f), 0, csm::rand(0, 3));
+        shoot(firstBeat() + 5.f, 8.5f, m_position + glm::vec3(0.f, 0.75f, 0.f), glm::vec3(0.f, 4.f, 0.f), 0, csm::rand(0, 3));
+        shoot(firstBeat() + 5.f, 9.f, m_position + glm::vec3(0.f, 0.75f, 0.f), glm::vec3(0.f, 4.f, 0.f), 0, 0);
+        shoot(firstBeat() + 5.f, 9.f, m_position + glm::vec3(0.f, 0.75f, 0.f), glm::vec3(0.f, 4.f, 0.f), 0, 1);
+        shoot(firstBeat() + 5.f, 9.f, m_position + glm::vec3(0.f, 0.75f, 0.f), glm::vec3(0.f, 4.f, 0.f), 0, 2);
     }
 
     if (m_position.y > 40.f)

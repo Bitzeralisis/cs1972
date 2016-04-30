@@ -19,12 +19,14 @@ private:
 
     GLuint m_hdr;
     GLuint m_hdrTex;
+    GLuint m_depthBuf;
     GLuint m_blur;
     GLuint m_blurTex;
     GLuint m_pingpong;
     GLuint m_pingpongTex;
 
 public:
+    VALUE_ACCESSOR(GLuint,hdr)
     VALUE_ACCESSOR(GLuint,hdrTex)
     VALUE_ACCESSOR(GLuint,blurTex)
 

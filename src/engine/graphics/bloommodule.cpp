@@ -18,6 +18,7 @@ BloomModule::~BloomModule() {
 }
 
 void BloomModule::initBuffers(int width, int height) {
+    // Make HDR framebuffer
     glGenFramebuffers(1, &m_hdr);
     glBindFramebuffer(GL_FRAMEBUFFER, m_hdr);
 
@@ -32,8 +33,15 @@ void BloomModule::initBuffers(int width, int height) {
     GLuint attachments[1] = { GL_COLOR_ATTACHMENT0 };
     glDrawBuffers(1, attachments);
 
+    glGenRenderbuffers(1, &m_depthBuf);
+    glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuf);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBuf);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+    // Make blur framebuffer
     glGenFramebuffers(1, &m_blur);
     glBindFramebuffer(GL_FRAMEBUFFER, m_blur);
 
@@ -51,6 +59,7 @@ void BloomModule::initBuffers(int width, int height) {
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+    // Make a second blur framebuffer
     glGenFramebuffers(1, &m_pingpong);
     glBindFramebuffer(GL_FRAMEBUFFER, m_pingpong);
 

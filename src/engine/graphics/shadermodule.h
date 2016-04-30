@@ -28,6 +28,7 @@ public:
     void useFog(bool use, float near, float far, glm::vec3 color);
     void useLight(bool use);
     void useLight(bool use, int type, glm::vec3 pos);
+    glm::mat4 billboardMTransform(glm::vec3 position, glm::vec2 size = glm::vec2(1.f), float rotation = 0.f);
 };
 
 }

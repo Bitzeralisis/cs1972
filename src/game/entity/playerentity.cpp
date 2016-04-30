@@ -14,24 +14,30 @@ void PlayerEntity::gainScoreValue(int score) {
     m_score += m_combo*score;
 }
 
-void PlayerEntity::makeParticles(glm::vec3 position, glm::vec3 velocity) {
-    int numParts = 256;
-    GLfloat *pos = new GLfloat[4*numParts];
-    GLfloat *vel = new GLfloat[3*numParts];
-    for (int i = 0; i < numParts; ++i) {
-        pos[4*i+0] = 0.5f * (float) rand() / RAND_MAX - 0.25f + position.x;
-        pos[4*i+1] = 0.5f * (float) rand() / RAND_MAX - 0.25f + position.y;
-        pos[4*i+2] = 0.5f * (float) rand() / RAND_MAX - 0.25f + position.z;
-        pos[4*i+3] = 1.f * (float) rand() / RAND_MAX + 1.f;
+void PlayerEntity::makeParticles(int amount, glm::vec3 position, float width, glm::vec3 velocity, glm::vec3 color, glm::vec2 life) {
+    GLfloat *pos = new GLfloat[4*amount];
+    GLfloat *vel = new GLfloat[3*amount];
+    GLfloat *col = new GLfloat[3*amount];
+    for (int i = 0; i < amount; ++i) {
+        pos[4*i+0] = width * (float) rand() / RAND_MAX - width*0.5f + position.x;
+        pos[4*i+1] = width * (float) rand() / RAND_MAX - width*0.5f + position.y;
+        pos[4*i+2] = width * (float) rand() / RAND_MAX - width*0.5f + position.z;
+        pos[4*i+3] = (life.y-life.x) * (float) rand() / RAND_MAX + life.x;
     }
-    for (int i = 0; i < numParts; ++i) {
+    for (int i = 0; i < amount; ++i) {
         vel[3*i+0] = 0.8f * (float) rand() / RAND_MAX - 0.4f + velocity.x;
         vel[3*i+1] = 0.8f * (float) rand() / RAND_MAX - 0.4f + velocity.y;
         vel[3*i+2] = 0.8f * (float) rand() / RAND_MAX - 0.4f + velocity.z;
     }
-    graphics().particle()->putParticles(numParts, pos, vel);
+    for (int i = 0; i < amount; ++i) {
+        col[3*i+0] = color.x;
+        col[3*i+1] = color.y;
+        col[3*i+2] = color.z;
+    }
+    graphics().particle()->putParticles(amount, pos, vel, col);
     delete pos;
     delete vel;
+    delete col;
 }
 
 void PlayerEntity::attachShot(EnemyShotEntity *shot) {
