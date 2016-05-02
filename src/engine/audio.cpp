@@ -93,7 +93,12 @@ void Audio::queueBgmOnBeat(Sound *sound, float beat) {
         FMOD_Channel_GetDSPClock(m_bgm->m_channel, &bgmNowDSP, &parentNowDSP);
         m_bgmOffset = (parentNowDSP - bgmNowDSP) + (m_sampleRate * m_bgm->m_offset);
     } else {
-        queueSoundOnBeat(sound, beat);
+        unsigned long long soundStartOffsetDSP = m_sampleRate * sound->m_offset;
+        unsigned long long beatMasterDSP =  m_bgmOffset + (unsigned long long) (beat * (60.f * m_sampleRate / m_bgm->m_bpm));
+        FMOD_System_PlaySound(m_fmod, sound->m_sound, 0, true, &sound->m_channel);
+        FMOD_Channel_SetDelay(sound->m_channel, beatMasterDSP - soundStartOffsetDSP, 0, true);
+        FMOD_Channel_SetPaused(sound->m_channel, false);
+        FMOD_Channel_SetDelay(m_bgm->m_channel, 0, beatMasterDSP - soundStartOffsetDSP, true);
         //m_bgmOffset +=  beat * (60.f * m_sampleRate / m_bgm->m_bpm);
         m_bgm = sound;
     }

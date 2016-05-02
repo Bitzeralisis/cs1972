@@ -1,12 +1,12 @@
 #pragma once
 
-#include "cogentity.h"
+#include "controlledentity.h"
 
 namespace COG {
 
 class EnemyShotEntity;
 
-class PlayerEntity : public COGEntity {
+class PlayerEntity : public ControlledEntity {
 public:
     PlayerEntity();
     virtual ~PlayerEntity() { }
@@ -28,7 +28,7 @@ public:
     void attachShot(EnemyShotEntity *shot);
 
     virtual void tickBeats(float beats) override;
-    virtual void draw(int pass) override { }
+    virtual void draw(int pass, float beat) override { }
 };
 
 }

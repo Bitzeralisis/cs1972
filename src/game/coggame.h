@@ -8,6 +8,7 @@ class PlayerEntity;
 
 class COGGame : public CS1972Engine::Game {
 public:
+    COGGame();
     virtual ~COGGame();
     virtual void initGL() override;
 

@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/level">
+        <file>level.cogs</file>
+    </qresource>
+</RCC>

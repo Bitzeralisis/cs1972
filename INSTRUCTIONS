@@ -1,32 +1,30 @@
                           cs.brown.edu/courses/cs1972
-                                     final2
+                                     final3
                                     by ajlin
-                           due: 11:59 PM, 04/26/2016
+                           due: 11:59 PM, 05/03/2016
 
 
                                 Children of Gaia
 
 1) CONTROLS. ___________________________________________________________________
 
-	SHOOT  > (LMB) or [S]
-	DEFEND > [W]
-	
+    SHOOT  > (LMB) or [S]
+    DEFEND > [W] [A] [D]
 
 
 2) MECHANICS. __________________________________________________________________
 
-	COMBO SYSTEM.
+    DEFENSE SYSTEM.
 
-		The diamonds around the reticle is your combo, and your score gain is
-		multiplied by your combo. Each time you shoot on the beat, your combo
-		goes up by 1. If you shoot off the beat, or hold the shoot button, your
-		combo will slowly decrease. Mantain a full combo to get a high score!
+        Enemy bullets cannot be shot down and must be blocked using the defense
+        ring. Each enemy bullet is represented as a star that approaches the
+        defense ring, and when it lines up with one of the defense markers,
+        press the marker's letter in order to block it.
 
 
-	DEFENSE SYSTEM.
+    COMBO SYSTEM.
 
-		Currently in a very rough state, much of it is going to change in the
-		upcoming weeks. For now, enemy projectiles have a hexagonal ring
-		overlaid on them. When the arrows in the ring line up, press the defend
-		button to block it. (There isn't any feedback for blocking properly
-		yet, but then again you can't die either so it doesn't really matter.)
+        The diamonds around the reticle is your combo, and your score gain is
+        multiplied by your combo. Each time you shoot on the beat, your combo
+        goes up by 1. If you shoot off the beat, or hold the shoot button, your
+        combo will slowly decrease. Mantain a full combo to get a high score!

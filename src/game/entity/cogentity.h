@@ -25,19 +25,14 @@ protected:
     VALUE_ACCESSOR(float,beat)
 
 public:
-    void offsetPosition(glm::vec3 controllerPos) { m_position -= controllerPos; }
+    inline void offsetPosition(glm::vec3 controllerPos) { m_position -= controllerPos; }
 
     virtual void tickBeats(float beats) = 0;
-    virtual void draw(int pass) override = 0;
+    virtual void draw(int pass, float beat) = 0;
     virtual csm::ellipsoid getEllipsoid() const override { return csm::ellipsoid(); }
 
-    virtual void tick(float seconds) final override {
-        m_beat = seconds;
-        if (m_beat > m_prevBeat) {
-            tickBeats(m_beat - m_prevBeat);
-            m_prevBeat = m_beat;
-        }
-    }
+    virtual void tick(float seconds) final override;
+    virtual void draw(int pass) final override;
     virtual glm::vec2 getCylinder() const final override { return glm::vec2(); }
     virtual csm::aabb getAabb() const final override { return csm::aabb(); }
     virtual void collideTerrain(const glm::vec3 &tv, const glm::vec3 &normal) final override { }

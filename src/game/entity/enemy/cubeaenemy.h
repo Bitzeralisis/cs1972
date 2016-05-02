@@ -6,12 +6,11 @@ namespace COG {
 
 class CubeaEnemy : public EnemyEntity {
 public:
-    CubeaEnemy(float beat, glm::vec3 pos);
+    CubeaEnemy(float beat);
     virtual ~CubeaEnemy() { }
 
 public:
-    virtual void tickBeats(float beats) override;
-    virtual void draw(int pass) override;
+    virtual void draw(int pass, float beat) override;
     virtual csm::ellipsoid getEllipsoid() const override;
     virtual void hitEffect(float beat) override;
     virtual void deathEffect(float beat) override;

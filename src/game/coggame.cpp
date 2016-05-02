@@ -4,6 +4,8 @@
 
 using namespace COG;
 
+COGGame::COGGame() { }
+
 COGGame::~COGGame() { }
 
 void COGGame::initGL() {
@@ -18,7 +20,7 @@ void COGGame::initGL() {
         circleLoop[8*i+5] = -1.f;
     }
     g.putPrimitive("uis_circleLoop", new CS1972Engine::Primitive(60, 60*8*sizeof(GLfloat), GL_LINE_LOOP, circleLoop, 0));
-    delete circleLoop;
+    delete[] circleLoop;
 
     GLfloat cubeLinesData[] = {
          .5f, .5f, .5f, 0.f, 1.f, 1.f, 0.f,0.f,

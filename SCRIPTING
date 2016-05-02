@@ -1,0 +1,95 @@
+                                Children of Gaia
+                                   Scripting
+
+1) SYNTAX. _____________________________________________________________________
+
+    COG scripts consist of a list of instructions delimited by newlines, where
+    an instruction is a list of arguments delimited by whitespace.
+
+    At the base level, a (listof behavior-definition) is expected.
+
+
+2) INSTRUCTION CLASSES. ________________________________________________________
+
+    behavior-definition:
+    
+        behavior-definition: def (behavior-name: string) \ (body: listof action) \ end
+    
+            There are two special behaviors in COG scripts: the "none" behavior
+            (which has no actions), which is defined automatically, and the
+            "main" behavior, which needs to be defined, and is given to the
+            level controller at the start of the level. Behaviors cannot be
+            redefined and if a behavior-name is given for a previously defined
+            behavior, a warning is raised (and the entire body of the behavior
+            is invalidated).
+
+
+    action:
+    
+        (beat: float) (action-inner)
+        q (beat: float) (action-inner)
+
+            Perform an action on beat.
+            
+            In the second form, the game performs the action immediately even
+            if the current time is earlier than beat. This has the effect of
+            "queueing" that action.
+
+
+    action-inner:
+
+        disappear
+
+            Causes the entity to delete itself.
+
+        set (attribute)
+
+        spawn (enemy-type: string) (behavior-name: string) (initializer: listof attribute)
+
+            By default, the spawned enemy's spatial attributes are equal to the
+            spawner's.
+
+        shoot (travel-time: float) (shot-type: int) (lane: int) (*: pos) (*: vel)
+
+            Note that although * are spatial attributes, in the case of shoot
+            their arguments x, y, and z may not be . or it will result in
+            undefined behavior.
+
+        play (file: string) (bpm: float) (offset: float) (loop-start: float) (loop-end: float)
+
+            Plays file as a bgm. For seamless transitioning, this is preferred
+            to be used with "q".
+
+    attribute:
+
+        pos (relative-type) (x: float-nil) (y: float-nil) (z: float-nil)
+        vel (relative-type) (x: float-nil) (y: float-nil) (z: float-nil)
+        acc (relative-type) (x: float-nil) (y: float-nil) (z: float-nil)
+
+            These three attributes are a special class of attribute known as
+            spatial attributes. relative-type is either "abs" or "rel" and
+            float-nils are either regular numbers or ".", which means that
+            dimension should be ignored (so that just x-position can be set, for
+            example, with "pos abs 0 . .".
+
+        targetable (float)
+
+
+    relative-type:
+
+        abs
+        rel
+
+
+    float-nil: 
+
+        .
+        (float)
+
+
+3) ERRORS AND WARNINGS. ________________________________________________________
+
+    Whenever something unexpected shows up while parsing a script, either an
+    error or a warning is thrown. In the case of an error, the entire script
+    becomes invalid. In the case of a warning, generally it invalidates the
+    entire instruction recursively, stopping at a listof.

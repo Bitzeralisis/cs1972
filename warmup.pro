@@ -54,7 +54,11 @@ SOURCES += \
     src/game/entity/ambiententity.cpp \
     src/game/entity/enemy/diamondaenemy.cpp \
     src/game/entity/enemy/cubeaenemy.cpp \
-    src/game/entity/enemyshotentity.cpp
+    src/game/entity/enemyshotentity.cpp \
+    src/game/scriptparser.cpp \
+    src/game/entity/controlledentity.cpp \
+    src/game/cogscript.cpp \
+    src/game/entity/cogentity.cpp
 
 HEADERS += \
     libs/glew-1.10.0/include/GL/glew.h \
@@ -96,7 +100,10 @@ HEADERS += \
     src/game/entity/ambiententity.h \
     src/game/entity/enemy/diamondaenemy.h \
     src/game/entity/enemy/cubeaenemy.h \
-    src/game/entity/enemyshotentity.h
+    src/game/entity/enemyshotentity.h \
+    src/game/scriptparser.h \
+    src/game/entity/controlledentity.h \
+    src/game/cogscript.h
 
 
 FORMS += src/mainwindow.ui
@@ -104,7 +111,8 @@ FORMS += src/mainwindow.ui
 RESOURCES += \
     res/shaders/shaders.qrc \
     res/images/images.qrc \
-    res/obj/obj.qrc
+    res/obj/obj.qrc \
+    res/level/level.qrc
 
 OTHER_FILES += \
     res/images/cube1.png \
@@ -116,7 +124,8 @@ OTHER_FILES += \
     res/images/reticle.png \
     res/images/enemyshot.png \
     res/images/target.png \
-    res/images/hud.png
+    res/images/hud.png \
+    res/level/level.txt
 
 DISTFILES += \
     res/shaders/shader.vert \

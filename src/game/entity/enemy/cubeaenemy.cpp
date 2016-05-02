@@ -7,23 +7,11 @@
 
 using namespace COG;
 
-CubeaEnemy::CubeaEnemy(float beat, glm::vec3 pos)
+CubeaEnemy::CubeaEnemy(float beat)
     : EnemyEntity(beat, 1, 100)
-{
-    m_position = pos;
-    m_velocity = glm::vec3(-2.f, 0.f, 0.f);
-    targetable(false);
-}
+{ }
 
-void CubeaEnemy::tickBeats(float beats) {
-    if (m_position.x < 30.f)
-        targetable(true);
-    if (m_position.x < -10.f)
-        parent()->deleteEntity(this);
-    EnemyEntity::tickBeats(beats);
-}
-
-void CubeaEnemy::draw(int pass) {
+void CubeaEnemy::draw(int pass, float beat) {
     if (pass != GameScreen::DRAW_GEOMETRY)
         return;
 

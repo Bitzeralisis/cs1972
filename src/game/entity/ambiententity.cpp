@@ -16,9 +16,7 @@ void AmbientEntity::tickBeats(float beats) {
         m_position.x += 18.f;
 }
 
-void AmbientEntity::draw(int pass) {
-    float beat = GAME->beat();
-
+void AmbientEntity::draw(int pass, float beat) {
     switch (pass) {
     case GameScreen::DRAW_GEOMETRY: {
         float brightness = 0.2f*(1.f - 1.f*glm::mod(beat, 1.f));

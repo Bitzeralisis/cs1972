@@ -32,9 +32,7 @@ void EnemyShotEntity::tickBeats(float) {
     m_visualPosition = csm::bezier_curve(m_target->position() + direction, m_target->position() + 5.f*direction, m_position+m_shotVel, m_position, travel);
 }
 
-void EnemyShotEntity::draw(int pass) {
-    float beat = GAME->beat();
-
+void EnemyShotEntity::draw(int pass, float beat) {
     switch (pass) {
     case GameScreen::DRAW_GEOMETRY: {
         graphics().shader()->useTexture(false);

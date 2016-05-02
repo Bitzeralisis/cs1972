@@ -34,7 +34,7 @@ public:
     void detatchShot(bool hit, glm::vec3 position);
 
     virtual void tickBeats(float beats) override;
-    virtual void draw(int pass) override;
+    virtual void draw(int pass, float beat) override;
 };
 
 }

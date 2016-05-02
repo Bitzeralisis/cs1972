@@ -41,7 +41,7 @@ void PlayerShotEntity::tickBeats(float) {
         parent()->deleteEntity(this);
 }
 
-void PlayerShotEntity::draw(int pass) {
+void PlayerShotEntity::draw(int pass, float beat) {
     if (!m_hit && (!m_target || !m_target->parent()))
         return;
 
@@ -50,8 +50,6 @@ void PlayerShotEntity::draw(int pass) {
         lockedPosition = m_position;
     else
         lockedPosition = m_target->position();
-
-    float beat = GAME->beat();
 
     switch (pass) {
     case GameScreen::DRAW_ADDITIVE: {
@@ -94,7 +92,7 @@ void PlayerShotEntity::draw(int pass) {
                 beam[16*i+15] = (float)i/beamLength;
             }
             CS1972Engine::Primitive(2*(beamLength+1), 8*2*(beamLength+1)*sizeof(GLfloat), GL_TRIANGLE_STRIP, beam, 0).drawArray();
-            delete beam;
+            delete[] beam;
 
             /*
             GLfloat *line = new GLfloat[8*(lineLength+1)];
@@ -108,7 +106,7 @@ void PlayerShotEntity::draw(int pass) {
             glLineWidth(1.f);
             graphics().deferred()->glowColor(glm::vec4(0.5f));
             CS1972Engine::Primitive(lineLength+1, 8*(lineLength+1)*sizeof(GLfloat), GL_LINE_STRIP, line, 0).drawArray();
-            delete line;
+            delete[] line;
             */
         }
 

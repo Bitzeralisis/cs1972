@@ -11,6 +11,7 @@ class World;
 
 namespace COG {
 
+class COGScript;
 class EnemyEntity;
 class PlayerEntity;
 
@@ -50,6 +51,7 @@ private:
 
 private:
     CS1972Engine::World *m_world;
+    COGScript *m_script;
     glm::vec3 m_particleOffset = glm::vec3(0.f);
 
     bool m_firstTick = true;
@@ -60,6 +62,8 @@ private:
 
     float m_maxYaw = 0.25f*glm::pi<float>();
     float m_maxPitch = 0.25f*glm::pi<float>();
+    float m_minFog = 20.f;
+    float m_maxFog = 30.f;
 
     PlayerEntity *m_player;
     glm::vec2 m_mousePosition;
@@ -72,11 +76,11 @@ private:
     int m_combo = 1;
     int m_prevJudge = 0;
 
-    int m_health = 3;
+    int m_health = 5;
     float m_iframes = 0.f;
     float m_defenseDisable = 0.f;
-    float m_prevSuccessfulBlock[3] = { -2.f, -2.f, -2.f };
-    float m_prevMissedBlock[3] = { -2.f, -2.f, -2.f };
+    float m_prevSuccessfulBlock[3] = { -10.f, -10.f, -10.f };
+    float m_prevMissedBlock[3] = { -10.f, -10.f, -10.f };
 
     bool m_mouseHeld[3] = { false, false, false };
     bool m_keysHeld[4] = { false, false, false, false };

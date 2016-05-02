@@ -8,39 +8,11 @@
 
 using namespace COG;
 
-DiamondaEnemy::DiamondaEnemy(float beat, glm::vec3 pos)
+DiamondaEnemy::DiamondaEnemy(float beat)
     : EnemyEntity(beat, 8, 2000)
-{
-    m_position = pos;
-    m_position.y = 20.f;
-    m_velocity = glm::vec3(1.f, -10.f, 0.f);
-    m_accel = glm::vec3(0.f, 2.5f, 0.f);
-}
+{ }
 
-void DiamondaEnemy::tickBeats(float beats) {
-    if (totalBeats() >= 12.f) {
-        m_accel.y = 2.5f;
-    } else if (totalBeats() >= 4.f) {
-        m_velocity.y = 0.f;
-        m_accel.y = 0.f;
-    }
-
-    if (!m_shot && totalBeats() >= 5.f) {
-        m_shot = true;
-        shoot(firstBeat() + 5.f, 8.f, m_position + glm::vec3(0.f, 0.75f, 0.f), glm::vec3(0.f, 4.f, 0.f), 0, csm::rand(0, 3));
-        shoot(firstBeat() + 5.f, 8.5f, m_position + glm::vec3(0.f, 0.75f, 0.f), glm::vec3(0.f, 4.f, 0.f), 0, csm::rand(0, 3));
-        shoot(firstBeat() + 5.f, 9.f, m_position + glm::vec3(0.f, 0.75f, 0.f), glm::vec3(0.f, 4.f, 0.f), 0, 0);
-        shoot(firstBeat() + 5.f, 9.f, m_position + glm::vec3(0.f, 0.75f, 0.f), glm::vec3(0.f, 4.f, 0.f), 0, 1);
-        shoot(firstBeat() + 5.f, 9.f, m_position + glm::vec3(0.f, 0.75f, 0.f), glm::vec3(0.f, 4.f, 0.f), 0, 2);
-    }
-
-    if (m_position.y > 40.f)
-        parent()->deleteEntity(this);
-
-    EnemyEntity::tickBeats(beats);
-}
-
-void DiamondaEnemy::draw(int pass) {
+void DiamondaEnemy::draw(int pass, float beat) {
     if (pass != GameScreen::DRAW_GEOMETRY)
         return;
 

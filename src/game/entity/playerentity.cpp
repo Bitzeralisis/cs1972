@@ -5,10 +5,8 @@
 using namespace COG;
 
 PlayerEntity::PlayerEntity()
-    : COGEntity(0.f)
-{
-    m_velocity = glm::vec3(1.f, 0.f, 0.f);
-}
+    : ControlledEntity(0.f)
+{ }
 
 void PlayerEntity::gainScoreValue(int score) {
     m_score += m_combo*score;
@@ -35,9 +33,9 @@ void PlayerEntity::makeParticles(int amount, glm::vec3 position, float width, gl
         col[3*i+2] = color.z;
     }
     graphics().particle()->putParticles(amount, pos, vel, col);
-    delete pos;
-    delete vel;
-    delete col;
+    delete[] pos;
+    delete[] vel;
+    delete[] col;
 }
 
 void PlayerEntity::attachShot(EnemyShotEntity *shot) {
@@ -45,5 +43,5 @@ void PlayerEntity::attachShot(EnemyShotEntity *shot) {
 }
 
 void PlayerEntity::tickBeats(float beats) {
-    tickPhysicsContinuous(beats);
+    ControlledEntity::tickBeats(beats);
 }

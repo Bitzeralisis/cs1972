@@ -52,9 +52,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
-     inkscape:cx="431.55269"
-     inkscape:cy="262.23571"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="341.09664"
+     inkscape:cy="164.36332"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -81,7 +81,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -117,18 +117,6 @@
          sodipodi:role="line"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:30px;line-height:100%;font-family:'OCR A Extended';-inkscape-font-specification:'OCR A Extended, Normal';text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#00ff00;fill-opacity:1;stroke:#000000;stroke-opacity:1;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;"
          id="tspan6480-5-1">HIT</tspan></text>
-    <text
-       sodipodi:linespacing="100%"
-       id="text4333-2-6-9-96-0-9"
-       y="869.66809"
-       x="319.91211"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:30px;line-height:100%;font-family:'OCR A Extended';-inkscape-font-specification:'OCR A Extended, Normal';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;shape-rendering:crispEdges"
-       xml:space="preserve"><tspan
-         y="869.66809"
-         x="319.91211"
-         sodipodi:role="line"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:30px;line-height:100%;font-family:'OCR A Extended';-inkscape-font-specification:'OCR A Extended, Normal';text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none"
-         id="tspan6480-5-2-2">MISS</tspan></text>
     <text
        sodipodi:linespacing="100%"
        id="text4333-2-6-9-6-8"

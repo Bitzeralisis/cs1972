@@ -11,7 +11,7 @@ public:
 
 public:
     virtual void tickBeats(float beats) override;
-    virtual void draw(int pass) override;
+    virtual void draw(int pass, float beat) override;
 };
 
 }

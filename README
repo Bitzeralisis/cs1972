@@ -1,59 +1,42 @@
                           cs.brown.edu/courses/cs1972
-                                     final2
+                                     final3
                                     by ajlin
-                           due: 11:59 PM, 04/26/2016
+                           due: 11:59 PM, 05/03/2016
 
 
                                 Children of Gaia
 
 1) BUILD INSTRUCTIONS. _________________________________________________________
 
-	Please make sure to copy $PROJECT_DIRECOTRY/res/sound/* to
-	$RUN_DIRECTORY/sound/* after building.
+    Please make sure to copy $PROJECT_DIRECOTRY/res/sound/* to
+    $RUN_DIRECTORY/sound/* after building.
 
 
 2) ANNOTATED RUBRIC. ___________________________________________________________
 
-Engine Requirements
-========================================
-[ ] All engine features from Final1 are polished and ready for usage
+COMPLETE/INCOMPLETE
 
-    They are all ready for usage, though I do plan on adding more features if I
-    need them.
+Retries used: NONE (2 extra retries left)
+
+[ ] 5 playtest signatures
 
 Game Requirements
 ========================================
-[ ] The player constantly moves forward on a rail (can be just straight
-    forward)
-
-    The way this works is that all entities are offset by the player's
-    position, such that the player always remains at the origin.
-
-[ ] At least two distinct, killable enemy types
-
-    The cubes and diamonds are quite different (apart from being simple
-    polyhedra).
-
-[ ] Some semblance of a defense mechanic exists (does not need to be fully
-    implemented)
-
-    I am experimenting with how the defense system is displayed and I am going
-    to change it from the current one; however I ran out of time to change it.
-    Additionally, some mechanics of the defense ring, such as it being disabled
-    if you fail to block anything by pressing a defense button, have not been
-    implemented yet.
-
-[ ] A score is displayed on the screen that is updated when enemies die, other
-    events happen, etc.
-
-    Please see the upper-right corner of the screen.
-
-[ ] Score is somehow calculated using a combination of rhythm and user input
-
-    Score gain is based on the base value of an enemy times the current combo
-    you have.  Combo increases if you press shoot (LMB or S) on the beat of the
-    music. It decreases if you press it off the beat, or you hold down the
-    shoot button.
+[ ] Level scripting
+    [ ] Levels are loaded from external files
+    [ ] Level files follow a specific format
+        [ ] Times & spawns
+    [ ] Robust parser
+[ ] Player has health and can lose
+[ ] Feedback
+    [ ] Upon health lost
+    [ ] Upon successful defense
+[ ] Improved defense mechanic
+[ ] Game experience
+    [ ] Intro screen that requires player input to advance
+    [ ] Game screen
+    [ ] Game consists of at least one level loaded from file
+    [ ] End screen that displays the result and final score
 
 Global requirements
 ========================================
@@ -70,8 +53,8 @@ Global requirements
 [ ] Runs on department machines
 [ ] Does not crash
 [ ] Works at 800x600 and fullscreen resolutions
-[ ] Runs at 30+ UPS and never dips below 20 UPS unless indicated in the
-    specific handout
+[ ] Runs at 30+ UPS and never dips below 20 UPS unless indicated in the specific
+    handout
 
 
 3) KNOWN BUGS. _________________________________________________________________
@@ -82,4 +65,3 @@ Global requirements
 4) TIME SPENT. _________________________________________________________________
 
     Too many hours.
-

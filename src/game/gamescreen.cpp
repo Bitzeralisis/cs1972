@@ -1,4 +1,5 @@
 #include "gamescreen.h"
+#include "scriptparser.h"
 #include "game/coggame.h"
 #include "entity/ambiententity.h"
 #include "entity/enemyshotentity.h"
@@ -67,6 +68,8 @@ GameScreen::GameScreen(CS1972Engine::Game *parent)
     if (!audio().hasSound("chewie_scratch.aif"))
         audio().putSound("chewie_scratch.aif", audio().createSoundSample("sound/chewie_scratch.aif"));
 
+    m_script = ScriptParser(":/level/level.txt").parse();
+
     m_bgm = audio().createSoundStream("sound/1.mp3");
     m_bgm->setMusicParams(150.f, 0.052245f);
     m_bgm->setLoop(true);
@@ -75,10 +78,14 @@ GameScreen::GameScreen(CS1972Engine::Game *parent)
     m_world = new CS1972Engine::World(parent, NUM_LAYERS);
 
     m_player = new PlayerEntity();
+    m_player->giveBehavior(m_script->behaviors["main"]);
     GAME->controller(m_player);
-
     m_world->addEntity(LAYER_CONTROLLER, m_player);
+
     m_world->addEntity(LAYER_AMBIENCE, new AmbientEntity(0.f));
+
+    // Tick once to add all entities
+    m_world->tick(0.f);
 }
 
 GameScreen::~GameScreen() {
@@ -88,8 +95,9 @@ GameScreen::~GameScreen() {
 
     m_world->deleteEntitiesOnDeconstruct(true);
     delete m_world;
+    delete m_script;
 
-    delete m_bgm;
+    //delete m_bgm;
 }
 
 void GameScreen::boundMouse() {
@@ -223,12 +231,29 @@ void GameScreen::tick(float seconds) {
         m_firstTick = false;
         if (seconds > 0.017f)
             seconds = 0.017f;
-        audio().queueBgmOnBeat(m_bgm, 0.f);
+        //audio().queueBgmOnBeat(m_bgm, 0.f);
+        // Tick the controller or else it'll never be updated because there's no music by default
+        m_player->tickBeats(0.f);
     }
 
-    float beats = seconds*audio().bgm()->bpm()/60.f;
+    float beats = 0.f;
+    if (audio().bgm())
+        beats = seconds*audio().bgm()->bpm()/60.f;
 
     boundMouse();
+
+    // Update the world
+    m_world->tick(beat);
+
+    // Offset everything by the player's position so that player is always at origin
+    int layers[2] = { LAYER_AMBIENCE };
+    for (int i = 0; i < 2; ++i) {
+        const std::list<CS1972Engine::Entity *> *e = m_world->getEntities(layers[i]);
+        for (std::list<CS1972Engine::Entity *>::const_iterator it = e->begin(); it != e->end(); ++it)
+            ((COGEntity *) (*it))->offsetPosition(m_player->position());
+    }
+    m_particleOffset -= m_player->position();
+    m_player->offsetPosition(m_player->position());
 
     // Check all shooting related things
     float m_nextShot = glm::ceil(beat*4.f)/4.f;
@@ -289,28 +314,6 @@ void GameScreen::tick(float seconds) {
     if (m_defenseDisable > 0.f)
         m_defenseDisable -= beats;
 
-    // Update the world
-    while (prevBeat < beat) {
-        prevBeat += 1.f;
-        float x = csm::rand(-12.f, 12.f);
-        float y = csm::rand(-3.f, 3.f);
-        m_world->addEntity(LAYER_ENEMIES, new CubeaEnemy(prevBeat, glm::vec3(40.f, y, x)));
-        if (glm::mod(prevBeat, 16.f) == 3.f)
-            m_world->addEntity(LAYER_ENEMIES, new DiamondaEnemy(prevBeat, glm::vec3(csm::rand(5.f, 6.f), 20.f, csm::rand(-3.f, 3.f))));
-    }
-
-    m_world->tick(beat);
-
-    // Offset everything by the player's position so that player is always at origin
-    int layers[2] = { LAYER_AMBIENCE, LAYER_ENEMIES };
-    for (int i = 0; i < 2; ++i) {
-        const std::list<CS1972Engine::Entity *> *e = m_world->getEntities(layers[i]);
-        for (std::list<CS1972Engine::Entity *>::const_iterator it = e->begin(); it != e->end(); ++it)
-            ((COGEntity *) (*it))->offsetPosition(m_player->position());
-    }
-    m_particleOffset -= m_player->position();
-    m_player->offsetPosition(m_player->position());
-
     m_beatstep += beats;
     m_beats += beats;
 }
@@ -354,7 +357,7 @@ void GameScreen::drawScene(float beat) {
     // Render geometry to g-buffer
     graphics().deferred()->useGbufferShader();
     graphics().shader()->pvTransformFromCamera();
-    graphics().shader()->useFog(true, 30.f, 40.f, glm::vec3(0.f));
+    graphics().shader()->useFog(true, m_minFog, m_maxFog, glm::vec3(0.f));
     m_world->draw(DRAW_GEOMETRY);
     graphics().useShader(0);
 
@@ -410,7 +413,7 @@ void GameScreen::drawScene(float beat) {
         graphics().deferred()->blitGbufferDepthTo(parent->width(), parent->height(), graphics().bloom()->hdr());
         graphics().shader()->pvTransformFromCamera();
         graphics().shader()->useLight(false);
-        graphics().shader()->useFog(true, 30.f, 40.f, glm::vec3(0.f));
+        graphics().shader()->useFog(true, m_minFog, m_maxFog, glm::vec3(0.f));
 
         glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         m_world->draw(DRAW_ADDITIVE);

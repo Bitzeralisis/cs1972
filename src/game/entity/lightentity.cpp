@@ -24,7 +24,7 @@ void LightEntity::tickBeats(float beats) {
     tickPhysicsContinuous(beats);
 }
 
-void LightEntity::draw(int pass) {
+void LightEntity::draw(int pass, float) {
     if (pass != GameScreen::DRAW_LIGHTS)
         return;
     graphics().deferred()->lightPoint(m_position, glm::vec3(m_life), 0.5f);
