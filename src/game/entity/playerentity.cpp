@@ -40,7 +40,10 @@ void PlayerEntity::makeParticles(int amount, glm::vec3 position, float width, gl
 }
 
 void PlayerEntity::attachShot(EnemyShotEntity *shot) {
-    m_attachedShots.push_back(shot);
+    if (m_attachedShots.size() && m_attachedShots.back()->hitBeat() == shot->hitBeat() && m_attachedShots.back()->approachLane() == shot->approachLane())
+        shot->detatchShot();
+    else
+        m_attachedShots.push_back(shot);
 }
 
 void PlayerEntity::performAction(COGScriptAction *action) {

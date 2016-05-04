@@ -59,7 +59,8 @@ SOURCES += \
     src/game/entity/controlledentity.cpp \
     src/game/cogscript.cpp \
     src/game/entity/cogentity.cpp \
-    src/game/mainmenuscreen.cpp
+    src/game/mainmenuscreen.cpp \
+    src/game/entity/enemy/gateenemy.cpp
 
 HEADERS += \
     libs/glew-1.10.0/include/GL/glew.h \
@@ -105,7 +106,8 @@ HEADERS += \
     src/game/scriptparser.h \
     src/game/entity/controlledentity.h \
     src/game/cogscript.h \
-    src/game/mainmenuscreen.h
+    src/game/mainmenuscreen.h \
+    src/game/entity/enemy/gateenemy.h
 
 
 FORMS += src/mainwindow.ui
@@ -121,6 +123,7 @@ OTHER_FILES += \
     res/images/cube1.png \
     res/images/cube2.png \
     res/images/diamond1.png \
+    res/images/enemy2.png \
     res/images/particle1.png \
     res/images/particle2.png \
     res/images/particle3.png \

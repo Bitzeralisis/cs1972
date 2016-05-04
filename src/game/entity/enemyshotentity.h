@@ -28,6 +28,8 @@ public:
     VALUE_ACCESSOR(float,hitBeat)
     VALUE_ACCESSOR(int,approachLane)
 
+    void detatchShot();
+
     virtual void tickBeats(float beats) override;
     virtual void draw(int pass, float beat) override;
 };

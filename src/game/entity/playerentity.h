@@ -5,8 +5,11 @@
 namespace COG {
 
 class EnemyShotEntity;
+class GameScreen;
 
 class PlayerEntity : public ControlledEntity {
+    friend class GameScreen;
+
 public:
     PlayerEntity();
     virtual ~PlayerEntity() { }
@@ -15,13 +18,12 @@ private:
     bool m_win = false;
     int m_score = 0;
     int m_combo;
+    int m_dealtDamage = 0;
 
     std::deque<EnemyShotEntity *> m_attachedShots;
 
 public:
-    VALUE_ACCESSOR(bool,win)
-    VALACC_MUT(int,score)
-    VALACC_MUT(int,combo)
+    void dealDamage() { ++m_dealtDamage; }
     std::deque<EnemyShotEntity *> *attachedShots() { return &m_attachedShots; }
 
     void gainScoreValue(int score);

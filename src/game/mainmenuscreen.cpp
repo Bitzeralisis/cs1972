@@ -16,6 +16,8 @@ MainMenuScreen::MainMenuScreen(CS1972Engine::Game *game)
         graphics().putTexture("cube2", graphics().loadTextureFromQRC(":/images/cube2.png", GL_LINEAR));
     if (!graphics().hasTexture("diamond1"))
         graphics().putTexture("diamond1", graphics().loadTextureFromQRC(":/images/diamond1.png", GL_LINEAR));
+    if (!graphics().hasTexture("enemy2"))
+        graphics().putTexture("enemy2", graphics().loadTextureFromQRC(":/images/enemy2.png", GL_LINEAR));
     if (!graphics().hasTexture("particle"))
         graphics().putTexture("particle", graphics().loadTextureFromQRC(":/images/particle1.png", GL_LINEAR));
     if (!graphics().hasTexture("blur"))

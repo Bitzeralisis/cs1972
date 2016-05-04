@@ -16,7 +16,7 @@ EnemyEntity::EnemyEntity(float beat, int health, int value)
 { }
 
 EnemyEntity::~EnemyEntity() {
-    for (std::deque<PlayerShotEntity *>::iterator it = m_attachedShots.begin(); it != m_attachedShots.end(); ++it)
+    for (auto it = m_attachedShots.begin(); it != m_attachedShots.end(); ++it)
         (*it)->detatchShot(false, m_position);
 }
 
@@ -67,6 +67,13 @@ void EnemyEntity::performAction(COGScriptAction *action) {
 void EnemyEntity::tickBeats(float beats) {
     // Do controlled actions
     ControlledEntity::tickBeats(beats);
+
+    // Lose all attached shots if untargetable
+    if (!m_targetable) {
+        for (auto it = m_attachedShots.begin(); it != m_attachedShots.end(); ++it)
+            (*it)->detatchShot(false, m_position);
+        m_attachedShots.clear();
+    }
 
     // Take damage from shots
     while (!m_attachedShots.empty() && m_attachedShots.front()->shotBeat()+1.f <= beat()) {

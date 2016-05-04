@@ -84,6 +84,7 @@ void BloomModule::initBuffers(int width, int height) {
 
 void BloomModule::cleanupBuffers() {
     glDeleteTextures(1, &m_hdrTex);
+    glDeleteRenderbuffers(1, &m_depthBuf);
     glDeleteFramebuffers(1, &m_hdr);
     glDeleteTextures(1, &m_blurTex);
     glDeleteFramebuffers(1, &m_blur);

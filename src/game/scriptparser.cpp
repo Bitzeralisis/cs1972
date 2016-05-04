@@ -28,13 +28,13 @@ std::ostream &ScriptParser::lineErr() {
 int ScriptParser::parseRoot(COGScript *&script) {
     script = new COGScript();
 
-    // Special behavior none
-    script->behaviors["none"] = 0;
+    // Special behavior nil
+    script->behaviors["."] = 0;
 
     QStringList line;
     while (!nextLine(line)) {
         if (line.length() < 2) {
-            lineErr() << "Warning: Found something other than behavior definition at root" << std::endl;
+            lineErr() << "Warning: Expected behavior-definition" << std::endl;
             continue;
         }
         if (line[0] == "def") {
@@ -59,7 +59,7 @@ int ScriptParser::parseBehavior(COGScriptBehavior *&behavior) {
         if (line[0] == QString("end"))
             return 0;
         if (line.length() < 2) {
-            lineErr() << "Warning: Expected an action" << std::endl;
+            lineErr() << "Warning: Expected action" << std::endl;
             continue;
         }
         COGScriptAction *action;
@@ -69,7 +69,7 @@ int ScriptParser::parseBehavior(COGScriptBehavior *&behavior) {
         }
         behavior->actions.push_back(action);
     }
-    lineErr() << "Warning: Reached end of file without finding end of behavior" << std::endl;
+    lineErr() << "Warning: Expected end" << std::endl;
     return 0;
 }
 
@@ -141,6 +141,8 @@ int ScriptParser::parseActionSpawn(QStringList &line, COGScriptAction *&action) 
     action = spawn;
     spawn->type = line[2].toStdString();
     spawn->behavior = line[3].toStdString();
+    if (!m_script->behaviors.count(spawn->behavior))
+        lineErr() << "Warning: Undefined behavior-name " << spawn->behavior << " used as argument" << std::endl;
 
     spawn->init = new COGScriptBehavior(m_script);
     int pos = 4;

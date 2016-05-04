@@ -2,14 +2,18 @@
 #include "enemyshotentity.h"
 #include "enemy/cubeaenemy.h"
 #include "enemy/diamondaenemy.h"
+#include "enemy/gateenemy.h"
+#include "game/coggame.h"
 #include "game/cogscript.h"
 #include "game/gamescreen.h"
+#include "game/entity/playerentity.h"
 #include "engine/sound.h"
 
 using namespace COG;
 
 ControlledEntity::ControlledEntity(float beat)
     : COGEntity(beat)
+    , m_scriptOffset(firstBeat())
 { }
 
 ControlledEntity::~ControlledEntity() { }
@@ -18,7 +22,8 @@ void ControlledEntity::performAction(COGScriptAction *action) {
     switch (action->action) {
     case Action::COMMAND: {
         COGScriptActionCommand *command = (COGScriptActionCommand *) action;
-        if (command->command == "disappear") parent()->deleteEntity(this);
+        if      (command->command == "disappear") parent()->deleteEntity(this);
+        else if (command->command == "crash")     GAME->controller()->dealDamage();
         else {
             std::cerr << "Warning: Attempted to perform command " << command->command << " on type missing that command" << std::endl;
             break;
@@ -45,7 +50,10 @@ void ControlledEntity::performAction(COGScriptAction *action) {
 
         case Attribute::FLOAT: {
             COGScriptAttributeFloat *attr = (COGScriptAttributeFloat *) act;
-            std::cerr << "Warning: Attempted to set attribute float " << attr->key << " on type missing that attribute" << std::endl;
+            if (attr->key == "offset") m_scriptOffset += attr->value;
+            else {
+                std::cerr << "Warning: Attempted to set attribute float " << attr->key << " on type missing that attribute" << std::endl;
+            }
             break;
         }
 
@@ -60,8 +68,9 @@ void ControlledEntity::performAction(COGScriptAction *action) {
         COGScriptActionSpawn *act = (COGScriptActionSpawn *) action;
         EnemyEntity *enemy;
 
-        if      (act->type == "cubea")    enemy = new CubeaEnemy(act->beat + firstBeat());
-        else if (act->type == "diamonda") enemy = new DiamondaEnemy(act->beat + firstBeat());
+        if      (act->type == "gate")     enemy = new GateEnemy(act->beat + m_scriptOffset);
+        else if (act->type == "cubea")    enemy = new CubeaEnemy(act->beat + m_scriptOffset);
+        else if (act->type == "diamonda") enemy = new DiamondaEnemy(act->beat + m_scriptOffset);
         else {
             std::cerr << "Warning: Attempted to spawn unrecognized enemy type " << act->type << std::endl;
             break;
@@ -87,7 +96,7 @@ void ControlledEntity::performAction(COGScriptAction *action) {
         s->setMusicParams(act->bpm, act->offset);
         s->setLoop(true);
         s->setLoopBeats(act->loopStart, act->loopEnd);
-        audio().queueBgmOnBeat(s, act->beat);
+        audio().queueBgmOnBeat(s, act->beat + m_scriptOffset);
         break;
     }
 
@@ -98,17 +107,17 @@ void ControlledEntity::performAction(COGScriptAction *action) {
 }
 
 void ControlledEntity::tickBeats(float beats) {
-    float startBeat = totalBeats()-beats;
+    float startBeat = beat()-beats;
     if (m_behavior) {
-        while (m_step < m_behavior->actions.size() && (m_behavior->actions[m_step]->beat <= totalBeats() || m_behavior->actions[m_step]->queued)) {
+        while (m_step < m_behavior->actions.size() && (m_behavior->actions[m_step]->beat + m_scriptOffset <= beat() || m_behavior->actions[m_step]->queued)) {
             COGScriptAction *action = m_behavior->actions[m_step];
             if (action->action == Action::SET_ATTRIBUTE) {
-                tickPhysicsContinuous(m_behavior->actions[m_step]->beat - startBeat);
-                startBeat = m_behavior->actions[m_step]->beat;
+                tickPhysicsContinuous(m_behavior->actions[m_step]->beat + m_scriptOffset - startBeat);
+                startBeat = m_behavior->actions[m_step]->beat + m_scriptOffset;
             }
             performAction(m_behavior->actions[m_step]);
             ++m_step;
         }
     }
-    tickPhysicsContinuous(totalBeats()-startBeat);
+    tickPhysicsContinuous(beat()-startBeat);
 }

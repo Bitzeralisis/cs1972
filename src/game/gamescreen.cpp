@@ -268,11 +268,11 @@ void GameScreen::tick(float seconds) {
         float best = std::numeric_limits<float>::infinity();
         EnemyEntity *bestEnemy = 0;
         std::list<EnemyEntity *> *enemies = (std::list<EnemyEntity *> *)m_world->getEntities(LAYER_ENEMIES);
-        for (std::list<EnemyEntity *>::iterator it = enemies->begin(); it != enemies->end(); ++it) {
-            if (!(*it)->targetable())
+        for (auto it = enemies->begin(); it != enemies->end(); ++it) {
+            if (!(*it)->targetable() || (*it)->futureHealth() <= 0)
                 continue;
             bool hit = csm::intersect_cone_ellipsoid(cone, (*it)->getEllipsoid() + (*it)->position());
-            if (hit && glm::dot((*it)->position(), dir) > 0.f && (*it)->futureHealth() > 0) {
+            if (hit && glm::dot((*it)->position(), dir) > 0.f) {
                 float dist = glm::distance2(pos, (*it)->position());
                 if (dist < best) {
                     best = dist;
@@ -296,7 +296,7 @@ void GameScreen::tick(float seconds) {
         }
     }
 
-    m_player->combo(m_combo);
+    m_player->m_combo = m_combo;
 
     // Check enemy shots
     for (std::deque<EnemyShotEntity *>::iterator it = m_player->attachedShots()->begin(); it != m_player->attachedShots()->end(); ) {
@@ -307,12 +307,16 @@ void GameScreen::tick(float seconds) {
         } else
             ++it;
     }
+    while (m_player->m_dealtDamage) {
+        m_player->m_dealtDamage--;
+        takeDamage();
+    }
 
     // Check game over status
     if (m_health <= 0) {
         m_shootUntil = beat;
         m_gameOver = 1;
-    } else if (m_player->win()) {
+    } else if (m_player->m_win) {
         m_gameOver = 2;
     }
 
@@ -424,14 +428,13 @@ void GameScreen::drawScene(float beat) {
     {
         // Blend in additive geometry
         glEnable(GL_DEPTH_TEST);
-        glDepthMask(false);
-
         graphics().shader()->use();
         graphics().deferred()->blitGbufferDepthTo(parent->width(), parent->height(), graphics().bloom()->hdr());
         graphics().shader()->pvTransformFromCamera();
         graphics().shader()->useLight(false);
         graphics().shader()->useFog(true, m_minFog, m_maxFog, glm::vec3(0.f));
 
+        glDepthMask(false);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         m_world->draw(DRAW_ADDITIVE);
 
@@ -811,8 +814,8 @@ void GameScreen::drawHudComponents(float beat) {
     );
 
     // Score
-    int score = m_player->score();
-    for (int i = 0; i < glm::max(1, (int) log10(m_player->score()) + 1); ++i) {
+    int score = m_player->m_score;
+    for (int i = 0; i < glm::max(1, (int) log10(m_player->m_score) + 1); ++i) {
         int digit = score % 10;
         float left = 1894.f/2048.f - 17.f/2048.f*i;
         float right = left + 32.f/2048.f;

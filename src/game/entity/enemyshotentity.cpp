@@ -24,12 +24,25 @@ EnemyShotEntity::EnemyShotEntity(float beat, float travelTime, glm::vec3 pos, gl
     m_position = pos;
 }
 
-void EnemyShotEntity::tickBeats(float) {
-    float travel = (m_hitBeat-beat()) / m_travelTime;
-    float rotation[3] = { 0.f, 0.25f*glm::pi<float>(), -0.25f*glm::pi<float>() };
-    glm::vec3 direction = glm::rotate(m_target->velocity(), rotation[m_approachLane], graphics().camera()->upVector());
-    direction = 1.f*glm::normalize(direction);
-    m_visualPosition = csm::bezier_curve(m_target->position() + direction, m_target->position() + 5.f*direction, m_position+m_shotVel, m_position, travel);
+void EnemyShotEntity::detatchShot() {
+    m_approachLane = -1;
+    m_position = m_visualPosition;
+    m_velocity = 0.5f*m_shotVel;
+}
+
+void EnemyShotEntity::tickBeats(float beats) {
+    if (m_approachLane >= 0) {
+        float travel = (m_hitBeat-beat()) / m_travelTime;
+        float rotation[3] = { 0.f, 0.25f*glm::pi<float>(), -0.25f*glm::pi<float>() };
+        glm::vec3 direction = glm::rotate(m_target->velocity(), rotation[m_approachLane], graphics().camera()->upVector());
+        direction = 1.f*glm::normalize(direction);
+        m_visualPosition = csm::bezier_curve(m_target->position() + direction, m_target->position() + 5.f*direction, m_position+m_shotVel, m_position, travel);
+    } else {
+        if (totalBeats() >= m_travelTime)
+            parent()->deleteEntity(this);
+        tickPhysicsContinuous(beats);
+        m_visualPosition = m_position;
+    }
 }
 
 void EnemyShotEntity::draw(int pass, float beat) {

@@ -6,6 +6,13 @@ def cubea-1
     16 disappear
 end
 
+def gate-1
+    0 set targetable 0
+    6 set targetable 1
+    16 crash
+    16 disappear
+end
+
 def diamonda-1-a
     0 set pos abs . 20 .
     0 set vel abs 0 -10 0
@@ -70,23 +77,16 @@ def main
     74 spawn cubea cubea-1 pos abs . -2 3
     74 spawn cubea cubea-1 pos abs . 2 3
 
-    84 spawn cubea cubea-1 pos abs . -2 -6
-    84 spawn cubea cubea-1 pos abs . -2 -2
-    84 spawn cubea cubea-1 pos abs . -2 2
-    84 spawn cubea cubea-1 pos abs . -2 6
-    84 spawn cubea cubea-1 pos abs . 2 -6
-    84 spawn cubea cubea-1 pos abs . 2 -2
-    84 spawn cubea cubea-1 pos abs . 2 2
-    84 spawn cubea cubea-1 pos abs . 2 6
+    80 spawn gate gate-1 pos abs 32 0 0 vel abs -2 0 0
 
     q 96 play sound/2.mp3 150 0.052245 0 64
+    92 set offset 96
 
-    92 spawn diamonda diamonda-1-a pos abs 5 20 -2
-    108 spawn diamonda diamonda-1-a pos abs 5 20 2
-    124 spawn diamonda diamonda-1-b pos abs 5 20 -2
-    132 spawn diamonda diamonda-1-b pos abs 5 20 2
-    140 spawn diamonda diamonda-1-b pos abs 5 20 -2
-    148 spawn diamonda diamonda-1-b pos abs 5 20 2
+    4 spawn diamonda diamonda-1-a pos abs 5 20 -2
+    20 spawn diamonda diamonda-1-a pos abs 5 20 2
+    36 spawn diamonda diamonda-1-b pos abs 5 20 -2
+    36 spawn diamonda diamonda-1-b pos abs 5 20 2
+    48 spawn gate gate-1 pos abs 32 0 0 vel abs -2 0 0
 
-    168 win
+    64 win
 end

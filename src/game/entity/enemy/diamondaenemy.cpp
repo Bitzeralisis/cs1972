@@ -4,7 +4,6 @@
 #include "engine/primitive.h"
 #include "engine/graphics/deferredmodule.h"
 #include "engine/graphics/shadermodule.h"
-#include "csm/csm.h"
 
 using namespace COG;
 

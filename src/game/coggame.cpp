@@ -78,5 +78,45 @@ void COGGame::initGL() {
     };
     g.putPrimitive("diamond", new CS1972Engine::Primitive(24, sizeof(diamondData), diamondData));
 
+    GLfloat gateData1[] = {
+        0.f,-.5f,-.5f, -1.f,0.f,0.f, 0.f,0.f,
+        0.f, .5f, .5f, -1.f,0.f,0.f, .5f,.5f,
+        0.f, .5f,-.5f, -1.f,0.f,0.f, 0.f,.5f,
+        0.f,-.5f,-.5f, -1.f,0.f,0.f, 0.f,0.f,
+        0.f,-.5f, .5f, -1.f,0.f,0.f, .5f,0.f,
+        0.f, .5f, .5f, -1.f,0.f,0.f, .5f,.5f,
+    };
+    g.putPrimitive("gate1", new CS1972Engine::Primitive(6, sizeof(gateData1), gateData1));
+
+    GLfloat gateData2[] = {
+        0.f,-.5f,-.5f, -1.f,0.f,0.f, 0.f,.5f,
+        0.f, .5f, .5f, -1.f,0.f,0.f, .5f,1.f,
+        0.f, .5f,-.5f, -1.f,0.f,0.f, 0.f,1.f,
+        0.f,-.5f,-.5f, -1.f,0.f,0.f, 0.f,.5f,
+        0.f,-.5f, .5f, -1.f,0.f,0.f, .5f,.5f,
+        0.f, .5f, .5f, -1.f,0.f,0.f, .5f,1.f,
+    };
+    g.putPrimitive("gate2", new CS1972Engine::Primitive(6, sizeof(gateData2), gateData2));
+
+    GLfloat gateData3[] = {
+        0.f,-1.f,-.25f, -1.f,0.f,0.f, 0.5f,0.f,
+        0.f, 1.f, .25f, -1.f,0.f,0.f, .75f,1.f,
+        0.f, 1.f,-.25f, -1.f,0.f,0.f, 0.5f,1.f,
+        0.f,-1.f,-.25f, -1.f,0.f,0.f, 0.5f,0.f,
+        0.f,-1.f, .25f, -1.f,0.f,0.f, .75f,0.f,
+        0.f, 1.f, .25f, -1.f,0.f,0.f, .75f,1.f,
+    };
+    g.putPrimitive("gate3", new CS1972Engine::Primitive(6, sizeof(gateData3), gateData3));
+
+    GLfloat gateData4[] = {
+        0.f,-1.f,-.25f, -1.f,0.f,0.f, .75f,0.f,
+        0.f, 1.f, .25f, -1.f,0.f,0.f, 1.0f,1.f,
+        0.f, 1.f,-.25f, -1.f,0.f,0.f, .75f,1.f,
+        0.f,-1.f,-.25f, -1.f,0.f,0.f, .75f,0.f,
+        0.f,-1.f, .25f, -1.f,0.f,0.f, 1.0f,0.f,
+        0.f, 1.f, .25f, -1.f,0.f,0.f, 1.0f,1.f,
+    };
+    g.putPrimitive("gate4", new CS1972Engine::Primitive(6, sizeof(gateData4), gateData4));
+
     pushScreen(new MainMenuScreen(this));
 }

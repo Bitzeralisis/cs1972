@@ -11,5 +11,6 @@
         <file>diamond1.png</file>
         <file>enemyshot.png</file>
         <file>mainmenu.png</file>
+        <file>enemy2.png</file>
     </qresource>
 </RCC>
