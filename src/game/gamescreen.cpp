@@ -1,4 +1,5 @@
 #include "gamescreen.h"
+#include "mainmenuscreen.h"
 #include "scriptparser.h"
 #include "game/coggame.h"
 #include "entity/ambiententity.h"
@@ -30,50 +31,13 @@ int PARTS_H = 256;
 GameScreen::GameScreen(CS1972Engine::Game *parent)
     : Screen(parent)
 {
-    if (!graphics().hasTexture("cube1"))
-        graphics().putTexture("cube1", graphics().loadTextureFromQRC(":/images/cube1.png", GL_LINEAR));
-    if (!graphics().hasTexture("cube2"))
-        graphics().putTexture("cube2", graphics().loadTextureFromQRC(":/images/cube2.png", GL_LINEAR));
-    if (!graphics().hasTexture("diamond1"))
-        graphics().putTexture("diamond1", graphics().loadTextureFromQRC(":/images/diamond1.png", GL_LINEAR));
-    if (!graphics().hasTexture("particle"))
-        graphics().putTexture("particle", graphics().loadTextureFromQRC(":/images/particle1.png", GL_LINEAR));
-    if (!graphics().hasTexture("blur"))
-        graphics().putTexture("blur", graphics().loadTextureFromQRC(":/images/particle2.png", GL_NEAREST));
-    if (!graphics().hasTexture("reticle"))
-        graphics().putTexture("reticle", graphics().loadTextureFromQRC(":/images/reticle.png", GL_LINEAR));
-    if (!graphics().hasTexture("enemyshot"))
-        graphics().putTexture("enemyshot", graphics().loadTextureFromQRC(":/images/enemyshot.png", GL_LINEAR));
-    if (!graphics().hasTexture("target"))
-        graphics().putTexture("target", graphics().loadTextureFromQRC(":/images/target.png", GL_NEAREST));
-    if (!graphics().hasTexture("hud"))
-        graphics().putTexture("hud", graphics().loadTextureFromQRC(":/images/hud.png", GL_LINEAR));
-
     graphics().deferred()->initGbuffer(parent->width(), parent->height());
     graphics().bloom()->initBuffers(parent->width(), parent->height());
     graphics().particle()->init(PARTS_W, PARTS_H);
 
-    if (!audio().hasSound("handclap.aif"))
-        audio().putSound("handclap.aif", audio().createSoundSample("sound/handclap.aif"));
-    if (!audio().hasSound("808hh08.aif"))
-        audio().putSound("808hh08.aif", audio().createSoundSample("sound/808hh08.aif"));
-    if (!audio().hasSound("noisy1.aif"))
-        audio().putSound("noisy1.aif", audio().createSoundSample("sound/noisy1.aif"));
-    if (!audio().hasSound("supergate-snare.aif"))
-        audio().putSound("supergate-snare.aif", audio().createSoundSample("sound/supergate-snare.aif"));
-    if (!audio().hasSound("popslap.aif"))
-        audio().putSound("popslap.aif", audio().createSoundSample("sound/popslap.aif"));
-    if (!audio().hasSound("tambourine-simple1.aif"))
-        audio().putSound("tambourine-simple1.aif", audio().createSoundSample("sound/tambourine-simple1.aif"));
-    if (!audio().hasSound("chewie_scratch.aif"))
-        audio().putSound("chewie_scratch.aif", audio().createSoundSample("sound/chewie_scratch.aif"));
+    m_mousePosition = 0.5f*glm::vec2(parent->width(), parent->height());
 
-    m_script = ScriptParser(":/level/level.txt").parse();
-
-    m_bgm = audio().createSoundStream("sound/1.mp3");
-    m_bgm->setMusicParams(150.f, 0.052245f);
-    m_bgm->setLoop(true);
-    m_bgm->setLoopBeats(32.f, 96.f);
+    m_script = ScriptParser(":/level/level.cogs").parse();
 
     m_world = new CS1972Engine::World(parent, NUM_LAYERS);
 
@@ -96,8 +60,6 @@ GameScreen::~GameScreen() {
     m_world->deleteEntitiesOnDeconstruct(true);
     delete m_world;
     delete m_script;
-
-    //delete m_bgm;
 }
 
 void GameScreen::boundMouse() {
@@ -128,6 +90,9 @@ void GameScreen::boundMouse() {
 }
 
 void GameScreen::startShooting(float beat) {
+    if (m_gameOver)
+        return;
+
     audio().playSound("handclap.aif");
 
     float thisBeat = glm::round(beat);
@@ -148,6 +113,9 @@ void GameScreen::startShooting(float beat) {
 }
 
 void GameScreen::keepShooting(float beat) {
+    if (m_gameOver)
+        return;
+
     m_shootUntil = beat + 2.f;
 
     // Check combo up to current beat
@@ -189,13 +157,17 @@ void GameScreen::missCombo(float beat) {
 }
 
 void GameScreen::takeDamage() {
-    if (m_iframes <= 0.f) {
+    if (!m_gameOver && m_iframes <= 0.f) {
         m_health -= 1;
         m_iframes = 4.f;
+        m_defenseDisable = 0.f;
     }
 }
 
 void GameScreen::defend(float beat, int lane) {
+    if (m_gameOver)
+        return;
+
     if (m_defenseDisable <= 0.f) {
         for (std::deque<EnemyShotEntity *>::iterator it = m_player->attachedShots()->begin(); it != m_player->attachedShots()->end(); ++it) {
             if ((*it)->approachLane() != lane)
@@ -216,7 +188,8 @@ void GameScreen::defend(float beat, int lane) {
 
     audio().getSound("chewie_scratch.aif")->stop();
     audio().playSound("chewie_scratch.aif");
-    m_defenseDisable = 2.f;
+    if (m_iframes <= 0.f)
+        m_defenseDisable = 2.f;
     m_prevMissedBlock[lane] = beat;
 }
 
@@ -231,7 +204,6 @@ void GameScreen::tick(float seconds) {
         m_firstTick = false;
         if (seconds > 0.017f)
             seconds = 0.017f;
-        //audio().queueBgmOnBeat(m_bgm, 0.f);
         // Tick the controller or else it'll never be updated because there's no music by default
         m_player->tickBeats(0.f);
     }
@@ -241,6 +213,11 @@ void GameScreen::tick(float seconds) {
         beats = seconds*audio().bgm()->bpm()/60.f;
 
     boundMouse();
+
+    if (m_iframes > 0.f)
+        m_iframes -= beats;
+    if (m_defenseDisable > 0.f)
+        m_defenseDisable -= beats;
 
     // Update the world
     m_world->tick(beat);
@@ -309,10 +286,30 @@ void GameScreen::tick(float seconds) {
         } else
             ++it;
     }
-    if (m_iframes > 0.f)
-        m_iframes -= beats;
-    if (m_defenseDisable > 0.f)
-        m_defenseDisable -= beats;
+
+    // Check game over status
+    if (m_health <= 0) {
+        m_shootUntil = beat;
+        m_gameOver = 1;
+    } else if (m_player->win()) {
+        m_gameOver = 2;
+    }
+
+    if (m_gameOver == 0) {
+        m_fade -= 0.5f*seconds;
+        if (m_fade < 0.f)
+            m_fade = 0.f;
+    } else {
+        m_mousePosition = 0.5f*glm::vec2(parent->width(), parent->height());
+        if ((m_gameOver == 1 && m_iframes <= 0.f) || m_fade > 0.f)
+            m_fade += 0.5f*seconds;
+        if (m_fade >= 1.f) {
+            audio().bgm()->stop();
+            audio().clearBgm();
+            parent->popScreen();
+            parent->pushScreen(new MainMenuScreen(parent));
+        }
+    }
 
     m_beatstep += beats;
     m_beats += beats;
@@ -498,11 +495,18 @@ void GameScreen::drawHud(float beat) {
     graphics().uishader()->use();
     graphics().uishader()->orthoTransform(0.f, W, H, 0.f);
 
-    // Draw orthographic ui
-
     m_world->draw(DRAW_ORTHOGRAPHIC);
+    if (m_gameOver == 0)
+        drawReticle(beat);
+    drawDefenseRing(beat);
+    drawHudComponents(beat);
 
-    // Draw the reticle
+    graphics().useShader(0);
+}
+
+void GameScreen::drawReticle(float beat) {
+    float W = parent->width();
+    float H = parent->height();
 
     float hSize = H*RETICLE_SIZE_FACTOR_DRAW * 0.5f;
     graphics().shader()->useTexture(true);
@@ -557,8 +561,11 @@ void GameScreen::drawHud(float beat) {
             );
         }
     }
+}
 
-    // Draw the defense ring
+void GameScreen::drawDefenseRing(float beat) {
+    float W = parent->width();
+    float H = parent->height();
 
     // Figure out whether or not we should display the ring, and which lanes to display
     float lanesHave[3] = { 0.f, 0.f, 0.f };
@@ -567,8 +574,8 @@ void GameScreen::drawHud(float beat) {
         if ((*it)->hitBeat()-beat > 8.f)
             break;
         else if ((*it)->hitBeat()-beat > 4.f) {
-            lanesHave[(*it)->approachLane()] = 0.5f;
-            hasAny = 0.5f;
+            lanesHave[(*it)->approachLane()] = glm::max(0.5f, lanesHave[(*it)->approachLane()]);
+            hasAny = glm::max(0.5f, hasAny);
         } else {
             lanesHave[(*it)->approachLane()] = 1.f;
             hasAny = 1.f;
@@ -583,12 +590,13 @@ void GameScreen::drawHud(float beat) {
         hasAny = 1.f;
 
     if (hasAny > 0.f) {
+        graphics().shader()->useTexture(true);
         graphics().shader()->bindTexture("enemyshot");
         glm::vec2 size(H*DEFENSERING_SIZE_FACTOR);
-        glm::vec2 center(0.5f*W, H-0.09375f*H);
+        glm::vec2 center(0.5f*W, H-0.15f*H);
         float offset = size.x*2.5f;
         float laneLength = size.x*8.f;
-        float fallSpeed = 0.4f;
+        float fallSpeed = 0.15f;
         float laneOffset = offset-size.x/2.f+laneLength/2.f;
         glm::vec2 laneSize(size.x, laneLength);
         glm::vec2 centers[3] = { center-glm::vec2(0.f, offset), center-glm::vec2(offset, 0.f), center+glm::vec2(offset, 0.f) };
@@ -712,9 +720,13 @@ void GameScreen::drawHud(float beat) {
             }
         }
     }
+}
 
-    // Draw the HUD
+void GameScreen::drawHudComponents(float beat) {
+    float W = parent->width();
+    float H = parent->height();
 
+    graphics().shader()->useTexture(true);
     graphics().shader()->bindTexture("hud");
     graphics().uishader()->color(glm::vec4(1.f));
     graphics().uishader()->drawQuad(
@@ -767,7 +779,33 @@ void GameScreen::drawHud(float beat) {
         graphics().uishader()->drawQuad(0.f, W, 0.f, H);
     }
 
-    graphics().useShader(0);
+    if (m_gameOver == 1) {
+        graphics().shader()->useTexture(false);
+        graphics().uishader()->color(glm::vec4(0.f, 0.f, 0.f, 1.f-m_iframes/4.f));
+        graphics().uishader()->drawQuad(0.f, W, 0.f, H);
+
+        graphics().shader()->useTexture(true);
+        graphics().shader()->bindTexture("hud");
+        graphics().uishader()->color(glm::vec4(1.f));
+        graphics().uishader()->drawQuad(
+            0.5f*glm::vec2(W, H), W/16.f*glm::vec2(16.f, 1.f), 0.f,
+            0.5f, 1.f, 0.5f, 0.5625f
+        );
+    } else if (m_gameOver == 2) {
+        graphics().shader()->useTexture(true);
+        graphics().shader()->bindTexture("hud");
+        graphics().uishader()->color(glm::vec4(1.f));
+        graphics().uishader()->drawQuad(
+            0.5f*glm::vec2(W, H), W/16.f*glm::vec2(16.f, 2.f), 0.f,
+            0.5f, 1.f, 0.5625f, 0.6875f
+        );
+    }
+
+    if (m_fade > 0.f) {
+        graphics().shader()->useTexture(false);
+        graphics().uishader()->color(glm::vec4(0.f, 0.f, 0.f, m_fade));
+        graphics().uishader()->drawQuad(0.f, W, 0.f, H);
+    }
 }
 
 void GameScreen::mousePressEvent(QMouseEvent *event) {
@@ -794,6 +832,9 @@ void GameScreen::mousePressEvent(QMouseEvent *event) {
 }
 
 void GameScreen::mouseMoveEvent(QMouseEvent *event) {
+    if (m_gameOver)
+        return;
+
     int dx = event->x() - parent->width() / 2;
     int dy = event->y() - parent->height() / 2;
     m_mousePosition += glm::vec2(dx, dy) * MOUSE_SENSITIVITY_FACTOR * (float) parent->height();
@@ -863,6 +904,11 @@ void GameScreen::keyPressEvent(QKeyEvent *event) {
         particles = (particles+1) % 3;
         break;
 
+    case Qt::Key_Return:
+        if (m_fade <= 0.f)
+            m_fade = 0.01f;
+        break;
+
     default:
         break;
     }
@@ -886,7 +932,7 @@ void GameScreen::keyReleaseEvent(QKeyEvent *event) {
 
     case Qt::Key_S:
         m_keysHeld[3] = false;
-        m_shootUntil = beat + 2.f;
+        keepShooting(beat);
         break;
 
     default:

@@ -30,7 +30,7 @@ public:
     void setMusicParams(float bpm, float offset);
     void setLoop(bool loop);
     void setLoopBeats(float beat1, float beat2);
-    void stop();
+    void stop() const;
 };
 
 }

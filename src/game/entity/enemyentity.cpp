@@ -37,16 +37,18 @@ void EnemyEntity::performAction(COGScriptAction *action) {
         COGScriptActionShoot *act = (COGScriptActionShoot *) action;
         glm::vec3 pos = act->pos.coord + (act->pos.relative ? m_position : glm::vec3(0.f));
         glm::vec3 vel = act->vel.coord + (act->vel.relative ? m_velocity : glm::vec3(0.f));
-        shoot(act->beat, act->travel, pos, vel, act->type, act->lane);
+        shoot(firstBeat() + act->beat, act->travel, pos, vel, act->type, act->lane);
         return;
     }
 
     case Action::SET_ATTRIBUTE: {
         COGScriptActionSetAttribute *act = (COGScriptActionSetAttribute *) action;
         switch (act->attr) {
-        case Attribute::TARGETABLE: {
+        case Attribute::FLOAT: {
             COGScriptAttributeFloat *attr = (COGScriptAttributeFloat *) act;
-            m_targetable = attr->value;
+            if (attr->key == "targetable") m_targetable = attr->value;
+            else
+                break;
             return;
         }
 

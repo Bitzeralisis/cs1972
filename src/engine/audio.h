@@ -34,6 +34,7 @@ public:
     Sound *createSoundStream(const char *path);
     MAP_OPS(Sound *,Sound,sound)
 
+    inline void clearBgm() { m_bgm = 0; }
     void playSound(Sound *sound);
     void playSound(const char *sound);
     void queueSoundOnBeat(Sound *sound, float beat);

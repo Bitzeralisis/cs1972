@@ -9,7 +9,7 @@
     At the base level, a (listof behavior-definition) is expected.
 
 
-2) INSTRUCTION CLASSES. ________________________________________________________
+2) INSTRUCTION CLASSES (GLOBAL). _______________________________________________
 
     behavior-definition:
     
@@ -32,8 +32,16 @@
             Perform an action on beat.
             
             In the second form, the game performs the action immediately even
-            if the current time is earlier than beat. This has the effect of
-            "queueing" that action.
+            if the current time is earlier than beat. For some actions, this
+            has the effect of "queueing" that action to automatically perform
+            in the future. For other actions, it will perform now regardless of
+            the beat value. Finally, some actions will cause undefined
+            behavior.
+
+            All play actions are recommended to be q'd in order to pre-load it
+            and prevent lag when the music needs to be played. spawn and shoot
+            can be safely q'd. All other action-inner are unspecified and not
+            recommended to be q'd.
 
 
     action-inner:
@@ -48,12 +56,6 @@
 
             By default, the spawned enemy's spatial attributes are equal to the
             spawner's.
-
-        shoot (travel-time: float) (shot-type: int) (lane: int) (*: pos) (*: vel)
-
-            Note that although * are spatial attributes, in the case of shoot
-            their arguments x, y, and z may not be . or it will result in
-            undefined behavior.
 
         play (file: string) (bpm: float) (offset: float) (loop-start: float) (loop-end: float)
 
@@ -71,9 +73,7 @@
             float-nils are either regular numbers or ".", which means that
             dimension should be ignored (so that just x-position can be set, for
             example, with "pos abs 0 . .".
-
-        targetable (float)
-
+        
 
     relative-type:
 
@@ -86,8 +86,33 @@
         .
         (float)
 
+3) INSTRUCTION CLASSES: CONTROLLER. ____________________________________________
 
-3) ERRORS AND WARNINGS. ________________________________________________________
+    These are instructions that only the controller (which runs the main
+    behavior) may perform.
+
+
+4) INSTRUCTION CLASSES: ENEMY. _________________________________________________
+
+    These are instructions that only enemies may perform.
+
+    action-inner:
+
+        shoot (travel-time: float) (shot-type: int) (lane: int) (*: pos) (*: vel)
+
+            May only be performed by enemies.
+
+            Note that although * are spatial attributes, in the case of shoot
+            their arguments x, y, and z may not be . or it will result in
+            undefined behavior.
+
+
+    attribute:
+
+        targetable (float)
+
+
+5) ERRORS AND WARNINGS. ________________________________________________________
 
     Whenever something unexpected shows up while parsing a script, either an
     error or a warning is thrown. In the case of an error, the entire script

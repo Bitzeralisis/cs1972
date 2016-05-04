@@ -114,14 +114,14 @@
   </defs>
   <sodipodi:namedview
      id="base"
-     pagecolor="#ffffff"
+     pagecolor="#000000"
      bordercolor="#666666"
      borderopacity="1.0"
-     inkscape:pageopacity="0.0"
+     inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.4757779"
-     inkscape:cx="878.09033"
-     inkscape:cy="479.57998"
+     inkscape:cx="837.10043"
+     inkscape:cy="567.33553"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -152,7 +152,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -399,5 +399,38 @@
          x="19.999977"
          id="tspan5249-0-2"
          sodipodi:role="line">EDEN FULL-DIVE SYSTEM v.2093</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:60px;line-height:125%;font-family:'OCR A Extended';-inkscape-font-specification:'OCR A Extended, Normal';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#ff0000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.50196078;shape-rendering:crispEdges"
+       x="1535.5898"
+       y="527.82996"
+       id="text4333-0-2-4-9-4"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4224"
+         x="1535.5898"
+         y="527.82996">CONNECTION LOST</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:60px;line-height:125%;font-family:'OCR A Extended';-inkscape-font-specification:'OCR A Extended, Normal';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.50196078;shape-rendering:crispEdges"
+       x="1535.6484"
+       y="431.82993"
+       id="text4333-0-2-4-9-4-9"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4224-3"
+         x="1535.6484"
+         y="431.82993">INFILTRATION SUCCESSFUL</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:30px;line-height:125%;font-family:'OCR A Extended';-inkscape-font-specification:'OCR A Extended, Normal';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.50196078;shape-rendering:crispEdges"
+       x="1535.8389"
+       y="467.44467"
+       id="text4333-0-2-4-9-4-9-4"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4224-3-2"
+         x="1535.8389"
+         y="467.44467">press enter to log out</tspan></text>
   </g>
 </svg>

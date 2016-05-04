@@ -10,5 +10,6 @@
         <file>hud.png</file>
         <file>diamond1.png</file>
         <file>enemyshot.png</file>
+        <file>mainmenu.png</file>
     </qresource>
 </RCC>

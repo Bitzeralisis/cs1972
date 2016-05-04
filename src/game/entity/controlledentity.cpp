@@ -16,9 +16,15 @@ ControlledEntity::~ControlledEntity() { }
 
 void ControlledEntity::performAction(COGScriptAction *action) {
     switch (action->action) {
-    case Action::DISAPPEAR:
-        parent()->deleteEntity(this);
+    case Action::COMMAND: {
+        COGScriptActionCommand *command = (COGScriptActionCommand *) action;
+        if (command->command == "disappear") parent()->deleteEntity(this);
+        else {
+            std::cerr << "Warning: Attempted to perform command " << command->command << " on type missing that command" << std::endl;
+            break;
+        }
         break;
+    }
 
     case Action::SET_ATTRIBUTE: {
         COGScriptActionSetAttribute *act = (COGScriptActionSetAttribute *) action;
@@ -34,6 +40,12 @@ void ControlledEntity::performAction(COGScriptAction *action) {
             if (!glm::isnan(attr->coord.x)) space->x = attr->coord.x + (attr->relative ? space->x : 0.f);
             if (!glm::isnan(attr->coord.y)) space->y = attr->coord.y + (attr->relative ? space->y : 0.f);
             if (!glm::isnan(attr->coord.z)) space->z = attr->coord.z + (attr->relative ? space->z : 0.f);
+            break;
+        }
+
+        case Attribute::FLOAT: {
+            COGScriptAttributeFloat *attr = (COGScriptAttributeFloat *) act;
+            std::cerr << "Warning: Attempted to set attribute float " << attr->key << " on type missing that attribute" << std::endl;
             break;
         }
 
@@ -65,7 +77,13 @@ void ControlledEntity::performAction(COGScriptAction *action) {
 
     case Action::PLAY_MUSIC: {
         COGScriptActionPlay *act = (COGScriptActionPlay *) action;
-        CS1972Engine::Sound *s = audio().createSoundStream(act->sound.data());
+        CS1972Engine::Sound *s;
+        if (audio().hasSound(act->sound))
+            s = audio().getSound(act->sound);
+        else {
+            s = audio().createSoundStream(act->sound.data());
+            audio().putSound(act->sound, s);
+        }
         s->setMusicParams(act->bpm, act->offset);
         s->setLoop(true);
         s->setLoopBeats(act->loopStart, act->loopEnd);

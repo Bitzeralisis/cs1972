@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1920"
+   height="1080"
+   viewBox="0 0 1920.0001 1079.9999"
+   id="svg4244"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="mainmenu.svg"
+   inkscape:export-filename="D:\Libraries\Programming\cs1972\res\images\mainmenu.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs4246" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#000000"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.45254834"
+     inkscape:cx="870.21429"
+     inkscape:cy="629.61253"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:window-width="1920"
+     inkscape:window-height="1003"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:snap-object-midpoints="true"
+     inkscape:snap-center="true"
+     units="px"
+     showborder="true">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4792"
+       spacingx="4.0000001"
+       spacingy="3.9999999"
+       empspacing="8" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata4249">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,27.637304)">
+    <rect
+       style="opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:6;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:12.00000036, 6.00000018, 3.00000009, 6.00000018;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4880"
+       width="1472.0001"
+       height="768.00006"
+       x="223.99995"
+       y="156.36263" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:125%;font-family:'OCR A Extended';-inkscape-font-specification:'OCR A Extended, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="259.72623"
+       y="174.80598"
+       id="text4794"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="259.72623"
+         y="174.80598"
+         id="tspan4798" /><tspan
+         sodipodi:role="line"
+         x="259.72623"
+         y="224.80597"
+         id="tspan4872">EDEN FULL-DIVE SYSTEM PRIMER.</tspan><tspan
+         sodipodi:role="line"
+         x="259.72623"
+         y="274.80597"
+         id="tspan4878" /><tspan
+         sodipodi:role="line"
+         x="259.72623"
+         y="324.80597"
+         id="tspan4874" /><tspan
+         sodipodi:role="line"
+         x="259.72623"
+         y="374.80597"
+         id="tspan4876">OFFENSE:</tspan><tspan
+         sodipodi:role="line"
+         x="259.72623"
+         y="424.80597"
+         id="tspan4802" /><tspan
+         sodipodi:role="line"
+         x="259.72623"
+         y="474.80597"
+         id="tspan4806">Mouse to aim.</tspan><tspan
+         sodipodi:role="line"
+         x="259.72623"
+         y="524.80597"
+         id="tspan4810">Click / hold to shoot.</tspan><tspan
+         sodipodi:role="line"
+         x="259.72623"
+         y="574.80597"
+         id="tspan4812" /><tspan
+         sodipodi:role="line"
+         x="259.72623"
+         y="624.80597"
+         id="tspan4814" /><tspan
+         sodipodi:role="line"
+         x="259.72623"
+         y="674.80597"
+         id="tspan4816">DEFENSE:</tspan><tspan
+         sodipodi:role="line"
+         x="259.72623"
+         y="724.80597"
+         id="tspan4818" /><tspan
+         sodipodi:role="line"
+         x="259.72623"
+         y="774.80597"
+         id="tspan4822">Enemy bullets cannot be shot down.</tspan><tspan
+         sodipodi:role="line"
+         x="259.72623"
+         y="824.80597"
+         id="tspan4820">When the Defense Ring appears, press [W], [A], or [D] when</tspan><tspan
+         sodipodi:role="line"
+         x="259.72623"
+         y="874.80597"
+         id="tspan4848">the guidelines line up with enemy bullets. </tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:80px;line-height:125%;font-family:'OCR A Extended';-inkscape-font-specification:'OCR A Extended, Normal';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="927.45319"
+       y="86.319656"
+       id="text4794-9"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="927.45319"
+         y="86.319656"
+         id="tspan4848-8">CHILDREN OF GAIA</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:40px;line-height:125%;font-family:'OCR A Extended';-inkscape-font-specification:'OCR A Extended, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="1448.4119"
+       y="1030.5482"
+       id="text4794-5"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="1448.4119"
+         y="1030.5482"
+         id="tspan4848-4">click to begin dive</tspan></text>
+  </g>
+</svg>

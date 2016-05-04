@@ -1,5 +1,5 @@
 #include "coggame.h"
-#include "gamescreen.h"
+#include "mainmenuscreen.h"
 #include "engine/primitive.h"
 
 using namespace COG;
@@ -78,5 +78,5 @@ void COGGame::initGL() {
     };
     g.putPrimitive("diamond", new CS1972Engine::Primitive(24, sizeof(diamondData), diamondData));
 
-    pushScreen(new GameScreen(this));
+    pushScreen(new MainMenuScreen(this));
 }

@@ -29,7 +29,7 @@ float Audio::getBeat() {
 
     unsigned long long dsp;
     FMOD_Channel_GetDSPClock(m_bgm->m_channel, 0, &dsp);
-    float beat= (long long) (dsp - m_bgmOffset) / (60 * m_sampleRate / m_bgm->m_bpm);
+    float beat = (long long) (dsp - m_bgmOffset) / (60 * m_sampleRate / m_bgm->m_bpm);
     return beat;
 }
 
@@ -86,12 +86,15 @@ void Audio::queueSoundOnBeat(const char *sound, float beat) {
 void Audio::queueBgmOnBeat(Sound *sound, float beat) {
     // Have `sound` start at a time such that its start offset matches up with `beat` in the current bgm, then set `sound` as the new bgm
     if (m_bgm == 0) {
-        playSound(sound);
-        m_bgm = sound;
-
         unsigned long long bgmNowDSP, parentNowDSP;
-        FMOD_Channel_GetDSPClock(m_bgm->m_channel, &bgmNowDSP, &parentNowDSP);
-        m_bgmOffset = (parentNowDSP - bgmNowDSP) + (m_sampleRate * m_bgm->m_offset);
+        FMOD_System_PlaySound(m_fmod, sound->m_sound, 0, true, &sound->m_channel);
+        FMOD_Channel_GetDSPClock(sound->m_channel, &bgmNowDSP, 0);
+        m_bgmOffset = bgmNowDSP;
+        FMOD_Channel_SetPaused(sound->m_channel, false);
+        FMOD_Channel_GetDSPClock(sound->m_channel, &bgmNowDSP, &parentNowDSP);
+        m_bgmOffset += (parentNowDSP - bgmNowDSP) + (m_sampleRate * sound->m_offset);
+
+        m_bgm = sound;
     } else {
         unsigned long long soundStartOffsetDSP = m_sampleRate * sound->m_offset;
         unsigned long long beatMasterDSP =  m_bgmOffset + (unsigned long long) (beat * (60.f * m_sampleRate / m_bgm->m_bpm));

@@ -6,13 +6,35 @@ def cubea-1
     16 disappear
 end
 
-def diamonda-1
+def diamonda-1-mid
     0 set pos abs . 20 .
     0 set vel abs 0 -10 0
     0 set acc abs 0 2.5 0
     4 set vel abs 0 0 0
     4 set acc abs 0 0 0
     5 shoot 7 0 0 pos rel 0 0.75 0 vel abs 0 4 0
+    12 set acc abs 0 2.5 0
+    20 disappear
+end
+
+def diamonda-1-left
+    0 set pos abs . 20 .
+    0 set vel abs 0 -10 0
+    0 set acc abs 0 2.5 0
+    4 set vel abs 0 0 0
+    4 set acc abs 0 0 0
+    5 shoot 7 0 1 pos rel 0 0.75 0 vel abs 0 4 0
+    12 set acc abs 0 2.5 0
+    20 disappear
+end
+
+def diamonda-1-right
+    0 set pos abs . 20 .
+    0 set vel abs 0 -10 0
+    0 set acc abs 0 2.5 0
+    4 set vel abs 0 0 0
+    4 set acc abs 0 0 0
+    5 shoot 7 0 2 pos rel 0 0.75 0 vel abs 0 4 0
     12 set acc abs 0 2.5 0
     20 disappear
 end
@@ -61,4 +83,11 @@ def main
     68 spawn cubea cubea-1 pos abs . 2 6
 
     q 96 play sound/2.mp3 150 0.052245 0 64
+
+    84 spawn diamonda diamonda-1-mid pos abs 5 20 -2
+    92 spawn diamonda diamonda-1-mid pos abs 5 20 2
+    100 spawn diamonda diamonda-1-left pos abs 5 20 -2
+    108 spawn diamonda diamonda-1-right pos abs 5 20 2
+
+    128 win
 end

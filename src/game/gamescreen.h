@@ -41,7 +41,7 @@ private:
     const float RETICLE_SIZE_FACTOR = 1.f/8.f;
     const float RETICLE_SIZE_FACTOR_DRAW = 1.f/6.f;
     const float RETICLE_SIZE_FACTOR_HIT = 1.f/16.f;
-    const float DEFENSERING_SIZE_FACTOR = 1.f/24.f;
+    const float DEFENSERING_SIZE_FACTOR = 1.f/16.f;
     const float PERFECT_TIMING_WINDOW = 0.090f;
     const float DEFENSE_TIMING_WINDOW = 0.160f;
     const int MAX_COMBO = 8;
@@ -53,12 +53,11 @@ private:
     CS1972Engine::World *m_world;
     COGScript *m_script;
     glm::vec3 m_particleOffset = glm::vec3(0.f);
+    float m_fade = 1.f;
 
     bool m_firstTick = true;
     float m_beatstep;
     float m_beats = 0.f;
-
-    CS1972Engine::Sound *m_bgm;
 
     float m_maxYaw = 0.25f*glm::pi<float>();
     float m_maxPitch = 0.25f*glm::pi<float>();
@@ -76,6 +75,7 @@ private:
     int m_combo = 1;
     int m_prevJudge = 0;
 
+    int m_gameOver = 0;
     int m_health = 5;
     float m_iframes = 0.f;
     float m_defenseDisable = 0.f;
@@ -101,6 +101,9 @@ public:
     virtual void draw() override;
     void drawScene(float beat);
     void drawHud(float beat);
+    void drawReticle(float beat);
+    void drawDefenseRing(float beat);
+    void drawHudComponents(float beat);
 
     virtual void mousePressEvent(QMouseEvent *event) override;
     virtual void mouseMoveEvent(QMouseEvent *event) override;

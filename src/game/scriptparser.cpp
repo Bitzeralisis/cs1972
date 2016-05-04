@@ -81,15 +81,11 @@ int ScriptParser::parseAction(QStringList &line, COGScriptAction *&action) {
     std::string command = line[1].toStdString();
 
     int retval = 0;
-    if      (command == "disappear") action = new COGScriptAction(Action::DISAPPEAR);
-    else if (command == "set")       retval = parseActionSetAttribute(line, action);
-    else if (command == "spawn")     retval = parseActionSpawn(line, action);
-    else if (command == "shoot")     retval = parseActionShoot(line, action);
-    else if (command == "play")      retval = parseActionPlay(line, action);
-    else {
-        lineErr() << "Warning: Unrecognized action-name " << command << std::endl;
-        return 1;
-    }
+    if      (command == "set")   retval = parseActionSetAttribute(line, action);
+    else if (command == "spawn") retval = parseActionSpawn(line, action);
+    else if (command == "shoot") retval = parseActionShoot(line, action);
+    else if (command == "play")  retval = parseActionPlay(line, action);
+    else                         action = new COGScriptActionCommand(command);
 
     if (retval)
         return retval;
@@ -194,11 +190,10 @@ int ScriptParser::parseActionSetAttribute(QStringList &line, COGScriptAction *&a
 
 Attribute ScriptParser::peekAttribute(QStringList &line, int pos, int &length) {
     QString name = line[pos];
-    if      (name == "pos")        { length = 5; return Attribute::POSITION; }
-    else if (name == "vel")        { length = 5; return Attribute::VELOCITY; }
-    else if (name == "acc")        { length = 5; return Attribute::ACCELERATION; }
-    else if (name == "targetable") { length = 2; return Attribute::TARGETABLE; }
-    else                           { length = 1; return Attribute::UNDEFINED; }
+    if      (name == "pos")   { length = 5; return Attribute::POSITION; }
+    else if (name == "vel")   { length = 5; return Attribute::VELOCITY; }
+    else if (name == "acc")   { length = 5; return Attribute::ACCELERATION; }
+    else                      { length = 2; return Attribute::FLOAT; }
 }
 
 int ScriptParser::parseAttribute(QStringList &line, int pos, COGScriptActionSetAttribute *&set) {
@@ -215,9 +210,10 @@ int ScriptParser::parseAttribute(QStringList &line, int pos, COGScriptActionSetA
         break;
     }
 
-    case Attribute::TARGETABLE: {
+    case Attribute::FLOAT: {
         COGScriptAttributeFloat *attr = new COGScriptAttributeFloat();
         set = attr;
+        attr->key = line[pos].toStdString();
         attr->value = atof(line[pos+1].toUtf8().constData());
         break;
     }

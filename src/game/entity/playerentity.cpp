@@ -1,4 +1,5 @@
 #include "playerentity.h"
+#include "game/cogscript.h"
 #include "game/entity/enemyshotentity.h"
 #include "engine/graphics/particlemodule.h"
 
@@ -40,6 +41,23 @@ void PlayerEntity::makeParticles(int amount, glm::vec3 position, float width, gl
 
 void PlayerEntity::attachShot(EnemyShotEntity *shot) {
     m_attachedShots.push_back(shot);
+}
+
+void PlayerEntity::performAction(COGScriptAction *action) {
+    switch (action->action) {
+    case Action::COMMAND: {
+        COGScriptActionCommand *command = (COGScriptActionCommand *) action;
+        if (command->command == "win") m_win = true;
+        else
+            break;
+        return;
+    }
+
+    default:
+        break;
+    }
+
+    ControlledEntity::performAction(action);
 }
 
 void PlayerEntity::tickBeats(float beats) {

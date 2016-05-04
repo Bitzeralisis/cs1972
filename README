@@ -24,14 +24,29 @@ Game Requirements
 ========================================
 [ ] Level scripting
     [ ] Levels are loaded from external files
+
+        Please see res/level/level.cogs for an example of a level file.
+
     [ ] Level files follow a specific format
         [ ] Times & spawns
+
+        Please see SCRIPTING, which is the specification for script files'
+        formats.
+
     [ ] Robust parser
+
+        Please see src/game/scriptparser.*. All errors are reported to standard
+        error.
+
 [ ] Player has health and can lose
 [ ] Feedback
     [ ] Upon health lost
     [ ] Upon successful defense
 [ ] Improved defense mechanic
+
+    Press W, A, or D when a bullet overlaps the corresponding defense area in
+    the defense ring.
+
 [ ] Game experience
     [ ] Intro screen that requires player input to advance
     [ ] Game screen

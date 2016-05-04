@@ -18,13 +18,13 @@ enum class Attribute {
     VELOCITY,
     ACCELERATION,
     // Single-value attributes
-    TARGETABLE,
+    FLOAT,
 };
 
 enum class Action {
     UNDEFINED,
     // Simple actions (no arguments)
-    DISAPPEAR,
+    COMMAND,
     // Attributes
     SET_ATTRIBUTE,
     // Advanced
@@ -42,6 +42,11 @@ struct COGScriptAction {
     COGScriptAction(Action type) : action(type) { }
 };
 
+struct COGScriptActionCommand : public COGScriptAction {
+    std::string command;
+    explicit COGScriptActionCommand(std::string cmd = "") : COGScriptAction(Action::COMMAND), command(cmd) { }
+};
+
 // Action types - attributes
 struct COGScriptActionSetAttribute : public COGScriptAction {
     Attribute attr;
@@ -54,6 +59,7 @@ struct COGScriptAttributeSpatial : public COGScriptActionSetAttribute {
 };
 
 struct COGScriptAttributeFloat : public COGScriptActionSetAttribute {
+    std::string key;
     float value;
 };
 
