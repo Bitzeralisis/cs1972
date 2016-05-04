@@ -29,8 +29,8 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.45254834"
-     inkscape:cx="870.21429"
-     inkscape:cy="629.61253"
+     inkscape:cx="823.81041"
+     inkscape:cy="543.43389"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -58,7 +58,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -87,7 +87,7 @@
          id="tspan4798" /><tspan
          sodipodi:role="line"
          x="259.72623"
-         y="224.80597"
+         y="224.80598"
          id="tspan4872">EDEN FULL-DIVE SYSTEM PRIMER.</tspan><tspan
          sodipodi:role="line"
          x="259.72623"
@@ -112,7 +112,7 @@
          sodipodi:role="line"
          x="259.72623"
          y="524.80597"
-         id="tspan4810">Click / hold to shoot.</tspan><tspan
+         id="tspan4810">Click / hold to lock-on and shoot.</tspan><tspan
          sodipodi:role="line"
          x="259.72623"
          y="574.80597"

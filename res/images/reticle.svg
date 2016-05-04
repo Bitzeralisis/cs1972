@@ -24,6 +24,18 @@
      id="defs4">
     <linearGradient
        inkscape:collect="always"
+       id="linearGradient8772">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1"
+         offset="0"
+         id="stop8774" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:0"
+         offset="1"
+         id="stop8776" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
        id="linearGradient5668">
       <stop
          style="stop-color:#ffffff;stop-opacity:1;"
@@ -74,6 +86,17 @@
        x2="320"
        y2="352"
        gradientUnits="userSpaceOnUse" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient8772"
+       id="radialGradient8778"
+       cx="624"
+       cy="876.36218"
+       fx="624"
+       fy="876.36218"
+       r="16"
+       gradientTransform="matrix(0.25,0,0,3,484,-1704.7244)"
+       gradientUnits="userSpaceOnUse" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -83,8 +106,8 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.95155579"
-     inkscape:cx="409.46043"
-     inkscape:cy="277.96275"
+     inkscape:cx="475.50775"
+     inkscape:cy="176.39701"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -111,7 +134,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -304,5 +327,12 @@
        d="m 128,823.36216 -8,8 8,8 8,-8 z"
        id="path4248-2-2-6-56"
        inkscape:connector-curvature="0" />
+    <ellipse
+       style="opacity:1;fill:url(#radialGradient8778);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="path8770"
+       cx="640"
+       cy="924.36218"
+       rx="4"
+       ry="48" />
   </g>
 </svg>

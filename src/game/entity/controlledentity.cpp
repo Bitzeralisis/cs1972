@@ -101,8 +101,11 @@ void ControlledEntity::tickBeats(float beats) {
     float startBeat = totalBeats()-beats;
     if (m_behavior) {
         while (m_step < m_behavior->actions.size() && (m_behavior->actions[m_step]->beat <= totalBeats() || m_behavior->actions[m_step]->queued)) {
-            tickPhysicsContinuous(m_behavior->actions[m_step]->beat - startBeat);
-            startBeat = m_behavior->actions[m_step]->beat;
+            COGScriptAction *action = m_behavior->actions[m_step];
+            if (action->action == Action::SET_ATTRIBUTE) {
+                tickPhysicsContinuous(m_behavior->actions[m_step]->beat - startBeat);
+                startBeat = m_behavior->actions[m_step]->beat;
+            }
             performAction(m_behavior->actions[m_step]);
             ++m_step;
         }

@@ -17,7 +17,7 @@ int ScriptParser::nextLine(QStringList &line) {
             return 1;
         line = nextLine.trimmed().split(QRegularExpression("\\s+"));
         ++m_lineNumber;
-    } while (line[0] == "");
+    } while (line[0] == "" || line[0].startsWith("//"));
     return 0;
 }
 

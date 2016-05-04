@@ -66,6 +66,7 @@ private:
 
     PlayerEntity *m_player;
     glm::vec2 m_mousePosition;
+    glm::vec2 m_mouseMove = glm::vec2(0.f);
     EnemyEntity *m_nextTarget = 0;
     float m_prevShot = -1.f;
     float m_shootUntil = -1.f;
@@ -86,7 +87,7 @@ private:
     bool m_keysHeld[4] = { false, false, false, false };
 
 private:
-    void boundMouse();
+    void boundMouse(float seconds);
     void startShooting(float beat);
     void keepShooting(float beat);
     void goodCombo(float beat);

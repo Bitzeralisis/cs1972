@@ -62,12 +62,36 @@ GameScreen::~GameScreen() {
     delete m_script;
 }
 
-void GameScreen::boundMouse() {
+void GameScreen::boundMouse(float seconds) {
     float W = parent->width();
     float H = parent->height();
     float hSize = glm::round(H*RETICLE_SIZE_FACTOR * 0.5f);
     float viewSensitivity = graphics().camera()->fovy() / W;
 
+    m_mousePosition += m_mouseMove;
+    m_mouseMove = glm::vec2(0.f);
+
+    glm::vec2 mouseDisplace(0.f);
+
+    if (m_mousePosition.x < 0.25f*W)
+        mouseDisplace.x = (1.f-glm::pow(0.01f, seconds)) * (m_mousePosition.x - 0.25f*W);
+    else if (m_mousePosition.x > 0.75*W)
+        mouseDisplace.x = (1.f-glm::pow(0.01f, seconds)) * (m_mousePosition.x - 0.75f*W);
+    if (m_mousePosition.y < 0.25f*H)
+        mouseDisplace.y = (1.f-glm::pow(0.01f, seconds)) * (m_mousePosition.y - 0.25f*H);
+    else if (m_mousePosition.y > 0.75*H)
+        mouseDisplace.y = (1.f-glm::pow(0.01f, seconds)) * (m_mousePosition.y - 0.75f*H);
+
+    glm::vec2 cameraPos = glm::vec2(graphics().camera()->yaw(), graphics().camera()->pitch()) + glm::vec2(1.f, -1.f)*viewSensitivity*mouseDisplace;
+    glm::vec2 boundedCameraPos = glm::min(glm::max(-1.f*glm::vec2(m_maxYaw, m_maxPitch), cameraPos), glm::vec2(m_maxYaw, m_maxPitch));
+    graphics().camera()->yaw(boundedCameraPos.x);
+    graphics().camera()->pitch(boundedCameraPos.y);
+
+    mouseDisplace += glm::vec2(1.f, -1.f)*(boundedCameraPos-cameraPos)/viewSensitivity;
+    m_mousePosition -= mouseDisplace;
+    m_mousePosition = glm::min(glm::max(glm::vec2(0.f, 0.f), m_mousePosition), glm::vec2(W, H));
+
+    /*
     if (m_mousePosition.x < hSize) {
         graphics().camera()->yaw(graphics().camera()->yaw() + viewSensitivity*(m_mousePosition.x - hSize));
         m_mousePosition.x = hSize;
@@ -76,7 +100,6 @@ void GameScreen::boundMouse() {
         m_mousePosition.x = W-hSize;
     }
     graphics().camera()->yaw(glm::min(glm::max(-1.f*m_maxYaw, graphics().camera()->yaw()), m_maxYaw));
-
     if (m_mousePosition.y < hSize) {
         graphics().camera()->pitch(graphics().camera()->pitch() - viewSensitivity*(m_mousePosition.y - hSize));
         m_mousePosition.y = hSize;
@@ -84,9 +107,7 @@ void GameScreen::boundMouse() {
         graphics().camera()->pitch(graphics().camera()->pitch() - viewSensitivity*(m_mousePosition.y + hSize-H));
         m_mousePosition.y = H-hSize;
     }
-    graphics().camera()->pitch(glm::min(glm::max(-1.f*m_maxPitch, graphics().camera()->pitch()), m_maxPitch));
-
-    m_mousePosition = glm::round(m_mousePosition);
+    */
 }
 
 void GameScreen::startShooting(float beat) {
@@ -212,7 +233,7 @@ void GameScreen::tick(float seconds) {
     if (audio().bgm())
         beats = seconds*audio().bgm()->bpm()/60.f;
 
-    boundMouse();
+    boundMouse(seconds);
 
     if (m_iframes > 0.f)
         m_iframes -= beats;
@@ -341,7 +362,6 @@ void GameScreen::drawScene(float beat) {
     }
 
     // Set up camera
-    boundMouse();
     graphics().camera()->position(glm::vec3(0.f));
     graphics().camera()->fovy(0.75f*glm::half_pi<float>());
     graphics().camera()->near(0.1f);
@@ -508,55 +528,68 @@ void GameScreen::drawReticle(float beat) {
     float W = parent->width();
     float H = parent->height();
 
-    float hSize = H*RETICLE_SIZE_FACTOR_DRAW * 0.5f;
+    glm::vec2 mousePos = glm::round(m_mousePosition);
+    glm::vec2 size(H*RETICLE_SIZE_FACTOR_DRAW);
     graphics().shader()->useTexture(true);
     graphics().shader()->bindTexture("reticle");
 
-    float hSize2 = hSize * (1.f+glm::mod(beat, 1.f));
+    // Draw shooting pulsing
     graphics().uishader()->color(glm::vec4(1.f, 1.f, 1.f, glm::max(0.f, glm::min(0.5f*(m_shootUntil-beat), 1.f-glm::mod(beat, 1.f)))));
     graphics().uishader()->drawQuad(
-        m_mousePosition.x-hSize2, m_mousePosition.x+hSize2, m_mousePosition.y-hSize2, m_mousePosition.y+hSize2,
+        mousePos, size * (1.f+glm::mod(beat, 1.f)),
         0.25f, 0.5f, 0.5f, 1.f
     );
 
-    //for (float f = glm::ceil(beat*4.f)/4.f; f < m_shootUntil; f += 0.25f) {
+    // Draw needles that pop out while shooting
+    /*
+    if (beat < m_shootUntil+0.25f) {
+        float rotation = glm::mod(beat-glm::mod(beat, 0.25f), 2.f);
+        graphics().uishader()->color(glm::vec4(1.f, 1.f, 1.f, 1.f-glm::abs(8.f*glm::mod(beat, 0.25f)-1.f)));
+        glm::vec2 pos = glm::rotate(glm::vec2(0.f, (-0.25f-2.f*glm::mod(beat, 0.25f))*size.y), rotation*glm::pi<float>());
+        graphics().uishader()->drawQuad(
+            mousePos+pos, size, -180.f*rotation,
+            0.5f, 0.75f, 0.f, 0.5f
+        );
+    }
+    */
+
+    // Draw combo ticks
     for (int i = 0; i < m_combo; ++i) {
         graphics().uishader()->color(glm::vec4(1.f));
         graphics().uishader()->drawQuad(
-            m_mousePosition.x-hSize, m_mousePosition.x+hSize, m_mousePosition.y-hSize, m_mousePosition.y+hSize,
-            //-180.f * glm::mod(f, 2.f),
-            -45.f * i,
+            mousePos, size, -45.f*i,
             0.5f, 0.75f, 0.5f, 1.f
         );
     }
 
+    // Draw the main part of the reticle
     graphics().uishader()->color(glm::vec4(1.f));
     graphics().uishader()->drawQuad(
-        m_mousePosition.x-hSize, m_mousePosition.x+hSize, m_mousePosition.y-hSize, m_mousePosition.y+hSize,
+        mousePos, size,
         0.f, 0.25f, 0.f, 0.5f
     );
 
+    // Draw the spinning white thing
     graphics().uishader()->color(glm::vec4(1.f));
     graphics().uishader()->drawQuad(
-        m_mousePosition.x-hSize, m_mousePosition.x+hSize, m_mousePosition.y-hSize, m_mousePosition.y+hSize,
-        -180.f * glm::mod(beat, 2.f),
+        mousePos, size, -180.f * glm::mod(beat, 2.f),
         0.25f, 0.5f, 0.f, 0.5f
     );
 
+    // Draw the hold-down effects
     if (m_mouseHeld[0] || m_keysHeld[3] ||  beat-m_prevMiss < 2.f*PERFECT_TIMING_WINDOW) {
-        hSize *= 1.05f;
+        size *= 1.05f;
         if (m_prevJudge == 2 || m_prevJudge == 3)
             graphics().uishader()->color(glm::vec4(1.f, 0.f, 0.f, 1.f));
         else
             graphics().uishader()->color(glm::vec4(1.f, 1.f, 1.f, 0.5f));
         graphics().uishader()->drawQuad(
-            m_mousePosition.x-hSize, m_mousePosition.x+hSize, m_mousePosition.y-hSize, m_mousePosition.y+hSize,
+            mousePos, size,
             0.f, 0.25f, 0.5f, 1.f
         );
         for (int i = 0; i < m_combo; ++i) {
             graphics().uishader()->drawQuad(
-                m_mousePosition.x-hSize, m_mousePosition.x+hSize, m_mousePosition.y-hSize, m_mousePosition.y+hSize,
-                -45.f * i,
+                mousePos, size, -45.f * i,
                 0.75f, 1.f, 0.5f, 1.f
             );
         }
@@ -571,7 +604,7 @@ void GameScreen::drawDefenseRing(float beat) {
     float lanesHave[3] = { 0.f, 0.f, 0.f };
     float hasAny = 0.f;
     for (std::deque<EnemyShotEntity *>::iterator it = m_player->attachedShots()->begin(); it != m_player->attachedShots()->end(); ++it) {
-        if ((*it)->hitBeat()-beat > 8.f)
+        if ((*it)->hitBeat()-beat > 12.f)
             break;
         else if ((*it)->hitBeat()-beat > 4.f) {
             lanesHave[(*it)->approachLane()] = glm::max(0.5f, lanesHave[(*it)->approachLane()]);
@@ -592,6 +625,7 @@ void GameScreen::drawDefenseRing(float beat) {
     if (hasAny > 0.f) {
         graphics().shader()->useTexture(true);
         graphics().shader()->bindTexture("enemyshot");
+
         glm::vec2 size(H*DEFENSERING_SIZE_FACTOR);
         glm::vec2 center(0.5f*W, H-0.15f*H);
         float offset = size.x*2.5f;
@@ -599,9 +633,11 @@ void GameScreen::drawDefenseRing(float beat) {
         float fallSpeed = 0.15f;
         float laneOffset = offset-size.x/2.f+laneLength/2.f;
         glm::vec2 laneSize(size.x, laneLength);
-        glm::vec2 centers[3] = { center-glm::vec2(0.f, offset), center-glm::vec2(offset, 0.f), center+glm::vec2(offset, 0.f) };
+        glm::vec2 markerCenters[3] = { center-glm::vec2(0.f, offset), center-glm::vec2(offset, 0.f), center+glm::vec2(offset, 0.f) };
         glm::vec2 laneCenters[3] = { center-glm::vec2(0.f, laneOffset), center-glm::vec2(laneOffset, 0.f), center+glm::vec2(laneOffset, 0.f) };
-        glm::vec2 offsets[3] = { glm::vec2(0.f, -1.f*fallSpeed*laneLength), glm::vec2(-1.f*fallSpeed*laneLength, 0.f), glm::vec2(fallSpeed*laneLength, 0.f) };
+        glm::vec2 offsets[3] = { glm::vec2(0.f, -1.f), glm::vec2(-1.f, 0.f), glm::vec2(1.f, 0.f) };
+        float noteOffset = fallSpeed*laneLength;
+        float letterOffset = size.x;
         float rotations[3] = { 0.f, 90.f, -90.f };
 
         float flicker = hasAny;
@@ -612,36 +648,32 @@ void GameScreen::drawDefenseRing(float beat) {
         graphics().uishader()->color(glm::vec4(1.f, 1.f, 1.f, flicker));
         if (m_iframes > 0.f)
             graphics().uishader()->drawQuad(
-                center, 2.f*size, 0.f,
-                0.375f, 0.5f, 0.75f, 1.f
+                center, 4.f*size, 0.f,
+                0.25f, 0.5f, 0.5f, 0.75f
             );
         if (m_defenseDisable <= 0.f) {
             if (m_iframes <= 0.f)
                 graphics().uishader()->drawQuad(
-                    center, 2.f*size, 0.f,
-                    0.375f, 0.5f, 0.25f, 0.5f
+                    center, 4.f*size, 0.f,
+                    0.f, 0.25f, 0.5, 0.75f
                 );
             graphics().uishader()->drawQuad(
                 center, 4.f*size, 45.f*glm::mod(beat, 8.f),
-                0.5f, 0.75f, 0.f, 0.5f
+                0.5f, 0.75f, 0.f, 0.25f
             );
             graphics().uishader()->drawQuad(
                 center, 4.f*size, -45.f*glm::mod(beat, 8.f),
-                0.75f, 1.f, 0.f, 0.5f
-            );
-            graphics().uishader()->drawQuad(
-                center, 4.f*size, 0.f,
-                0.5f, 0.75f, 0.5f, 1.f
+                0.75f, 1.f, 0.f, 0.25f
             );
         } else {
             if (m_iframes <= 0.f)
                 graphics().uishader()->drawQuad(
-                    center, 2.f*size, 0.f,
-                    0.375f, 0.5f, 0.5f, 0.75f
+                    center, 4.f*size, 0.f,
+                    0.f, 0.25f, 0.75f, 1.f
                 );
             graphics().uishader()->drawQuad(
                 center, 4.f*size, 0.f,
-                0.75f, 1.f, 0.5f, 1.f
+                0.75f, 1.f, 0.25f, 0.5f
             );
         }
 
@@ -651,71 +683,111 @@ void GameScreen::drawDefenseRing(float beat) {
                 graphics().uishader()->color(glm::vec4(1.f, 1.f, 1.f, lanesHave[i]));
                 graphics().uishader()->drawQuad(
                     laneCenters[i], laneSize, rotations[i],
-                    0.0625f, 0.125f, 0.f, 1.f
+                    0.0625f, 0.125f, 0.f, 0.5f
                 );
+                graphics().uishader()->drawQuad(
+                    markerCenters[i] - letterOffset*offsets[i], size, 0.f,
+                    0.375f, 0.4375f, 0.125f+0.0625*i, 0.1875f+0.0625*i
+                );
+                if (lanesHave[i] >= 1.f) {
+                    graphics().uishader()->color(glm::vec4(1.f, 1.f, 1.f, glm::abs(glm::mod(beat, 2.f)-1.f)));
+                    graphics().uishader()->drawQuad(
+                        markerCenters[i] - letterOffset*offsets[i], size, 0.f,
+                        0.4375f, 0.5f, 0.125f+0.0625*i, 0.1875f+0.0625*i
+                    );
+                }
             }
 
         // Draw projectiles
+        int i = 0;
+        GLfloat *lines = new GLfloat[16*m_player->attachedShots()->size()];
+
         float blink = (glm::mod(beat, 1.f) < 0.5f) ? 0.f : 0.0625f;
-        graphics().uishader()->color(glm::vec4(0.5f, 0.5f, 0.5f, 1.f));
-        for (std::deque<EnemyShotEntity *>::iterator it = m_player->attachedShots()->begin(); it != m_player->attachedShots()->end(); ++it) {
-            if ((*it)->hitBeat()-beat > 8.f)
+        for (auto it = m_player->attachedShots()->begin(); it != m_player->attachedShots()->end(); ++it) {
+            if ((*it)->hitBeat()-beat > 12.f)
                 break;
             if ((*it)->hitBeat()-beat <= 4.f)
                 graphics().uishader()->color(glm::vec4(1.f));
+            else
+                graphics().uishader()->color(glm::vec4(0.5f, 0.5f, 0.5f, 1.f));
             float offset = 0.f;
             if (glm::mod((*it)->hitBeat(), 1.f) != 0.f)
-                offset += 0.25f;
+                offset += 0.125f;
             if (glm::mod((*it)->hitBeat(), 0.5f) != 0.f)
-                offset += 0.25f;
+                offset += 0.125f;
             if (glm::mod((*it)->hitBeat(), 0.25f) != 0.f)
-                offset += 0.25f;
+                offset += 0.125f;
             int lane = (*it)->approachLane();
+            glm::vec2 pos = markerCenters[lane] + offsets[lane]*noteOffset*((*it)->hitBeat()-beat);
             graphics().uishader()->drawQuad(
-                centers[lane] + offsets[lane]*((*it)->hitBeat()-beat), size, 0.f,
-                0.125f+blink, 0.1875f+blink, 0.f+offset, 0.125f+offset
+                pos, size, 0.f,
+                0.125f+blink, 0.1875f+blink, 0.f+offset, 0.0625f+offset
             );
+
+            if (pos.x >= -1.f*size.x && pos.x <= W+size.x && pos.y >= -1.f*size.y) {
+                glm::vec3 ortho = graphics().uishader()->cameraSpaceToUisSpace((*it)->visualPosition());
+                lines[8*i+0] = pos.x;
+                lines[8*i+1] = pos.y;
+                lines[8*i+2] = 0.f;
+                ++i;
+                lines[8*i+0] = ortho.x;
+                lines[8*i+1] = ortho.y;
+                lines[8*i+2] = 0.f;
+                ++i;
+            }
         }
 
+        if (i) {
+            graphics().shader()->mTransform(glm::mat4(1.f));
+            graphics().shader()->useTexture(false);
+            graphics().uishader()->color(glm::vec4(1.f, 0.f, 0.f, 0.5f));
+            glLineWidth(1.f);
+            auto line = new CS1972Engine::Primitive(i, 8*i*sizeof(GLfloat), GL_LINES, lines, 0);
+            line->drawArray();
+            delete line;
+        }
+        delete[] lines;
+
         // Draw hit markers && judgements
+        graphics().shader()->useTexture(true);
         for (int i = 0; i < 3; ++i) {
             if (m_keysHeld[i]) {
                 graphics().uishader()->color(glm::vec4(1.f));
-                if (m_defenseDisable <= 0.f && beat-m_prevSuccessfulBlock[i] < 2.f)
+                if (m_defenseDisable <= 0.f && m_prevSuccessfulBlock[i] > m_prevMissedBlock[i])
                     graphics().uishader()->drawQuad(
-                        centers[i], size, 0.f,
-                        0.f, 0.0625f, 0.125f, 0.25f
+                        markerCenters[i], size, 0.f,
+                        0.f, 0.0625f, 0.0625f, 0.125f
                     );
                 else
                     graphics().uishader()->drawQuad(
-                        centers[i], size, 0.f,
-                        0.f, 0.0625f, 0.25f, 0.375f
+                        markerCenters[i], size, 0.f,
+                        0.f, 0.0625f, 0.125f, 0.1875f
                     );
             } else if (m_defenseDisable <= 0.f) {
                 graphics().uishader()->color(glm::vec4(1.f, 1.f, 1.f, lanesHave[i]));
                 graphics().uishader()->drawQuad(
-                    centers[i], size, 0.f,
-                    0.f, 0.0625f, 0.f, 0.125f
+                    markerCenters[i], size, 0.f,
+                    0.f, 0.0625f, 0.f, 0.0625f
                 );
             }
 
             graphics().uishader()->color(glm::vec4(1.f));
             if (beat-m_prevMissedBlock[i] < 2.f) {
                 graphics().uishader()->drawQuad(
-                    centers[i], 2.f*size, 0.f,
-                    0.375f, 0.5f, 0.f, 0.25f
+                    markerCenters[i], 2.f*size, 0.f,
+                    0.375f, 0.5f, 0.f, 0.125f
                 );
             } else if (beat-m_prevSuccessfulBlock[i] < 2.f) {
                 float offset = 0.f;
                 if (glm::mod(m_prevSuccessfulBlock[i], 1.f) != 0.f)
-                    offset += 0.25f;
+                    offset += 0.125f;
                 if (glm::mod(m_prevSuccessfulBlock[i], 0.5f) != 0.f)
-                    offset += 0.25f;
+                    offset += 0.125f;
                 if (glm::mod(m_prevSuccessfulBlock[i], 0.25f) != 0.f)
-                    offset += 0.25f;
+                    offset += 0.125f;
                 graphics().uishader()->drawQuad(
-                    centers[i], 2.f*size, 0.f,
-                    0.25f, 0.375f, 0.f+offset, 0.25f+offset
+                    markerCenters[i], 2.f*size, 0.f,
+                    0.25f, 0.375f, 0.f+offset, 0.125f+offset
                 );
             }
         }
@@ -837,7 +909,7 @@ void GameScreen::mouseMoveEvent(QMouseEvent *event) {
 
     int dx = event->x() - parent->width() / 2;
     int dy = event->y() - parent->height() / 2;
-    m_mousePosition += glm::vec2(dx, dy) * MOUSE_SENSITIVITY_FACTOR * (float) parent->height();
+    m_mouseMove += glm::vec2(dx, dy) * MOUSE_SENSITIVITY_FACTOR * (float) parent->height();
 }
 
 void GameScreen::mouseReleaseEvent(QMouseEvent *event) {

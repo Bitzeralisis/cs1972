@@ -54,6 +54,10 @@ void UiShaderModule::drawQuad(float left, float right, float bottom, float top, 
     m_parent->uiQuad()->drawArray();
 }
 
+void UiShaderModule::drawQuad(glm::vec2 center, glm::vec2 size, float texLeft, float texRight, float texBottom, float texTop) {
+    drawQuad(center, size, 0.f, texLeft, texRight, texBottom, texTop);
+}
+
 void UiShaderModule::drawQuad(glm::vec2 center, glm::vec2 size, float rotation, float texLeft, float texRight, float texBottom, float texTop) {
     glm::mat4 m(1.f);
     m = glm::translate(m, glm::vec3(center.x, center.y, 0.f));

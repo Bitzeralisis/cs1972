@@ -12,6 +12,6 @@ void COGEntity::tick(float seconds) {
 }
 
 void COGEntity::draw(int pass) {
-    if (GAME->beat() >= m_firstBeat)
+    if (GAME->beat() >= m_firstBeat && m_prevBeat > m_firstBeat)
         draw(pass, GAME->beat());
 }
