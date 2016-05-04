@@ -35,9 +35,8 @@ def diamonda-1-b
     20 disappear
 end
 
-def main
+def main2
     q 0 play sound/1.mp3 150 0.052245 32 96
-
     0 set vel abs 1 0 0
 
     12 spawn cubea cubea-1 pos abs . 0 -5
@@ -81,7 +80,17 @@ def main
 
     q 96 play sound/2.mp3 150 0.052245 0 64
     92 set offset 96
+end
 
+def main
+    q 0 play sound/2.mp3 150 0.052245 0 64
+    0 set vel abs 1 0 0
+    0 spawn gate gate-1 pos abs 32 0 0 vel abs -2 0 0
+    24 spawn gate gate-1 pos abs 32 0 0 vel abs -2 0 0
+end
+
+
+def main3
     4 spawn diamonda diamonda-1-a pos abs 5 20 -2
     20 spawn diamonda diamonda-1-a pos abs 5 20 2
     36 spawn diamonda diamonda-1-b pos abs 5 20 -2

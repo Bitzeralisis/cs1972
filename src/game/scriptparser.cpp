@@ -1,6 +1,6 @@
 #include "scriptparser.h"
 #include <QFile>
-#include <QRegularExpression>
+#include <QRegExp>
 #include <QTextStream>
 #include <iostream>
 
@@ -11,11 +11,11 @@ ScriptParser::ScriptParser(const char *file)
 { }
 
 int ScriptParser::nextLine(QStringList &line) {
-    QString nextLine;
     do {
-        if (!m_stream->readLineInto(&nextLine, 0))
+        if (m_stream->atEnd())
             return 1;
-        line = nextLine.trimmed().split(QRegularExpression("\\s+"));
+        QString nextLine = m_stream->readLine();
+        line = nextLine.trimmed().split(QRegExp("\\s+"));
         ++m_lineNumber;
     } while (line[0] == "" || line[0].startsWith("//"));
     return 0;

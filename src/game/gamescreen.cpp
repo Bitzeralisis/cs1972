@@ -46,7 +46,9 @@ GameScreen::GameScreen(CS1972Engine::Game *parent)
     GAME->controller(m_player);
     m_world->addEntity(LAYER_CONTROLLER, m_player);
 
-    m_world->addEntity(LAYER_AMBIENCE, new AmbientEntity(0.f));
+    AmbientEntity *ambience = new AmbientEntity(0.f);
+    m_player->m_ambience = ambience;
+    m_world->addEntity(LAYER_AMBIENCE, m_player->m_ambience);
 
     // Tick once to add all entities
     m_world->tick(0.f);
@@ -90,24 +92,6 @@ void GameScreen::boundMouse(float seconds) {
     mouseDisplace += glm::vec2(1.f, -1.f)*(boundedCameraPos-cameraPos)/viewSensitivity;
     m_mousePosition -= mouseDisplace;
     m_mousePosition = glm::min(glm::max(glm::vec2(0.f, 0.f), m_mousePosition), glm::vec2(W, H));
-
-    /*
-    if (m_mousePosition.x < hSize) {
-        graphics().camera()->yaw(graphics().camera()->yaw() + viewSensitivity*(m_mousePosition.x - hSize));
-        m_mousePosition.x = hSize;
-    } else if (m_mousePosition.x > W-hSize) {
-        graphics().camera()->yaw(graphics().camera()->yaw() + viewSensitivity*(m_mousePosition.x + hSize-W));
-        m_mousePosition.x = W-hSize;
-    }
-    graphics().camera()->yaw(glm::min(glm::max(-1.f*m_maxYaw, graphics().camera()->yaw()), m_maxYaw));
-    if (m_mousePosition.y < hSize) {
-        graphics().camera()->pitch(graphics().camera()->pitch() - viewSensitivity*(m_mousePosition.y - hSize));
-        m_mousePosition.y = hSize;
-    } else if (m_mousePosition.y > H-hSize) {
-        graphics().camera()->pitch(graphics().camera()->pitch() - viewSensitivity*(m_mousePosition.y + hSize-H));
-        m_mousePosition.y = H-hSize;
-    }
-    */
 }
 
 void GameScreen::startShooting(float beat) {

@@ -12,5 +12,5 @@ in vec3 colorv;
 void main() {
     gNormal = vec3(0.f);
     gColor = vec3(0.f);
-    gGlow = texture2D(particle_tex, texc).rgb * colorv * min(1.f, lifef);
+    gGlow = texture2D(particle_tex, texc).rgb * colorv * min(1.f, lifef) - 2.f*mod(lifef, 0.01f);
 }

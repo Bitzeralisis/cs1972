@@ -14,13 +14,17 @@ void PlayerEntity::gainScoreValue(int score) {
 }
 
 void PlayerEntity::makeParticles(int amount, glm::vec3 position, float width, glm::vec3 velocity, glm::vec3 color, glm::vec2 life) {
+    makeParticles(amount, position, glm::vec3(width), velocity, color, life);
+}
+
+void PlayerEntity::makeParticles(int amount, glm::vec3 position, glm::vec3 size, glm::vec3 velocity, glm::vec3 color, glm::vec2 life) {
     GLfloat *pos = new GLfloat[4*amount];
     GLfloat *vel = new GLfloat[3*amount];
     GLfloat *col = new GLfloat[3*amount];
     for (int i = 0; i < amount; ++i) {
-        pos[4*i+0] = width * (float) rand() / RAND_MAX - width*0.5f + position.x;
-        pos[4*i+1] = width * (float) rand() / RAND_MAX - width*0.5f + position.y;
-        pos[4*i+2] = width * (float) rand() / RAND_MAX - width*0.5f + position.z;
+        pos[4*i+0] = size.x * (float) rand() / RAND_MAX - size.x*0.5f + position.x;
+        pos[4*i+1] = size.y * (float) rand() / RAND_MAX - size.y*0.5f + position.y;
+        pos[4*i+2] = size.z * (float) rand() / RAND_MAX - size.z*0.5f + position.z;
         pos[4*i+3] = (life.y-life.x) * (float) rand() / RAND_MAX + life.x;
     }
     for (int i = 0; i < amount; ++i) {

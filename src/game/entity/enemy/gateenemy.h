@@ -10,6 +10,7 @@ public:
     virtual ~GateEnemy() { }
 
 private:
+    bool m_opened = false;
     bool m_open[8] = { false, false, false, false, false, false, false, false };
 
 public:
