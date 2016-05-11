@@ -21,11 +21,22 @@ private:
     int m_combo;
     int m_dealtDamage = 0;
 
+    float m_minFog = 0.f;
+    float m_maxFog = 0.f;
+    int m_cameraBehavior = 0;
+    float m_baseYaw = 0.f;
+    float m_basePitch = 0.f;
+    float m_yawLimit = 0.25f;
+    float m_pitchLimit = 0.25f;
+
     AmbientEntity *m_ambience;
     std::deque<EnemyShotEntity *> m_attachedShots;
 
 public:
     VALUE_ACCESSOR(AmbientEntity *,ambience)
+    VALUE_ACCESSOR(float,maxFog)
+    VALUE_ACCESSOR(float,baseYaw)
+    VALUE_ACCESSOR(float,basePitch)
 
     void dealDamage() { ++m_dealtDamage; }
     std::deque<EnemyShotEntity *> *attachedShots() { return &m_attachedShots; }

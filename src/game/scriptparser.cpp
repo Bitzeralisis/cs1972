@@ -43,7 +43,7 @@ int ScriptParser::parseRoot(COGScript *&script) {
             if (parseBehavior(behavior))
                 return 1;
             if (script->behaviors.count(name)) {
-                lineErr() << "Warning: Redefinition of behavior " << name << std::endl;
+                lineErr() << "Warning: Ignored redefinition of behavior " << name << std::endl;
                 delete behavior;
                 continue;
             }

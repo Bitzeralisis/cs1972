@@ -60,7 +60,9 @@ SOURCES += \
     src/game/cogscript.cpp \
     src/game/entity/cogentity.cpp \
     src/game/mainmenuscreen.cpp \
-    src/game/entity/enemy/gateenemy.cpp
+    src/game/entity/enemy/gateenemy.cpp \
+    src/game/entity/enemy/swimmeraenemy.cpp \
+    src/game/entity/enemy/swimmerbenemy.cpp
 
 HEADERS += \
     libs/glew-1.10.0/include/GL/glew.h \
@@ -107,7 +109,9 @@ HEADERS += \
     src/game/entity/controlledentity.h \
     src/game/cogscript.h \
     src/game/mainmenuscreen.h \
-    src/game/entity/enemy/gateenemy.h
+    src/game/entity/enemy/gateenemy.h \
+    src/game/entity/enemy/swimmeraenemy.h \
+    src/game/entity/enemy/swimmerbenemy.h
 
 
 FORMS += src/mainwindow.ui
@@ -124,6 +128,7 @@ OTHER_FILES += \
     res/images/cube2.png \
     res/images/diamond1.png \
     res/images/enemy2.png \
+    res/images/skybox.png \
     res/images/particle1.png \
     res/images/particle2.png \
     res/images/particle3.png \
@@ -131,7 +136,7 @@ OTHER_FILES += \
     res/images/enemyshot.png \
     res/images/target.png \
     res/images/hud.png \
-    res/level/level.txt
+    res/level/level.cogs
 
 DISTFILES += \
     res/shaders/shader.vert \

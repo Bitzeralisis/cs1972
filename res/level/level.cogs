@@ -1,8 +1,63 @@
 def cubea-1
+    0 set targetable 0
     0 set pos abs 30 . .
     0 set vel abs -2 0 0
-    0 set targetable 0
     4 set targetable 1
+    16 disappear
+end
+
+def cubea-2-a
+    0 set targetable 0
+    0 set pos abs 40 . .
+    0 set vel abs -4 0 0
+    2.5 set targetable 1
+    10 set acc abs 4 0 0
+    13 set acc abs 0 0 0
+    20 disappear
+end
+
+def cubea-2-b
+    0 set targetable 0
+    0 set pos abs 40 . .
+    0 set vel abs -4 0 0
+    2.5 set targetable 1
+    13 disappear
+end
+
+def cubea-2-c
+    0 set targetable 0
+    0 set pos rel -40 . .
+    0 set vel abs 41 . .
+    0 set acc abs -20 . .
+    2 set targetable 1
+    2 set vel abs 1 . .
+    2 set acc abs 0 . .
+    10 set acc abs -2 . .
+end
+
+def cubea-3-a
+    0 set vel abs 1 . .
+    72 disappear
+end
+
+def cubea-3-b
+    0 set targetable 0
+    0 set vel abs -10 . .
+    0 set acc abs 5 . .
+    2 set targetable 1
+    2 set acc abs -2 . .
+    7 set acc abs 0 . .
+    16 disappear
+end
+
+def cubea-3-c
+    0 set targetable 0
+    0 set vel abs -10 . .
+    0 set acc abs 5 . .
+    2 set targetable 1
+    2 set acc abs -2 . .
+    3 shoot 7 0 0 pos rel -0.75 0 0 vel abs -4 0 0
+    7 set acc abs 0 . .
     16 disappear
 end
 
@@ -11,6 +66,22 @@ def gate-1
     6 set targetable 1
     16 crash
     16 disappear
+end
+
+def gate-2
+    0 set targetable 0
+    18 set targetable 1
+    34 crash
+    34 disappear
+end
+
+def gate-2-helper
+    18     shoot 8 0 1 pos rel 0 0 -2 vel rel 0 0 -8
+    18.75  shoot 8 0 2 pos rel 0 0 2 vel rel 0 0 8
+    19.5   shoot 8 0 1 pos rel 0 0 -2 vel rel 0 0 -8
+    20.25  shoot 8 0 0 pos rel 0 2 0 vel rel 0 8 0
+    21     shoot 8 0 2 pos rel 0 0 2 vel rel 0 0 8
+    34 disappear
 end
 
 def diamonda-1-a
@@ -35,9 +106,204 @@ def diamonda-1-b
     20 disappear
 end
 
-def main2
+def diamonda-2-a
+    0 set pos abs . -20 .
+    0 set vel abs 0 10 0
+    0 set acc abs 0 -2.5 0
+    4 set vel abs 0 0 0
+    4 set acc abs 0 0 0
+    12 set acc abs -0.25 0 0
+    20 disappear
+end
+
+def diamonda-2-b
+    0 set pos abs . -20 .
+    0 set vel abs 0 10 0
+    0 set acc abs 0 -2.5 0
+    4 set vel abs 0 0 0
+    4 set acc abs 0 0 0
+    8 set acc abs -0.25 0 0
+    16 disappear
+end
+
+def diamonda-2-c
+    0 set pos abs . -20 .
+    0 set vel abs 0 10 0
+    0 set acc abs 0 -2.5 0
+    4 set vel abs 0 0 0
+    4 set acc abs 0 0 0
+    12 shoot 8 0 0 pos rel 0 0.75 0 vel abs 0 4 0
+    12 set acc abs -0.25 0 0
+    16 disappear
+end
+
+def diamonda-3-a
+    0 set pos rel . 10 .
+    0 set vel abs . -10 .
+    0 set acc abs . 5 .
+    2 set acc abs . 0 .
+    8 set acc abs -1 . .
+    20 disappear
+end
+
+def diamonda-3-b
+    0 set vel abs 1 0 0
+    40 shoot 8 0 0 pos rel 0 -0.75 0 vel abs 0 -4 0
+    72 disappear
+end
+
+def diamonda-3-c
+    0 set pos rel . 10 .
+    0 set vel abs . -10 .
+    0 set acc abs . 5 .
+    2 set acc abs . 0 .
+    14 shoot 8 0 1 pos rel 0 0.75 0 vel abs 0 4 0
+    18 set acc abs -1 . .
+    34 disappear
+end
+
+def diamonda-3-d
+    0 set pos rel . -10 .
+    0 set vel abs . 10 .
+    0 set acc abs . -5 .
+    2 set acc abs . 0 .
+    14 shoot 8 0 2 pos rel 0 -0.75 0 vel abs 0 -4 0
+    18 set acc abs -1 . .
+    34 disappear
+end
+
+def swimmera-1-a
+    0 set targetable 0
+    0 set pos rel . -10 .
+    0 set vel abs . 10 .
+    0 set acc abs . -5 .
+    2 set targetable 1
+    2 set acc abs . 0 .
+    4 set acc abs . 1 .
+    12 disappear
+end
+
+def swimmera-1-b
+    0 set pos rel . -10 .
+    0 set vel abs . 10 .
+    0 set acc abs . -5 .
+    2 set acc abs . 0 .
+    4 set acc abs -1 . .
+    16 disappear
+end
+
+def swimmera-1-c
+    0 set pos rel . 10 .
+    0 set vel abs . -10 .
+    0 set acc abs . 5 .
+    2 set acc abs . 0 .
+    4 set acc abs -1 . .
+    16 disappear
+end
+
+def swimmera-1-d
+    0 set pos rel . -10 .
+    0 set vel abs . 10 .
+    0 set acc abs . -5 .
+    2 set acc abs . 0 .
+    3 shoot 7 0 0 pos rel 0 0.75 0 vel abs 0 4 0
+    4 set acc abs . 1 .
+    12 disappear
+end
+
+def swimmerb-1-a
+    13 shoot 7 0 2 pos rel 1 -0.3 0 vel abs 4 0 0
+    32 disappear
+end
+
+def swimmerb-1-b
+    13 shoot 7 0 1 pos rel 1 -0.3 0 vel abs 4 0 0
+    32 disappear
+end
+
+def swimmerb-2
+    0 set vel abs 0.25 0.02 0
+    24 shoot 8 0 0 pos rel 1 -0.3 0 vel abs 4 0 0
+    40 shoot 8 0 0 pos rel 1 -0.3 0 vel abs 4 0 0
+    56 shoot 8 0 0 pos rel 1 -0.3 0 vel abs 4 0 0
+    72 shoot 8 0 0 pos rel 1 -0.3 0 vel abs 4 0 0
+    88 shoot 8 0 0 pos rel 1 -0.3 0 vel abs 4 0 0
+    104 shoot 8 0 0 pos rel 1 -0.3 0 vel abs 4 0 0
+    120 shoot 8 0 0 pos rel 1 -0.3 0 vel abs 4 0 0
+    128 set acc abs 1 0 0
+    136 disappear
+end
+
+def area5spawner1
+    0 spawn swimmerb swimmerb-2 pos abs 5 -20 -6
+    0 spawn swimmerb swimmerb-2 pos abs 5 -20 6
+    
+    0 spawn cubea cubea-3-a pos abs -10 0 -15
+    2 spawn cubea cubea-3-a pos abs -10 0 -15
+    4 spawn cubea cubea-3-a pos abs -10 0 -15
+    6 spawn cubea cubea-3-a pos abs -10 0 -15
+    0 spawn cubea cubea-3-a pos abs -10 0 15
+    2 spawn cubea cubea-3-a pos abs -10 0 15
+    4 spawn cubea cubea-3-a pos abs -10 0 15
+    6 spawn cubea cubea-3-a pos abs -10 0 15
+
+    64 spawn diamonda diamonda-3-b pos abs -10 20 -8
+    64 spawn diamonda diamonda-3-b pos abs -10 20 -4
+    64 spawn diamonda diamonda-3-b pos abs -10 20  4
+    64 spawn diamonda diamonda-3-b pos abs -10 20  8
+    68 spawn diamonda cubea-3-a pos abs -10 20 -8
+    68 spawn diamonda cubea-3-a pos abs -10 20 -4
+    68 spawn diamonda cubea-3-a pos abs -10 20  4
+    68 spawn diamonda cubea-3-a pos abs -10 20  8
+
+    128 disappear
+end
+
+def area5spawner2
+    0     spawn cubea cubea-3-b pos abs 60  4 -9
+    0.75  spawn cubea cubea-3-b pos abs 60 -4  9
+    1.5   spawn cubea cubea-3-b pos abs 60  9 -4
+    2.25  spawn cubea cubea-3-b pos abs 60 -9  4
+    3     spawn cubea cubea-3-b pos abs 60  9  4
+    3.5   spawn cubea cubea-3-b pos abs 60 -9 -4
+    4     spawn cubea cubea-3-b pos abs 60  4  9
+    5.75  spawn cubea cubea-3-b pos abs 60 -4 -9
+
+    5.5   spawn cubea cubea-3-b pos abs 60 -4  9
+    6.25  spawn cubea cubea-3-b pos abs 60  4 -9
+    7     spawn cubea cubea-3-b pos abs 60 -9  4
+    7.5   spawn cubea cubea-3-b pos abs 60  9 -4
+    8     spawn cubea cubea-3-b pos abs 60 -9 -4
+    8.75  spawn cubea cubea-3-b pos abs 60  9  4
+    9.5   spawn cubea cubea-3-b pos abs 60 -4 -9
+
+    10.25 spawn diamonda diamonda-3-a pos abs 5 0 -2
+    11    spawn diamonda diamonda-3-a pos abs 5 0 2
+
+    // 16     spawn cubea cubea-3-b pos abs 60 -5  11
+    // 16.75  spawn cubea cubea-3-b pos abs 60  5  11
+    // 17.5   spawn cubea cubea-3-b pos abs 60 11   5
+    // 18.25  spawn cubea cubea-3-b pos abs 60 11  -5
+    // 19     spawn cubea cubea-3-b pos abs 60  5 -11
+    // 19.5   spawn cubea cubea-3-b pos abs 60 -5 -11
+
+    // 20     spawn cubea cubea-3-b pos abs 60 -5 -11
+    // 20.75  spawn cubea cubea-3-b pos abs 60  5 -11
+    // 21.5   spawn cubea cubea-3-b pos abs 60 11  -5
+    // 22.25  spawn cubea cubea-3-b pos abs 60 11   5
+    // 23     spawn cubea cubea-3-b pos abs 60  5  11
+    // 23.5   spawn cubea cubea-3-b pos abs 60 -5  11
+
+    32 disappear
+end
+
+def main
+    // Area 1
+
     q 0 play sound/1.mp3 150 0.052245 32 96
     0 set vel abs 1 0 0
+    0 set fog.near 20
+    0 set fog.far 30
 
     12 spawn cubea cubea-1 pos abs . 0 -5
 
@@ -79,23 +345,424 @@ def main2
     80 spawn gate gate-1 pos abs 32 0 0 vel abs -2 0 0
 
     q 96 play sound/2.mp3 150 0.052245 0 64
-    92 set offset 96
-end
+    96 set offset 96
 
-def main
-    q 0 play sound/2.mp3 150 0.052245 0 64
-    0 set vel abs 1 0 0
-    0 spawn gate gate-1 pos abs 32 0 0 vel abs -2 0 0
-    24 spawn gate gate-1 pos abs 32 0 0 vel abs -2 0 0
-end
+    // Area 2
 
+    0 set vel abs 4 0 0
 
-def main3
-    4 spawn diamonda diamonda-1-a pos abs 5 20 -2
-    20 spawn diamonda diamonda-1-a pos abs 5 20 2
-    36 spawn diamonda diamonda-1-b pos abs 5 20 -2
-    36 spawn diamonda diamonda-1-b pos abs 5 20 2
+    4 spawn diamonda diamonda-1-a pos abs 5 . -2
+    20 spawn diamonda diamonda-1-a pos abs 5 . 2
+    36 spawn diamonda diamonda-1-b pos abs 5 . -2
+    36 spawn diamonda diamonda-1-b pos abs 5 . 2
+
     48 spawn gate gate-1 pos abs 32 0 0 vel abs -2 0 0
 
-    64 win
+    q 64 play sound/16.mp3 150 0.052245 0 128
+    64 set offset 64
+
+    // Area 3
+
+    0 set vel abs 10 0 0
+    0 set fog.near 30
+    0 set fog.far 40
+
+    0 spawn diamonda diamonda-2-a pos abs 10 . -3
+    // 4 spawn diamonda diamonda-2-b pos abs 10 . 2
+    8 spawn diamonda diamonda-2-a pos abs 9 . 3 
+    // 12 spawn diamonda diamonda-2-b pos abs 9 . 4
+
+    16 spawn diamonda diamonda-2-c pos abs 6 . -2
+    16 spawn diamonda diamonda-2-c pos abs 5 . -4
+    24 spawn diamonda diamonda-2-c pos abs 6 . 2
+    24 spawn diamonda diamonda-2-c pos abs 5 . 4
+
+    30     set zone 21
+    32     set zone 2
+
+    32 spawn cubea cubea-2-b pos abs . -1 -5.5
+    32 spawn cubea cubea-2-b pos abs . 1 -5.5
+    33 spawn cubea cubea-2-b pos abs . -1 -5.5
+    33 spawn cubea cubea-2-b pos abs . 1 -5.5
+    34 spawn cubea cubea-2-b pos abs . -1 -5.5
+    34 spawn cubea cubea-2-b pos abs . 1 -5.5
+
+    36 spawn cubea cubea-2-b pos abs . -1 5.5
+    36 spawn cubea cubea-2-b pos abs . 1 5.5
+    37 spawn cubea cubea-2-b pos abs . -1 5.5
+    37 spawn cubea cubea-2-b pos abs . 1 5.5
+    38 spawn cubea cubea-2-b pos abs . -1 5.5
+    38 spawn cubea cubea-2-b pos abs . 1 5.5
+
+    40 spawn cubea cubea-2-a pos abs . 5.5 5.5
+    40 spawn cubea cubea-2-a pos abs . 5.5 -5.5
+    40 spawn cubea cubea-2-a pos abs . -5.5 5.5
+    40 spawn cubea cubea-2-a pos abs . -5.5 -5.5
+
+    46    spawn cubea cubea-2-c pos abs 4 -5 -6
+    46.25 spawn cubea cubea-2-c pos abs 4 -4.5 -4.5
+    46.5  spawn cubea cubea-2-c pos abs 4 -4 -3
+    46.75 spawn cubea cubea-2-c pos abs 4 -3.5 -1.5
+    47    spawn cubea cubea-2-c pos abs 4 -3 0
+    47.25 spawn cubea cubea-2-c pos abs 4 -2.5 1.5
+    47.5  spawn cubea cubea-2-c pos abs 4 -2 3
+    47.75 spawn cubea cubea-2-c pos abs 4 -1.5 4.5
+    48    spawn cubea cubea-2-c pos abs 4 -1 6
+
+    54    spawn cubea cubea-2-c pos abs 4 5 6
+    54.25 spawn cubea cubea-2-c pos abs 4 4.5 4.5
+    54.5  spawn cubea cubea-2-c pos abs 4 4 3
+    54.75 spawn cubea cubea-2-c pos abs 4 3.5 1.5
+    55    spawn cubea cubea-2-c pos abs 4 3 0
+    55.25 spawn cubea cubea-2-c pos abs 4 2.5 -1.5
+    55.5  spawn cubea cubea-2-c pos abs 4 2 -3
+    55.75 spawn cubea cubea-2-c pos abs 4 1.5 -4.5
+    56    spawn cubea cubea-2-c pos abs 4 1 -6
+
+    62     set zone 21
+    64     set zone 2
+
+    64 spawn diamonda diamonda-2-a pos abs 6 . -4.5
+    64 spawn diamonda diamonda-2-c pos abs 7.5 . -1.5
+    64 spawn diamonda diamonda-2-c pos abs 7.5 . 1.5
+    64 spawn diamonda diamonda-2-a pos abs 6 . 4.5
+
+    80 spawn diamonda diamonda-2-c pos abs 8 . -6
+    80 spawn diamonda diamonda-2-a pos abs 10 . -2
+    80 spawn diamonda diamonda-2-a pos abs 10 . 2
+    80 spawn diamonda diamonda-2-c pos abs 8 . 6
+
+    94     set zone 23
+    94.625 set zone 22
+    94.75  set zone 24
+    95.325 set zone 22
+    95.5   set zone 23
+    95.75  set zone 24
+    95.875 set zone 22
+    96     set zone 2
+
+    96 spawn cubea cubea-2-b pos abs . -5.5 -2
+    96 spawn cubea cubea-2-b pos abs . -5.5 0
+    96 spawn cubea cubea-2-b pos abs . -5.5 2
+    97 spawn cubea cubea-2-b pos abs . -5.5 -2
+    97 spawn cubea cubea-2-b pos abs . -5.5 0
+    97 spawn cubea cubea-2-b pos abs . -5.5 2
+    98 spawn cubea cubea-2-b pos abs . -5.5 -2
+    98 spawn cubea cubea-2-b pos abs . -5.5 0
+    98 spawn cubea cubea-2-b pos abs . -5.5 2
+
+    100 spawn cubea cubea-2-b pos abs . 5.5 -2
+    100 spawn cubea cubea-2-b pos abs . 5.5 0
+    100 spawn cubea cubea-2-b pos abs . 5.5 2
+    101 spawn cubea cubea-2-b pos abs . 5.5 -2
+    101 spawn cubea cubea-2-b pos abs . 5.5 0
+    101 spawn cubea cubea-2-b pos abs . 5.5 2
+    102 spawn cubea cubea-2-b pos abs . 5.5 -2
+    102 spawn cubea cubea-2-b pos abs . 5.5 0
+    102 spawn cubea cubea-2-b pos abs . 5.5 2
+
+    104 spawn cubea cubea-2-a pos abs . 5.5 5.5
+    104 spawn cubea cubea-2-a pos abs . 5.5 -5.5
+    104 spawn cubea cubea-2-a pos abs . -5.5 5.5
+    104 spawn cubea cubea-2-a pos abs . -5.5 -5.5
+    105 spawn cubea cubea-2-a pos abs . 5.5 5.5
+    105 spawn cubea cubea-2-a pos abs . 5.5 -5.5
+    105 spawn cubea cubea-2-a pos abs . -5.5 5.5
+    105 spawn cubea cubea-2-a pos abs . -5.5 -5.5
+
+    110     set zone 24
+    110.625 set zone 22
+    110.75  set zone 23
+    111.375 set zone 22
+    111.5   set zone 24
+    111.625 set zone 22
+    111.75  set zone 23
+    111.875 set zone 22
+    112     set zone 2
+
+    112 spawn gate gate-1 pos abs 40 0 0 vel abs -2.5 0 0
+
+    q 128 play sound/26.mp3 150 0.052245 32 64
+
+    126     set zone 21
+    128     set zone 2
+
+    128 set offset 128
+
+    // Area 4
+
+    0 set vel abs 4 0 0
+    0 set fog.near 20
+    0 set fog.far 30
+
+    8 spawn swimmera swimmera-1-a pos abs 5 0 0
+    9 spawn swimmera swimmera-1-a pos abs 4.25 1 2.5
+    10 spawn swimmera swimmera-1-a pos abs 4.75 -1 1.25
+    10 set camera.special 1
+
+    11 spawn swimmera swimmera-1-a pos abs 3.5 1 3.5
+    12 spawn swimmera swimmera-1-a pos abs 1.25 0 4.75
+    13 spawn swimmera swimmera-1-a pos abs 2.5 -1 4.25
+
+    14 spawn swimmera swimmera-1-a pos abs 0 0 5
+    15 spawn swimmera swimmera-1-a pos abs -2.5 1 4.25
+    16 spawn swimmera swimmera-1-a pos abs -1.25 -1 4.75
+
+    17 spawn swimmera swimmera-1-a pos abs -3.5 1 3.5
+    17 spawn swimmera swimmera-1-a pos abs -4.75 0 1.25
+    18 spawn swimmera swimmera-1-a pos abs -4.25 -1 2.5
+
+    20 spawn swimmera swimmera-1-a pos abs -5 0 0
+    21 spawn swimmera swimmera-1-a pos abs -4.25 1 -2.5
+    22 spawn swimmera swimmera-1-a pos abs -4.75 -1 -1.25
+
+    23 spawn swimmera swimmera-1-a pos abs -3.5 1 -3.5
+    23 spawn swimmera swimmera-1-a pos abs -1.25 0 -4.75
+    24 spawn swimmera swimmera-1-a pos abs -2.5 -1 -4.25
+
+    26 spawn swimmera swimmera-1-a pos abs 0 0 -5
+    27 spawn swimmera swimmera-1-a pos abs 2.5 1 -4.25
+    28 spawn swimmera swimmera-1-a pos abs 1.25 -1 -4.75
+
+    29 spawn swimmera swimmera-1-a pos abs 3.5 1 -3.5
+    30 spawn swimmera swimmera-1-a pos abs 4.75 0 -1.25
+    31 spawn swimmera swimmera-1-a pos abs 4.25 -1 -2.5
+
+    32 set camera.special 0
+    32 set camera.yawbase 0
+
+    32 spawn swimmera swimmera-1-b pos abs 10 -4 -4
+    33 spawn swimmera swimmera-1-c pos abs 10 4 -4
+    34 spawn swimmera swimmera-1-c pos abs 10 4 4
+    35 spawn swimmera swimmera-1-b pos abs 10 -4 4
+
+    36 spawn swimmera swimmera-1-c pos abs 10 4 -6
+    37 spawn swimmera swimmera-1-c pos abs 10 4 0
+    38 spawn swimmera swimmera-1-c pos abs 10 4 6
+    39 spawn swimmera swimmera-1-b pos abs 10 -4 6
+    40 spawn swimmera swimmera-1-b pos abs 10 -4 0
+    41 spawn swimmera swimmera-1-b pos abs 10 -4 -6
+
+    42 spawn swimmera swimmera-1-c pos abs 5 2 -2
+    43 spawn swimmera swimmera-1-c pos abs 5 2 2
+    44 spawn swimmera swimmera-1-b pos abs 10 -4 6
+    45 spawn swimmera swimmera-1-b pos abs 10 -4 -6
+    46 spawn swimmera swimmera-1-c pos abs 10 4 -6
+    47 spawn swimmera swimmera-1-c pos abs 10 4 6
+    48 spawn swimmera swimmera-1-b pos abs 5 -2 2
+    49 spawn swimmera swimmera-1-b pos abs 5 -2 -2
+    
+    54 spawn swimmera swimmera-1-b pos abs 10 0 -6
+    54 spawn swimmera swimmera-1-c pos abs 10 0 -4.5
+    54 spawn swimmera swimmera-1-b pos abs 10 0 -3
+    54 spawn swimmera swimmera-1-c pos abs 10 0 -1.5
+    54 spawn swimmera swimmera-1-b pos abs 10 0 0
+    54 spawn swimmera swimmera-1-c pos abs 10 0 1.5
+    54 spawn swimmera swimmera-1-b pos abs 10 0 3
+    54 spawn swimmera swimmera-1-c pos abs 10 0 4.5
+    54 spawn swimmera swimmera-1-b pos abs 10 0 6
+
+    59 spawn swimmera swimmera-1-b pos abs 5 -2 -2
+    59 spawn swimmera swimmera-1-b pos abs 5 -2 0
+    59 spawn swimmera swimmera-1-b pos abs 5 -2 2
+
+    64 set camera.yawbase -0.66
+    64 spawn swimmerb swimmerb-1-a pos abs -3 0 -6
+    64 spawn swimmerb swimmerb-1-a pos abs -11 -7 -9
+    64 spawn swimmerb swimmerb-1-a pos abs -11 7 -9
+    88 set camera.yawbase 0
+
+    90 spawn swimmera swimmera-1-b pos abs 5 0 -2
+    90 spawn swimmera swimmera-1-b pos abs 5 0 2
+
+    96 set camera.yawbase 0.66
+    96 spawn swimmerb swimmerb-1-b pos abs -3 0 6
+    96 spawn swimmerb swimmerb-1-b pos abs -11 -7 9
+    96 spawn swimmerb swimmerb-1-b pos abs -11 7 9
+    120 set camera.yawbase 0
+
+    122 spawn swimmera swimmera-1-d pos abs 5 0 0
+    122 spawn swimmera swimmera-1-d pos abs 5 0 -2
+    122 spawn swimmera swimmera-1-d pos abs 5 0 2
+
+    q 128 set bgm.loop 0
+
+    128 spawn cubea cubea-2-b pos abs . 5.5 5.5
+    128 spawn cubea cubea-2-b pos abs . 5.5 -5.5
+    128 spawn cubea cubea-2-b pos abs . -5.5 5.5
+    128 spawn cubea cubea-2-b pos abs . -5.5 -5.5
+
+    136 spawn gate gate-1 pos abs 32 0 0 vel abs -2 0 0
+
+    q 152 play sound/14.mp3 150 0.052245 0 32
+    152 set offset 152
+
+    // Area 5
+
+    0 set vel abs 12 0 0
+    0 set fog.near 50
+    0 set fog.far 60
+    0 set camera.yawlimit 0.33
+    0 set camera.pitchlimit 0.33
+
+    q 0 spawn controller area5spawner1
+
+    2   spawn cubea cubea-3-b pos abs 60  10 -12
+    2.5 spawn cubea cubea-3-b pos abs 60  10 -12
+    3   spawn cubea cubea-3-b pos abs 60  10 -12
+    3.5 spawn cubea cubea-3-b pos abs 60  10 -12
+    4   spawn cubea cubea-3-b pos abs 60  10  12
+    4.5 spawn cubea cubea-3-b pos abs 60  10  12
+    5   spawn cubea cubea-3-b pos abs 60  10  12
+    5.5 spawn cubea cubea-3-b pos abs 60  10  12
+    6   spawn cubea cubea-3-b pos abs 60 -10  12
+    6.5 spawn cubea cubea-3-b pos abs 60 -10  12
+    7   spawn cubea cubea-3-b pos abs 60 -10  12
+    7.5 spawn cubea cubea-3-b pos abs 60 -10  12
+    8   spawn cubea cubea-3-b pos abs 60 -10 -12
+    8.5 spawn cubea cubea-3-b pos abs 60 -10 -12
+    9   spawn cubea cubea-3-b pos abs 60 -10 -12
+    9.5 spawn cubea cubea-3-b pos abs 60 -10 -12
+
+    12   spawn cubea cubea-3-b pos abs 60  10 -6
+    12   spawn cubea cubea-3-b pos abs 60  10 -2
+    12   spawn cubea cubea-3-b pos abs 60  10  2
+    12   spawn cubea cubea-3-b pos abs 60  10  6
+    12.5 spawn cubea cubea-3-b pos abs 60  10 -6
+    12.5 spawn cubea cubea-3-b pos abs 60  10 -2
+    12.5 spawn cubea cubea-3-b pos abs 60  10  2
+    12.5 spawn cubea cubea-3-b pos abs 60  10  6
+
+    16   spawn cubea cubea-3-b pos abs 60 -10 -6
+    16   spawn cubea cubea-3-b pos abs 60 -10 -2
+    16   spawn cubea cubea-3-b pos abs 60 -10  2
+    16   spawn cubea cubea-3-b pos abs 60 -10  6
+    16.5 spawn cubea cubea-3-b pos abs 60 -10 -6
+    16.5 spawn cubea cubea-3-b pos abs 60 -10 -2
+    16.5 spawn cubea cubea-3-b pos abs 60 -10  2
+    16.5 spawn cubea cubea-3-b pos abs 60 -10  6
+
+    22   spawn cubea cubea-3-b pos abs 60 -10   0
+    22   spawn cubea cubea-3-b pos abs 60  10   0
+    22   spawn cubea cubea-3-b pos abs 60   0  12
+    22   spawn cubea cubea-3-b pos abs 60   0 -12
+
+    30    spawn swimmera swimmera-1-c pos abs 5  2 -2
+    30.75 spawn swimmera swimmera-1-c pos abs 5  2  2
+    31.5  spawn swimmera swimmera-1-b pos abs 5 -2  2
+    32    spawn swimmera swimmera-1-b pos abs 5 -2 -2
+    33.5  spawn swimmera swimmera-1-c pos abs 10  4 -4
+    34.5  spawn swimmera swimmera-1-c pos abs 10  4  0
+    35.5  spawn swimmera swimmera-1-c pos abs 10  4  4
+    36    spawn swimmera swimmera-1-b pos abs 10 -4  4.5
+    36.5  spawn swimmera swimmera-1-b pos abs 10 -4  1.5
+    37    spawn swimmera swimmera-1-b pos abs 10 -4 -1.5
+    37.5  spawn swimmera swimmera-1-b pos abs 10 -4 -4.5
+    38    spawn swimmera swimmera-1-c pos abs 5  1 -3
+    38.75 spawn swimmera swimmera-1-c pos abs 5  1  3
+    39.5  spawn diamonda diamonda-3-a pos abs 5 -1  0
+
+    46    spawn swimmera swimmera-1-c pos abs 5  2 -2
+    46.75 spawn swimmera swimmera-1-c pos abs 5  0.66 -0.66
+    47.5  spawn swimmera swimmera-1-b pos abs 5 -0.66 0.66
+    48    spawn swimmera swimmera-1-b pos abs 5 -2  2
+    49.5  spawn swimmera swimmera-1-c pos abs 10 4 4
+    50.5  spawn swimmera swimmera-1-c pos abs 10 2.66 2.66
+    51.5  spawn swimmera swimmera-1-c pos abs 10 1.33 1.33
+    52    spawn swimmera swimmera-1-b pos abs 10 0 0
+    52.5  spawn swimmera swimmera-1-b pos abs 10 -1.33 -1.33
+    53    spawn swimmera swimmera-1-b pos abs 10 -2.66 -2.66
+    53.5  spawn swimmera swimmera-1-b pos abs 10 -4 -4
+    54    spawn swimmera swimmera-1-c pos abs 5  1  3
+    54.75 spawn swimmera swimmera-1-c pos abs 5  1 -3
+    55.5  spawn diamonda diamonda-3-a pos abs 5 -1  0
+
+    62 spawn diamonda diamonda-3-c pos abs 4 -2 -3
+    62 spawn diamonda diamonda-3-c pos abs 5 -2 -1
+    62 spawn diamonda diamonda-3-c pos abs 5 -2  1
+    62 spawn diamonda diamonda-3-c pos abs 4 -2  3
+
+    65 set bgm.loop 0
+
+    78 spawn diamonda diamonda-3-d pos abs 4 2  3
+    78 spawn diamonda diamonda-3-d pos abs 5 2  1
+    78 spawn diamonda diamonda-3-d pos abs 5 2 -1
+    78 spawn diamonda diamonda-3-d pos abs 4 2 -3
+
+    126 spawn gate gate-2 pos abs 68 0 0 vel abs -2 0 0
+    126 spawn controller gate-2-helper pos abs 68 0 0 vel abs -2 0 0
+    126 spawn controller area5spawner2
+
+    128    set zone 43
+    128.75 set zone 42
+    129.5  set zone 41
+    130.25 set zone 43
+    131    set zone 42
+    131.5  set zone 43
+    132    set zone 42
+    132.75 set zone 43
+    133.5  set zone 42
+    134.25 set zone 43
+    135    set zone 41
+    135.5  set zone 44
+    136    set zone 41
+    136.75 set zone 43
+    137.5  set zone 41
+    138.25 set zone 42
+    139    set zone 41
+    140    set zone 44
+
+    144    set zone 43
+    144.75 set zone 42
+    145.5  set zone 41
+    146.25 set zone 43
+    147    set zone 42
+    147.5  set zone 43
+    148    set zone 42
+    148.75 set zone 43
+    149.5  set zone 42
+    150.25 set zone 43
+    151    set zone 41
+    151.5  set zone 42
+    152    set zone 41
+    152.75 set zone 43
+    153.5  set zone 41
+    154.25 set zone 42
+    155    set zone 43
+    156    set zone 45
+
+    q 160 play sound/22.mp3 150 0.052245 0 32
+    160 set zone 4
+    160 set offset 160
+
+    // Boss Area
+
+    0 set vel abs 1 0 0
+    0 set fog.near 20
+    0 set fog.far 30
+    0 set camera.yawlimit 0.25
+    0 set camera.pitchlimit 0.25
+
+    4 win
+end
+
+def main2
+    q 0 play sound/1.mp3 150 0.052245 32 96
+    q 0 set fog.near 20
+    q 0 set fog.far 30
+    q 0 set camera.yawlimit 1
+    0 spawn cubea . pos abs 5 0 0 vel abs 0 0 0 targetable 0
+    0 spawn cubea . pos abs 5 2 0 vel abs 0 0 0 targetable 0
+    0 spawn cubea . pos abs 5 4 0 vel abs 0 0 0 targetable 0
+    0 spawn cubea . pos abs 5 -2 0 vel abs 0 0 0 targetable 0
+    0 spawn cubea . pos abs 5 -4 0 vel abs 0 0 0 targetable 0
+    0 spawn diamonda . pos abs 5 0 -3 vel abs 0 0 0 targetable 0
+    0 spawn diamonda . pos abs 5 2 -3 vel abs 0 0 0 targetable 0
+    0 spawn diamonda . pos abs 5 4 -3 vel abs 0 0 0 targetable 0
+    0 spawn diamonda . pos abs 5 -2 -3 vel abs 0 0 0 targetable 0
+    0 spawn diamonda . pos abs 5 -4 -3 vel abs 0 0 0 targetable 0
+    0 spawn swimmerb . pos abs 5 0 3 vel abs 0 0 0 targetable 0
+    0 spawn swimmerb . pos abs 5 4 3 vel abs 0 0 0 targetable 0
+    0 spawn swimmerb . pos abs 5 -4 3 vel abs 0 0 0 targetable 0
+    0 spawn swimmerb . pos abs 0 0 7 vel abs 0 0 0 targetable 0
 end

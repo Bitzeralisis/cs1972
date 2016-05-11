@@ -4,10 +4,10 @@
 
 namespace COG {
 
-class CubeaEnemy : public EnemyEntity {
+class SwimmeraEnemy : public EnemyEntity {
 public:
-    CubeaEnemy(float beat);
-    virtual ~CubeaEnemy() { }
+    SwimmeraEnemy(float beat);
+    virtual ~SwimmeraEnemy() { }
 
 public:
     virtual void draw(int pass, float beat) override;

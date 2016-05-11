@@ -59,10 +59,10 @@ private:
     float m_beatstep;
     float m_beats = 0.f;
 
+    float m_baseYaw = 0.f;
+    float m_basePitch = 0.f;
     float m_maxYaw = 0.25f*glm::pi<float>();
     float m_maxPitch = 0.25f*glm::pi<float>();
-    float m_minFog = 20.f;
-    float m_maxFog = 30.f;
 
     PlayerEntity *m_player;
     glm::vec2 m_mousePosition;

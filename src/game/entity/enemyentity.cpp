@@ -20,12 +20,6 @@ EnemyEntity::~EnemyEntity() {
         (*it)->detatchShot(false, m_position);
 }
 
-void EnemyEntity::shoot(float beat, float travelTime, glm::vec3 pos, glm::vec3 vel, int type, int lane) {
-    EnemyShotEntity *shot = new EnemyShotEntity(beat, travelTime, pos, vel, GAME->controller(), type, lane);
-    parent()->addEntity(GameScreen::LAYER_ENEMY_PROJECTILES, shot);
-    GAME->controller()->attachShot(shot);
-}
-
 void EnemyEntity::attachShot(PlayerShotEntity *shot) {
     m_attachedShots.push_back(shot);
     --m_futureHealth;
@@ -33,14 +27,6 @@ void EnemyEntity::attachShot(PlayerShotEntity *shot) {
 
 void EnemyEntity::performAction(COGScriptAction *action) {
     switch (action->action) {
-    case Action::SHOOT: {
-        COGScriptActionShoot *act = (COGScriptActionShoot *) action;
-        glm::vec3 pos = act->pos.coord + (act->pos.relative ? m_position : glm::vec3(0.f));
-        glm::vec3 vel = act->vel.coord + (act->vel.relative ? m_velocity : glm::vec3(0.f));
-        shoot(firstBeat() + act->beat, act->travel, pos, vel, act->type, act->lane);
-        return;
-    }
-
     case Action::SET_ATTRIBUTE: {
         COGScriptActionSetAttribute *act = (COGScriptActionSetAttribute *) action;
         switch (act->attr) {
@@ -69,7 +55,7 @@ void EnemyEntity::tickBeats(float beats) {
     ControlledEntity::tickBeats(beats);
 
     // Lose all attached shots if untargetable
-    if (!m_targetable) {
+    if (!targetable()) {
         for (auto it = m_attachedShots.begin(); it != m_attachedShots.end(); ++it)
             (*it)->detatchShot(false, m_position);
         m_attachedShots.clear();

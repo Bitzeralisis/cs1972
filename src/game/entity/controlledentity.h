@@ -22,6 +22,8 @@ public:
     void giveBehavior(const COGScriptBehavior *behavior) { m_step = 0; m_behavior = behavior; }
     virtual void performAction(COGScriptAction *action);
 
+    void shoot(float beat, float travelTime, glm::vec3 pos, glm::vec3 vel, int type, int lane);
+
     virtual void tickBeats(float beats) override;
     virtual void draw(int pass, float beat) override { }
 };

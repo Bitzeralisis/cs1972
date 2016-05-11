@@ -34,7 +34,14 @@ void EnemyShotEntity::tickBeats(float beats) {
     if (m_approachLane >= 0) {
         float travel = (m_hitBeat-beat()) / m_travelTime;
         float rotation[3] = { 0.f, 0.25f*glm::pi<float>(), -0.25f*glm::pi<float>() };
-        glm::vec3 direction = glm::rotate(m_target->velocity(), rotation[m_approachLane], graphics().camera()->upVector());
+        float yaw = m_target->baseYaw()*glm::pi<float>();
+        float pitch = m_target->basePitch()*glm::pi<float>();
+        glm::vec3 look(
+            glm::cos(yaw) * glm::cos(pitch),
+            glm::sin(pitch),
+            glm::sin(yaw) * glm::cos(pitch)
+        );
+        glm::vec3 direction = glm::rotate(look, rotation[m_approachLane], graphics().camera()->upVector());
         direction = 1.f*glm::normalize(direction);
         m_visualPosition = csm::bezier_curve(m_target->position() + direction, m_target->position() + 5.f*direction, m_position+m_shotVel, m_position, travel);
     } else {

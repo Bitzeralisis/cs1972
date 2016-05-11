@@ -28,7 +28,7 @@ void DiamondaEnemy::draw(int pass, float beat) {
 }
 
 csm::ellipsoid DiamondaEnemy::getEllipsoid() const {
-    return csm::ellipsoid(glm::vec3(0.f), glm::vec3(0.5f));
+    return csm::ellipsoid(glm::vec3(0.f), glm::vec3(0.8f));
 }
 
 void DiamondaEnemy::hitEffect(float beat) {
@@ -37,5 +37,5 @@ void DiamondaEnemy::hitEffect(float beat) {
 
 void DiamondaEnemy::deathEffect(float beat) {
     audio().queueSoundOnBeat("popslap.aif", beat+0.25f);
-    parent()->addEntity(GameScreen::LAYER_AMBIENCE, new LightEntity(beat, m_position, glm::vec3(0.f, 0.f, 0.f)));
+    parent()->addEntity(GameScreen::LAYER_AMBIENCE, new LightEntity(beat, m_position, m_velocity));
 }

@@ -18,6 +18,8 @@ MainMenuScreen::MainMenuScreen(CS1972Engine::Game *game)
         graphics().putTexture("diamond1", graphics().loadTextureFromQRC(":/images/diamond1.png", GL_LINEAR));
     if (!graphics().hasTexture("enemy2"))
         graphics().putTexture("enemy2", graphics().loadTextureFromQRC(":/images/enemy2.png", GL_LINEAR));
+    if (!graphics().hasTexture("skybox"))
+        graphics().putTexture("skybox", graphics().loadTextureFromQRC(":/images/skybox.png", GL_LINEAR));
     if (!graphics().hasTexture("particle"))
         graphics().putTexture("particle", graphics().loadTextureFromQRC(":/images/particle1.png", GL_LINEAR));
     if (!graphics().hasTexture("blur"))
@@ -41,6 +43,14 @@ MainMenuScreen::MainMenuScreen(CS1972Engine::Game *game)
         audio().putSound("supergate-snare.aif", audio().createSoundSample("sound/supergate-snare.aif"));
     if (!audio().hasSound("popslap.aif"))
         audio().putSound("popslap.aif", audio().createSoundSample("sound/popslap.aif"));
+    if (!audio().hasSound("metal-plink.wav"))
+        audio().putSound("metal-plink.wav", audio().createSoundSample("sound/metal-plink.wav"));
+    if (!audio().hasSound("xylophone-c3.wav"))
+        audio().putSound("xylophone-c3.wav", audio().createSoundSample("sound/xylophone-c3.wav"));
+    if (!audio().hasSound("xylophone-e3.wav"))
+        audio().putSound("xylophone-e3.wav", audio().createSoundSample("sound/xylophone-e3.wav"));
+    if (!audio().hasSound("xylophone-g3.wav"))
+        audio().putSound("xylophone-g3.wav", audio().createSoundSample("sound/xylophone-g3.wav"));
     if (!audio().hasSound("tambourine-simple1.aif"))
         audio().putSound("tambourine-simple1.aif", audio().createSoundSample("sound/tambourine-simple1.aif"));
     if (!audio().hasSound("chewie_scratch.aif"))

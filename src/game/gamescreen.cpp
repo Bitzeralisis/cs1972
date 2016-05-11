@@ -84,8 +84,11 @@ void GameScreen::boundMouse(float seconds) {
     else if (m_mousePosition.y > 0.75*H)
         mouseDisplace.y = (1.f-glm::pow(0.01f, seconds)) * (m_mousePosition.y - 0.75f*H);
 
+    glm::vec2 cameraBase(m_baseYaw, m_basePitch);
     glm::vec2 cameraPos = glm::vec2(graphics().camera()->yaw(), graphics().camera()->pitch()) + glm::vec2(1.f, -1.f)*viewSensitivity*mouseDisplace;
-    glm::vec2 boundedCameraPos = glm::min(glm::max(-1.f*glm::vec2(m_maxYaw, m_maxPitch), cameraPos), glm::vec2(m_maxYaw, m_maxPitch));
+    while (cameraPos.x < cameraBase.x - glm::pi<float>()) cameraPos.x += 2.f*glm::pi<float>();
+    while (cameraPos.x > cameraBase.x + glm::pi<float>()) cameraPos.x -= 2.f*glm::pi<float>();
+    glm::vec2 boundedCameraPos = glm::min(glm::max(-1.f*glm::vec2(m_maxYaw, m_maxPitch)+cameraBase, cameraPos), glm::vec2(m_maxYaw, m_maxPitch)+cameraBase);
     graphics().camera()->yaw(boundedCameraPos.x);
     graphics().camera()->pitch(boundedCameraPos.y);
 
@@ -227,6 +230,19 @@ void GameScreen::tick(float seconds) {
     // Update the world
     m_world->tick(beat);
 
+    // Update the camera
+    if (m_player->m_cameraBehavior == 1)
+        m_player->m_baseYaw += beats/12.f;
+    while (glm::pi<float>()*m_player->m_baseYaw < m_baseYaw-glm::pi<float>()) m_player->m_baseYaw += 2.f;
+    while (glm::pi<float>()*m_player->m_baseYaw > m_baseYaw+glm::pi<float>()) m_player->m_baseYaw -= 2.f;
+    float newYaw = (1.f-glm::pow(0.01f, seconds)) * (glm::pi<float>()*m_player->m_baseYaw-m_baseYaw) + m_baseYaw;
+    graphics().camera()->yaw(graphics().camera()->yaw() + newYaw-m_baseYaw);
+    graphics().camera()->pitch(graphics().camera()->pitch() + glm::pi<float>()*m_player->m_basePitch-m_basePitch);
+    m_baseYaw = newYaw;
+    m_basePitch = glm::pi<float>()*m_player->m_basePitch;
+    m_maxYaw = glm::pi<float>()*m_player->m_yawLimit;
+    m_maxPitch = glm::pi<float>()*m_player->m_pitchLimit;
+
     // Offset everything by the player's position so that player is always at origin
     int layers[2] = { LAYER_AMBIENCE };
     for (int i = 0; i < 2; ++i) {
@@ -253,7 +269,7 @@ void GameScreen::tick(float seconds) {
         EnemyEntity *bestEnemy = 0;
         std::list<EnemyEntity *> *enemies = (std::list<EnemyEntity *> *)m_world->getEntities(LAYER_ENEMIES);
         for (auto it = enemies->begin(); it != enemies->end(); ++it) {
-            if (!(*it)->targetable() || (*it)->futureHealth() <= 0)
+            if (!(*it)->targetable() || (*it)->futureHealth() <= 0 || (*it)->totalBeats() <= 0.f)
                 continue;
             bool hit = csm::intersect_cone_ellipsoid(cone, (*it)->getEllipsoid() + (*it)->position());
             if (hit && glm::dot((*it)->position(), dir) > 0.f) {
@@ -353,7 +369,7 @@ void GameScreen::drawScene(float beat) {
     graphics().camera()->position(glm::vec3(0.f));
     graphics().camera()->fovy(0.75f*glm::half_pi<float>());
     graphics().camera()->near(0.1f);
-    graphics().camera()->far(50.f);
+    graphics().camera()->far(2.f*m_player->m_maxFog);
 
     // Draw to g-buffer
     graphics().deferred()->bindGbuffer();
@@ -362,7 +378,7 @@ void GameScreen::drawScene(float beat) {
     // Render geometry to g-buffer
     graphics().deferred()->useGbufferShader();
     graphics().shader()->pvTransformFromCamera();
-    graphics().shader()->useFog(true, m_minFog, m_maxFog, glm::vec3(0.f));
+    graphics().shader()->useFog(true, m_player->m_minFog, m_player->m_maxFog, glm::vec3(0.f));
     m_world->draw(DRAW_GEOMETRY);
     graphics().useShader(0);
 
@@ -416,7 +432,7 @@ void GameScreen::drawScene(float beat) {
         graphics().deferred()->blitGbufferDepthTo(parent->width(), parent->height(), graphics().bloom()->hdr());
         graphics().shader()->pvTransformFromCamera();
         graphics().shader()->useLight(false);
-        graphics().shader()->useFog(true, m_minFog, m_maxFog, glm::vec3(0.f));
+        graphics().shader()->useFog(true, m_player->m_minFog, m_player->m_maxFog, glm::vec3(0.f));
 
         glDepthMask(false);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE);

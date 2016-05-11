@@ -11,6 +11,7 @@ public:
     COGEntity(float beat)
         : m_firstBeat(beat)
         , m_prevBeat(beat)
+        , m_beat(beat)
     { }
     virtual ~COGEntity() { }
 
@@ -20,11 +21,11 @@ private:
     float m_beat;
 
 protected:
-    inline float totalBeats() const { return m_beat-m_firstBeat; }
     VALUE_ACCESSOR(float,firstBeat)
     VALUE_ACCESSOR(float,beat)
 
 public:
+    inline float totalBeats() const { return m_beat-m_firstBeat; }
     inline void offsetPosition(glm::vec3 controllerPos) { m_position -= controllerPos; }
 
     virtual void tickBeats(float beats) = 0;

@@ -51,7 +51,7 @@ Sound *Audio::createSound(const char *path, int flags) {
 }
 
 Sound *Audio::createSoundSample(const char *path) {
-    return createSound(path, FMOD_2D | FMOD_CREATESAMPLE);
+    return createSound(path, FMOD_2D | FMOD_CREATESAMPLE | FMOD_LOOP_OFF);
 }
 
 Sound *Audio::createSoundStream(const char *path) {

@@ -19,7 +19,10 @@ void CubeaEnemy::draw(int pass, float beat) {
     graphics().shader()->color(glm::vec4(0.f));
     graphics().deferred()->useGlowTexture(true);
     graphics().deferred()->bindGlowTexture("cube1");
-    graphics().deferred()->glowColor(glm::vec4(0.75f, 0.5f, 0.15f, 1.f));
+    if (m_targetable)
+        graphics().deferred()->glowColor(glm::vec4(1.5f, 1.f, 0.3f, 1.f));
+    else
+        graphics().deferred()->glowColor(glm::vec4(0.8f, 0.8f, 0.8f, 1.f));
     glm::mat4 m(1.f);
     m = glm::translate(m, m_position);
     m = glm::scale(m, glm::vec3(0.5f));
@@ -32,9 +35,7 @@ csm::ellipsoid CubeaEnemy::getEllipsoid() const {
     return csm::ellipsoid(glm::vec3(0.f), glm::vec3(0.5f));
 }
 
-void CubeaEnemy::hitEffect(float) { }
-
 void CubeaEnemy::deathEffect(float beat) {
     audio().queueSoundOnBeat("noisy1.aif", beat+0.25f);
-    parent()->addEntity(GameScreen::LAYER_AMBIENCE, new LightEntity(beat, m_position, glm::vec3(0.f, 0.f, 0.f)));
+    parent()->addEntity(GameScreen::LAYER_AMBIENCE, new LightEntity(beat, m_position, m_velocity));
 }

@@ -3,6 +3,8 @@
 #include "enemy/cubeaenemy.h"
 #include "enemy/diamondaenemy.h"
 #include "enemy/gateenemy.h"
+#include "enemy/swimmeraenemy.h"
+#include "enemy/swimmerbenemy.h"
 #include "game/coggame.h"
 #include "game/cogscript.h"
 #include "game/gamescreen.h"
@@ -50,7 +52,8 @@ void ControlledEntity::performAction(COGScriptAction *action) {
 
         case Attribute::FLOAT: {
             COGScriptAttributeFloat *attr = (COGScriptAttributeFloat *) act;
-            if (attr->key == "offset") m_scriptOffset += attr->value;
+            if      (attr->key == "offset")   m_scriptOffset += attr->value;
+            else if (attr->key == "bgm.loop") audio().bgm()->setLoop(attr->value);
             else {
                 std::cerr << "Warning: Attempted to set attribute float " << attr->key << " on type missing that attribute" << std::endl;
             }
@@ -66,11 +69,15 @@ void ControlledEntity::performAction(COGScriptAction *action) {
 
     case Action::SPAWN: {
         COGScriptActionSpawn *act = (COGScriptActionSpawn *) action;
-        EnemyEntity *enemy;
+        ControlledEntity *enemy;
+        int layer = GameScreen::LAYER_ENEMIES;
 
-        if      (act->type == "gate")     enemy = new GateEnemy(act->beat + m_scriptOffset);
-        else if (act->type == "cubea")    enemy = new CubeaEnemy(act->beat + m_scriptOffset);
-        else if (act->type == "diamonda") enemy = new DiamondaEnemy(act->beat + m_scriptOffset);
+        if      (act->type == "controller") { enemy = new ControlledEntity(act->beat + m_scriptOffset); layer = GameScreen::LAYER_CONTROLLER; }
+        else if (act->type == "gate")         enemy = new GateEnemy(act->beat + m_scriptOffset);
+        else if (act->type == "cubea")        enemy = new CubeaEnemy(act->beat + m_scriptOffset);
+        else if (act->type == "diamonda")     enemy = new DiamondaEnemy(act->beat + m_scriptOffset);
+        else if (act->type == "swimmera")     enemy = new SwimmeraEnemy(act->beat + m_scriptOffset);
+        else if (act->type == "swimmerb")     enemy = new SwimmerbEnemy(act->beat + m_scriptOffset);
         else {
             std::cerr << "Warning: Attempted to spawn unrecognized enemy type " << act->type << std::endl;
             break;
@@ -78,9 +85,17 @@ void ControlledEntity::performAction(COGScriptAction *action) {
 
         enemy->m_position = m_position;
         enemy->giveBehavior(m_behavior->parent->behaviors[act->behavior]);
-        parent()->addEntity(GameScreen::LAYER_ENEMIES, enemy);
+        parent()->addEntity(layer, enemy);
         for (std::deque<COGScriptAction *>::iterator it = act->init->actions.begin(); it != act->init->actions.end(); ++it)
             enemy->performAction(*it);
+        break;
+    }
+
+    case Action::SHOOT: {
+        COGScriptActionShoot *act = (COGScriptActionShoot *) action;
+        glm::vec3 pos = act->pos.coord + (act->pos.relative ? m_position : glm::vec3(0.f));
+        glm::vec3 vel = act->vel.coord + (act->vel.relative ? m_velocity : glm::vec3(0.f));
+        shoot(firstBeat() + act->beat, act->travel, pos, vel, act->type, act->lane);
         break;
     }
 
@@ -120,4 +135,10 @@ void ControlledEntity::tickBeats(float beats) {
         }
     }
     tickPhysicsContinuous(beat()-startBeat);
+}
+
+void ControlledEntity::shoot(float beat, float travelTime, glm::vec3 pos, glm::vec3 vel, int type, int lane) {
+    EnemyShotEntity *shot = new EnemyShotEntity(beat, travelTime, pos, vel, GAME->controller(), type, lane);
+    parent()->addEntity(GameScreen::LAYER_ENEMY_PROJECTILES, shot);
+    GAME->controller()->attachShot(shot);
 }

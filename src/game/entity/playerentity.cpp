@@ -1,5 +1,6 @@
 #include "playerentity.h"
 #include "game/cogscript.h"
+#include "game/entity/ambiententity.h"
 #include "game/entity/enemyshotentity.h"
 #include "engine/graphics/particlemodule.h"
 
@@ -58,6 +59,31 @@ void PlayerEntity::performAction(COGScriptAction *action) {
         else
             break;
         return;
+    }
+
+    case Action::SET_ATTRIBUTE: {
+        COGScriptActionSetAttribute *act = (COGScriptActionSetAttribute *) action;
+        switch (act->attr) {
+        case Attribute::FLOAT: {
+            COGScriptAttributeFloat *attr = (COGScriptAttributeFloat *) act;
+            if      (attr->key == "fog.near")           m_minFog = attr->value;
+            else if (attr->key == "fog.far")            m_maxFog = attr->value;
+            else if (attr->key == "camera.special")     m_cameraBehavior = attr->value;
+            else if (attr->key == "camera.yawbase")     m_baseYaw = attr->value;
+            else if (attr->key == "camera.pitchbase")   m_basePitch = attr->value;
+            else if (attr->key == "camera.yawlimit")    m_yawLimit = attr->value;
+            else if (attr->key == "camera.pitchlimit")  m_pitchLimit = attr->value;
+            else if (attr->key == "zone")               m_ambience->zone(attr->value);
+            else
+                break;
+            return;
+        }
+
+        default:
+            break;
+        }
+
+        break;
     }
 
     default:
