@@ -102,6 +102,7 @@ public:
     virtual void draw() override;
     void drawScene(float beat);
     void drawHud(float beat);
+    void drawText(std::string text, glm::vec2 left, float scale = 1.f);
     void drawReticle(float beat);
     void drawDefenseRing(float beat);
     void drawHudComponents(float beat);

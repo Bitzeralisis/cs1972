@@ -18,6 +18,9 @@ public:
 private:
     bool m_win = false;
     int m_score = 0;
+    int m_potentialScore = 0;
+    int m_shotDown = 0;
+    int m_potentialShotDown = 0;
     int m_combo;
     int m_dealtDamage = 0;
 
@@ -33,15 +36,17 @@ private:
     std::deque<EnemyShotEntity *> m_attachedShots;
 
 public:
-    VALUE_ACCESSOR(AmbientEntity *,ambience)
+    void gainScoreValue(int score);
+    void gainPotentialScore(int score);
+    void gainShotDown(int shotDown);
+    void gainPotentialShotDown(int shotDown);
     VALUE_ACCESSOR(float,maxFog)
     VALUE_ACCESSOR(float,baseYaw)
     VALUE_ACCESSOR(float,basePitch)
-
     void dealDamage() { ++m_dealtDamage; }
+    VALUE_ACCESSOR(AmbientEntity *,ambience)
     std::deque<EnemyShotEntity *> *attachedShots() { return &m_attachedShots; }
 
-    void gainScoreValue(int score);
     void makeParticles(int amount, glm::vec3 position, float width, glm::vec3 velocity, glm::vec3 color, glm::vec2 life);
     void makeParticles(int amount, glm::vec3 position, glm::vec3 size, glm::vec3 velocity, glm::vec3 color, glm::vec2 life);
 

@@ -14,6 +14,18 @@ void PlayerEntity::gainScoreValue(int score) {
     m_score += m_combo*score;
 }
 
+void PlayerEntity::gainPotentialScore(int score) {
+    m_potentialScore += score;
+}
+
+void PlayerEntity::gainShotDown(int shotDown) {
+    m_shotDown += shotDown;
+}
+
+void PlayerEntity::gainPotentialShotDown(int shotDown) {
+    m_potentialShotDown += shotDown;
+}
+
 void PlayerEntity::makeParticles(int amount, glm::vec3 position, float width, glm::vec3 velocity, glm::vec3 color, glm::vec2 life) {
     makeParticles(amount, position, glm::vec3(width), velocity, color, life);
 }

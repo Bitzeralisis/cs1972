@@ -9,7 +9,7 @@
 using namespace COG;
 
 SwimmerbEnemy::SwimmerbEnemy(float beat)
-    : EnemyEntity(beat, 16, 5000)
+    : EnemyEntity(beat, 16, 5000, 4)
 { }
 
 void SwimmerbEnemy::draw(int pass, float beat) {

@@ -68,7 +68,7 @@ void GameScreen::boundMouse(float seconds) {
     float W = parent->width();
     float H = parent->height();
     float hSize = glm::round(H*RETICLE_SIZE_FACTOR * 0.5f);
-    float viewSensitivity = graphics().camera()->fovy() / W;
+    float viewSensitivity = graphics().camera()->fovy() / H;
 
     m_mousePosition += m_mouseMove;
     m_mouseMove = glm::vec2(0.f);
@@ -527,6 +527,22 @@ void GameScreen::drawHud(float beat) {
     graphics().useShader(0);
 }
 
+void GameScreen::drawText(std::string text, glm::vec2 left, float scale) {
+    float W = parent->width();
+    glm::vec2 right = left + scale*glm::vec2(32.f/2048.f);
+    for (auto it = text.begin(); it != text.end(); ++it) {
+        char c = *it;
+        float texLeft = 32.f/2048.f * (c % 16);
+        float texBot = 0.5f + 32.f/1024.f * (c / 16);
+        graphics().uishader()->drawQuad(
+            left.x*W, right.x*W, left.y*W, right.y*W,
+            texLeft, texLeft+32.f/2048.f, texBot, texBot+32.f/1024.f
+        );
+        left.x += scale*17.f/2048.f;
+        right.x += scale*17.f/2048.f;
+    }
+}
+
 void GameScreen::drawReticle(float beat) {
     float W = parent->width();
     float H = parent->height();
@@ -814,6 +830,14 @@ void GameScreen::drawHudComponents(float beat) {
     );
 
     // Score
+    graphics().uishader()->color(glm::vec4(1.f, 0.5f, 1.f, 0.75f));
+    {
+        int numDigits = glm::max(1, (int) log10(m_player->m_score) + 1);
+        char text[33];
+        itoa(m_player->m_score, text, 10);
+        drawText(text, glm::vec2((1915.f-17.f*numDigits)/2048.f, 32.f/2048.f));
+    }
+    /*
     int score = m_player->m_score;
     for (int i = 0; i < glm::max(1, (int) log10(m_player->m_score) + 1); ++i) {
         int digit = score % 10;
@@ -825,8 +849,10 @@ void GameScreen::drawHudComponents(float beat) {
         );
         score /= 10;
     }
+    */
 
     // Life ticks
+    graphics().uishader()->color(glm::vec4(1.f));
     for (int i = 0; i < m_health; ++i) {
         float left = 1792.f/2048.f - 64.f/2048.f*i;
         float right = left + 64.f/2048.f;
@@ -871,9 +897,40 @@ void GameScreen::drawHudComponents(float beat) {
         graphics().shader()->bindTexture("hud");
         graphics().uishader()->color(glm::vec4(1.f));
         graphics().uishader()->drawQuad(
-            0.5f*glm::vec2(W, H), W/16.f*glm::vec2(16.f, 2.f), 0.f,
-            0.5f, 1.f, 0.5625f, 0.6875f
+            0.5f*glm::vec2(W, H), W/16.f*glm::vec2(16.f, 3.f), 0.f,
+            0.5f, 1.f, 0.5625f, 0.75f
         );
+
+        char buf[33];
+        std::string text;
+        int scoreRank = m_player->m_score*100 / m_player->m_potentialScore;
+        int shotDownRank = m_player->m_shotDown*100 / m_player->m_potentialShotDown;
+
+        itoa(m_player->m_score, buf, 10);
+        text = buf;
+        drawText(text, glm::vec2(0.5f, 0.5f*H/W - 32.f/1024.f), 2.f);
+
+        itoa(scoreRank, buf, 10);
+        text = buf;
+        text += "% (RANK ";
+        if      (scoreRank < 12) text += 'D';
+        else if (scoreRank < 25) text += 'C';
+        else if (scoreRank < 50) text += 'B';
+        else if (scoreRank < 90) text += 'A';
+        else                     text += 'S';
+        text += ")";
+        drawText(text, glm::vec2(0.5f, 0.5f*H/W), 2.f);
+
+        itoa(shotDownRank, buf, 10);
+        text = buf;
+        text += "% (RANK ";
+        if      (shotDownRank < 50) text += 'D';
+        else if (shotDownRank < 70) text += 'C';
+        else if (shotDownRank < 90) text += 'B';
+        else if (shotDownRank < 98) text += 'A';
+        else                        text += 'S';
+        text += ")";
+        drawText(text, glm::vec2(0.5f, 0.5f*H/W + 32.f/1024.f), 2.f);
     }
 
     if (m_fade > 0.f) {

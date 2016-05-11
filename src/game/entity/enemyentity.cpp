@@ -8,12 +8,16 @@
 
 using namespace COG;
 
-EnemyEntity::EnemyEntity(float beat, int health, int value)
+EnemyEntity::EnemyEntity(float beat, int health, int value, int shotDownValue)
     : ControlledEntity(beat)
     , m_health(health)
     , m_futureHealth(health)
     , m_scoreValue(value)
-{ }
+    , m_shotDownValue(shotDownValue)
+{
+    GAME->controller()->gainPotentialScore(8*m_scoreValue);
+    GAME->controller()->gainPotentialShotDown(m_shotDownValue);
+}
 
 EnemyEntity::~EnemyEntity() {
     for (auto it = m_attachedShots.begin(); it != m_attachedShots.end(); ++it)
@@ -72,6 +76,7 @@ void EnemyEntity::tickBeats(float beats) {
         // Die
         if (m_health <= 0) {
             GAME->controller()->gainScoreValue(m_scoreValue);
+            GAME->controller()->gainShotDown(m_shotDownValue);
             deathEffect(beat);
             for (std::deque<PlayerShotEntity *>::iterator it = m_attachedShots.begin(); it != m_attachedShots.end(); ++it)
                 (*it)->detatchShot(false, m_position);

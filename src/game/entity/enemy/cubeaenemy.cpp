@@ -8,7 +8,7 @@
 using namespace COG;
 
 CubeaEnemy::CubeaEnemy(float beat)
-    : EnemyEntity(beat, 1, 100)
+    : EnemyEntity(beat, 1, 100, 1)
 { }
 
 void CubeaEnemy::draw(int pass, float beat) {

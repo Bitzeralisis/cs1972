@@ -8,7 +8,7 @@
 using namespace COG;
 
 DiamondaEnemy::DiamondaEnemy(float beat)
-    : EnemyEntity(beat, 8, 2000)
+    : EnemyEntity(beat, 8, 2000, 1)
 { }
 
 void DiamondaEnemy::draw(int pass, float beat) {

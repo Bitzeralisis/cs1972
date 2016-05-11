@@ -9,7 +9,7 @@ class PlayerShotEntity;
 
 class EnemyEntity : public ControlledEntity {
 public:
-    EnemyEntity(float beat, int health, int value);
+    EnemyEntity(float beat, int health, int value, int shotDownValue = 0);
     virtual ~EnemyEntity();
 
 private:
@@ -19,6 +19,7 @@ private:
 protected:
     int m_health;
     int m_scoreValue;
+    int m_shotDownValue;
     bool m_targetable = true;
 
 public:
